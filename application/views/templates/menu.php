@@ -481,6 +481,23 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="<?php echo base_url() . "other_option"; ?>"> <i class="material-icons">people</i>
                         <span>Other option</span> </a>
                 </li>
+
+                <li id="other_options">
+                    <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
+                        <span>Other Options Details</span> </a>
+                    <ul class="ml-menu">
+                        <li id="manage_other_options">
+                            <a href="<?= base_url('other_option_new/add_other_option') ?>">
+                                <i class="material-icons">description</i> <span>Manage Other Option</span> </a>
+                        </li>
+                        <li id="manage_other_options">
+                            <a href="<?= base_url('other_option_new/other_option_list') ?>">
+                                <i class="material-icons">description</i> <span>Other Option List</span> </a>
+                        </li>
+
+                    </ul>
+                </li>
+
                 <li id="whatsapp_details">
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Whatsapp Details</span> </a>

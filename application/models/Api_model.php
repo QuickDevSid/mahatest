@@ -442,12 +442,12 @@ class Api_model extends CI_Model
         }
         $offset = $request['offset'];
         $limit = $request['limit'];
-        $this->db->select('current_affairs.*, category.title');
+        $this->db->select('current_affairs.*, current_affairs_category.category_name as title');
         if ($request['category'] != "") {
             $this->db->where('current_affairs.category', $request['category']);
         }
         $this->db->where('current_affairs.status', 'Active');
-        $this->db->join('category', 'category.id = current_affairs.category');
+        $this->db->join('current_affairs_category', 'current_affairs_category.id = current_affairs.category');
         $this->db->order_by('current_affairs.sequence_no', 'ASC');
         $this->db->limit($limit, $offset);
         $result = $this->db->get('current_affairs');
@@ -506,6 +506,7 @@ class Api_model extends CI_Model
 
         $result = $this->db->get();
         $result = $result->result();
+
         if (!empty($result)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'success';

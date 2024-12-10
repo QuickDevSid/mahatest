@@ -101,6 +101,15 @@ $route['membership_plans/status_membership_plans_list_active/(:any)'] = 'Members
 $route['membership_plans/status_membership_plans_list_in_active/(:any)'] = 'Membership_Plans/status_membership_plans_list_in_active/$1';
 
 
+$route['other_option_new/add_other_option'] = 'Other_options_controller/add_other_option';
+$route['other_option_new/add_other_option/(:any)'] = 'Other_options_controller/add_other_option/$1';
+$route['other_option_new/other_option_list'] = 'Other_options_controller/other_option_list';
+$route['other_option_new/delete_other_option_list/(:any)'] = 'Other_options_controller/delete_other_option_list/$1';
+$route['other_option_new/status_other_option_list_active/(:any)'] = 'Other_options_controller/status_other_option_list_active/$1';
+$route['other_option_new/status_other_option_list_in_active/(:any)'] = 'Other_options_controller/status_other_option_list_in_active/$1';
+
+
+
 $route['whatsapp_details/add_whatsapp_details'] = 'Whatsapp_details/add_whatsapp_details';
 $route['whatsapp_details/add_whatsapp_details/(:any)'] = 'Whatsapp_details/add_whatsapp_details/$1';
 $route['whatsapp_details/whatsapp_details_list'] = 'Whatsapp_details/whatsapp_details_list';
