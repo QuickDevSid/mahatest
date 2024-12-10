@@ -1,0 +1,1 @@
+ALTER TABLE `current_affairs` CHANGE `selected_exams_id` `sequence_no` INT NULL DEFAULT NULL;

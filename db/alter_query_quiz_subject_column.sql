@@ -1,0 +1,1 @@
+ALTER TABLE `quiz_subject` CHANGE `exam_section_id` `description` VARCHAR(500) NOT NULL;

@@ -1,0 +1,1538 @@
+{
+	"info": {
+		"_postman_id": "edaa9b5a-9b17-4763-8ce2-677fe92691cb",
+		"name": "eMahaTestApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4421208",
+		"_collection_link": "https://sagarmaher.postman.co/workspace/Team-Workspace~1346fbf3-b773-4d81-8ebc-936d3adc1084/collection/4421208-edaa9b5a-9b17-4763-8ce2-677fe92691cb?action=share&source=collection_link&creator=4421208"
+	},
+	"item": [
+		{
+			"name": "common",
+			"item": [
+				{
+					"name": "sliderDetail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ser}}/get_slider_details",
+							"host": [
+								"{{ser}}"
+							],
+							"path": [
+								"get_slider_details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getStateList",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/getStateList",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"getStateList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDistrictList",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/getDistrictList/14",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"getDistrictList",
+								"14"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "userRegistration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Abdul Bari Shaikh\",\r\n    \"gender\":\"Male\",\r\n    \"email\":\"Abdul@codingvisions.com\",\r\n    \"mobile_no\":\"8956993254\",\r\n    \"state_id\":20,\r\n    \"district_id\":373\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/userRegistration",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"userRegistration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify_mobile_no",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"mobile_no\":\"8308075524\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/verify_mobile_no",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"verify_mobile_no"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUserDetail",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{local}}/getUserDetail",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"getUserDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userlogout",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{local}}/userlogout",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"userlogout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getHomePageDetail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getHomePageDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getHomePageDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userFeedbackPost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjIiLCJmdWxsX25hbWUiOiJLb21hbCBKYWlzd2FsIiwiZW1haWwiOiJrb21hbEBnbWFpbC5jb20iLCJtb2JpbGVfbnVtYmVyIjoiOTg5ODk4OTg5OCIsInBhc3N3b3JkIjpudWxsLCJnZW5kZXIiOiJGZW1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDEtMTIgMTU6MDU6NDAiLCJzdGF0ZV9pZCI6IjE0IiwiZGlzdHJpY3RfaWQiOiIxIiwibGFzdF91c2VyX2xvZ2luIjpudWxsLCJpYXQiOiIyMDI0LTAxLTE4IDA2OjM4OjExIiwiZXhwIjoiMjAyNC0wMS0xOCAwNzozODoxMSJ9.LFV0W7wueRXHjwiyay802TT9VirSsPyDzj-d1fbRRCQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"feedback\":\"Nice Application.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/userFeedbackPost",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"userFeedbackPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCategoryDetails",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"section\":\"Current Affairs\",\r\n    \"year\":\"2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/getCategoryDetails",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"getCategoryDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCurrentAffairsCategoryDetail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"category\":\"4\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getCurrentAffairsCategoryDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getCurrentAffairsCategoryDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "currentAffairsPageDetail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ser}}/currentAffairsPageDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"currentAffairsPageDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "currentAffairsYearDetail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"year\":\"2024\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/currentAffairsYearDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"currentAffairsYearDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "currentAffairsAllCategoryWiseDetail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ser}}/currentAffairsAllCategoryWiseDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"currentAffairsAllCategoryWiseDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "currentAffairsAllYearDetail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ser}}/currentAffairsAllYearDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"currentAffairsAllYearDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getFAQDetails",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/getFAQDetails",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"getFAQDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAppHelpDetails",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/getAppHelpDetails",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"getAppHelpDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "saveUsersCurrentAffairPost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjIiLCJmdWxsX25hbWUiOiJLb21hbCBKYWlzd2FsIiwiZW1haWwiOiJrb21hbEBnbWFpbC5jb20iLCJtb2JpbGVfbnVtYmVyIjoiOTg5ODk4OTg5OCIsInBhc3N3b3JkIjpudWxsLCJnZW5kZXIiOiJGZW1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDEtMTIgMTU6MDU6NDAiLCJzdGF0ZV9pZCI6IjE0IiwiZGlzdHJpY3RfaWQiOiIxIiwibGFzdF91c2VyX2xvZ2luIjpudWxsLCJpYXQiOiIyMDI0LTAxLTE4IDA2OjM4OjExIiwiZXhwIjoiMjAyNC0wMS0xOCAwNzozODoxMSJ9.LFV0W7wueRXHjwiyay802TT9VirSsPyDzj-d1fbRRCQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"current_affair_id\":26\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/saveUsersCurrentAffairPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"saveUsersCurrentAffairPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getSavedCurrentAffairsDetail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getSavedCurrentAffairsDetail",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getSavedCurrentAffairsDetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "removeUsersCurrentAffairPost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjIiLCJmdWxsX25hbWUiOiJLb21hbCBKYWlzd2FsIiwiZW1haWwiOiJrb21hbEBnbWFpbC5jb20iLCJtb2JpbGVfbnVtYmVyIjoiOTg5ODk4OTg5OCIsInBhc3N3b3JkIjpudWxsLCJnZW5kZXIiOiJGZW1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDEtMTIgMTU6MDU6NDAiLCJzdGF0ZV9pZCI6IjE0IiwiZGlzdHJpY3RfaWQiOiIxIiwibGFzdF91c2VyX2xvZ2luIjpudWxsLCJpYXQiOiIyMDI0LTAxLTE4IDA2OjM4OjExIiwiZXhwIjoiMjAyNC0wMS0xOCAwNzozODoxMSJ9.LFV0W7wueRXHjwiyay802TT9VirSsPyDzj-d1fbRRCQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"current_affair_id\":1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local}}/removeUsersCurrentAffairPost",
+					"host": [
+						"{{local}}"
+					],
+					"path": [
+						"removeUsersCurrentAffairPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateCurrentAffairViewsPost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjIiLCJmdWxsX25hbWUiOiJLb21hbCBKYWlzd2FsIiwiZW1haWwiOiJrb21hbEBnbWFpbC5jb20iLCJtb2JpbGVfbnVtYmVyIjoiOTg5ODk4OTg5OCIsInBhc3N3b3JkIjpudWxsLCJnZW5kZXIiOiJGZW1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDEtMTIgMTU6MDU6NDAiLCJzdGF0ZV9pZCI6IjE0IiwiZGlzdHJpY3RfaWQiOiIxIiwibGFzdF91c2VyX2xvZ2luIjpudWxsLCJpYXQiOiIyMDI0LTAxLTE4IDA2OjM4OjExIiwiZXhwIjoiMjAyNC0wMS0xOCAwNzozODoxMSJ9.LFV0W7wueRXHjwiyay802TT9VirSsPyDzj-d1fbRRCQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"current_affair_id\":26\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/updateCurrentAffairViewsPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"updateCurrentAffairViewsPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getSuccessReviews",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getSuccessReviews",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getSuccessReviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userScheduleCallPost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjIiLCJmdWxsX25hbWUiOiJLb21hbCBKYWlzd2FsIiwiZW1haWwiOiJrb21hbEBnbWFpbC5jb20iLCJtb2JpbGVfbnVtYmVyIjoiOTg5ODk4OTg5OCIsInBhc3N3b3JkIjpudWxsLCJnZW5kZXIiOiJGZW1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDEtMTIgMTU6MDU6NDAiLCJzdGF0ZV9pZCI6IjE0IiwiZGlzdHJpY3RfaWQiOiIxIiwibGFzdF91c2VyX2xvZ2luIjpudWxsLCJpYXQiOiIyMDI0LTAxLTE4IDA2OjM4OjExIiwiZXhwIjoiMjAyNC0wMS0xOCAwNzozODoxMSJ9.LFV0W7wueRXHjwiyay802TT9VirSsPyDzj-d1fbRRCQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\":\"Test schedule.\",\r\n    \"date\":\"2024/02/10\",\r\n    \"time\":\"03:00 PM\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/userScheduleCallPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"userScheduleCallPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAbhyasSahityaCategory",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAbhyasSahityaCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAbhyasSahityaCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAbhyasSahityaTextByCategory",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"category\":\"6\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAbhyasSahityaTextByCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAbhyasSahityaTextByCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAbhyasSahityaPDFByCategory",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"category\":\"5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAbhyasSahityaPDFByCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAbhyasSahityaPDFByCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getParikshaPadhatiCategory",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getParikshaPadhatiCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getParikshaPadhatiCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getParikshaPadhatiPDFByCategory",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"category\":\"5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getParikshaPadhatiPDFByCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getParikshaPadhatiPDFByCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMasikeCategory",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getMasikeCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getMasikeCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMasikePDFByCategory",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"category\":\"5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getMasikePDFByCategory",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getMasikePDFByCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createDoubtPost",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"question\":\"Test.\",\r\n    \"doubt_image\":\"N/A\"//Base 64 image or N/A\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/createDoubtPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"createDoubtPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getDoubts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getDoubts",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getDoubts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getDoubtDetails",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"doubtId\":70\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getDoubtDetails",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getDoubtDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createDoubtCommentPost",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"doubtId\":70,\r\n    \"commentBody\":\"Test Comment..\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/createDoubtCommentPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"createDoubtCommentPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getDocsVideosDocs",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{ser}}/getDocsVideosDocs",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getDocsVideosDocs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getDocsVideosTexts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getDocsVideosTexts",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getDocsVideosTexts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getDocsVideosVideos",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getDocsVideosVideos",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getDocsVideosVideos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateDocsVideosViewsPost",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/updateDocsVideosViewsPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"updateDocsVideosViewsPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCouponCodes",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"Membership\"   //Test Series / Courses / Membership\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getCouponCodes",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getCouponCodes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "validateCouponCodePost",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"coupon_code\":\"Membership50\",\r\n    \"type\":\"Membership\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/validateCouponCodePost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"validateCouponCodePost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateCouponUsageCountPost",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"coupon_id\":1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/updateCouponUsageCountPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"updateCouponUsageCountPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMemberShipPlans",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ser}}/getMembershipPlans",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getMembershipPlans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "paymentResponsePost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjEwIiwiZnVsbF9uYW1lIjoiQWJkdWwgQmFyaSBTaGFpa2giLCJlbWFpbCI6InNoYWlraGFiZHVsYmFyQGdtYWlsLmNvbSIsIm1vYmlsZV9udW1iZXIiOiI4OTU2OTkzMjU0IiwicGFzc3dvcmQiOm51bGwsImdlbmRlciI6Ik1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDItMjEgMTE6MDc6NTUiLCJzdGF0ZV9pZCI6IjIwIiwiZGlzdHJpY3RfaWQiOiIzNzMiLCJsYXN0X3VzZXJfbG9naW4iOm51bGwsImlhdCI6IjIwMjQtMDItMjEgMTg6Mjg6NTIiLCJleHAiOiIyMDI0LTA1LTIxIDE4OjI4OjUyIn0.OlOeixjge_7l5alilI0ChAeJHNWVIsSjoJxgsQzkvvU",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"membership_id\":2, //150\r\n    \"coupon_id\":5, //Rs. 50\r\n    \"sub_total\":150,\r\n    \"coupon_discount_amount\":50,\r\n    \"final_total\":100,\r\n    \"payment_details\":{\r\n        \"id\": \"pay_L0nSsccovt6zyp\",\r\n        \"entity\": \"payment\",\r\n        \"amount\": 9900,\r\n        \"currency\": \"INR\",\r\n        \"status\": \"captured\",\r\n        \"order_id\": \"order_L0nS83FfCHaWqV\",\r\n        \"invoice_id\": \"inv_L0nS7JIyuX6Lyb\",\r\n        \"international\": false,\r\n        \"method\": \"card\",\r\n        \"amount_refunded\": 0,\r\n        \"refund_status\": null,\r\n        \"captured\": true,\r\n        \"description\": \"#L0nS7JIyuX6Lyb\",\r\n        \"card_id\": \"card_L0nSsfPv1LjA20\",\r\n        \"card\": {\r\n            \"id\": \"card_L0nSsfPv1LjA20\",\r\n            \"entity\": \"card\",\r\n            \"name\": \"\",\r\n            \"last4\": \"1111\",\r\n            \"network\": \"Visa\",\r\n            \"type\": \"debit\",\r\n            \"issuer\": null,\r\n            \"international\": false,\r\n            \"emi\": false,\r\n            \"sub_type\": \"consumer\",\r\n            \"token_iin\": null\r\n        },\r\n        \"bank\": null,\r\n        \"wallet\": null,\r\n        \"vpa\": null,\r\n        \"email\": \"gaurav.kumar@example.com\",\r\n        \"contact\": \"+9000090000\",\r\n        \"notes\": [],\r\n        \"fee\": 198,\r\n        \"tax\": 0,\r\n        \"error_code\": null,\r\n        \"error_description\": null,\r\n        \"error_source\": null,\r\n        \"error_step\": null,\r\n        \"error_reason\": null,\r\n        \"acquirer_data\": {\r\n            \"auth_code\": \"299196\"\r\n        },\r\n        \"created_at\": 1672987417\r\n    },\r\n    \"razorpay_orderId\":\"123456\",\r\n    \"razorpay_transaction_id\":\"121231\",\r\n    \"payment_for\":\"courses\",//courses /test series /membership\r\n    \"transaction_status\":\"Success\" //Success / Failled\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/paymentResponsePost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"paymentResponsePost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createRazorPayOrderPost",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjEwIiwiZnVsbF9uYW1lIjoiQWJkdWwgQmFyaSBTaGFpa2giLCJlbWFpbCI6InNoYWlraGFiZHVsYmFyQGdtYWlsLmNvbSIsIm1vYmlsZV9udW1iZXIiOiI4OTU2OTkzMjU0IiwicGFzc3dvcmQiOm51bGwsImdlbmRlciI6Ik1hbGUiLCJwcm9maWxlX2ltYWdlIjpudWxsLCJzZWxlY3RlZF9leGFtcyI6bnVsbCwic2VsZWN0ZWRfZXhhbXNfaWQiOm51bGwsImxvZ2luX3R5cGUiOm51bGwsImRldmljZV9pZCI6bnVsbCwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDItMjEgMTE6MDc6NTUiLCJzdGF0ZV9pZCI6IjIwIiwiZGlzdHJpY3RfaWQiOiIzNzMiLCJsYXN0X3VzZXJfbG9naW4iOm51bGwsImlhdCI6IjIwMjQtMDItMjEgMTg6Mjg6NTIiLCJleHAiOiIyMDI0LTA1LTIxIDE4OjI4OjUyIn0.OlOeixjge_7l5alilI0ChAeJHNWVIsSjoJxgsQzkvvU",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"amount\":10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/createRazorPayOrderPost",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"createRazorPayOrderPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userUpdateDeviceId",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"device_id\":\"Id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/userUpdateDeviceId",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"userUpdateDeviceId"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllQuizSubjectSectionWise",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"section\":\"MPSC\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAllQuizSubjectSectionWise",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAllQuizSubjectSectionWise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllQuizYearSubjectSectionWise",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"subject_id\":\"2\",\r\n    \"section\":\"MPSC\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAllQuizYearSubjectSectionWise",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAllQuizYearSubjectSectionWise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllQuizChapterSubjectSectionWise",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"subject_id\":\"2\",\r\n    \"section\":\"MPSC\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAllQuizChapterSubjectSectionWise",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAllQuizChapterSubjectSectionWise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllQuizzesBySubjectSectionChapterYearWise",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"subject_id\":\"2\",\r\n    \"section\":\"MPSC\",\r\n    \"yearChapter\":\"Chapter\",\r\n    \"yearChapterValue\":\"3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getAllQuizzesBySubjectSectionChapterYearWise",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getAllQuizzesBySubjectSectionChapterYearWise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getQuizQuestionsByQuizId",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"quizId\":\"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getQuizQuestionsByQuizId",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getQuizQuestionsByQuizId"
+					],
+					"query": [
+						{
+							"key": "quiz_id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postQuizAnswersByQuizId",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"quizID\": \"1\",\r\n    \"timeTaken\": \"0:00:48\",\r\n    \"quizStatus\": \"Completed\",\r\n    \"questionDetails\": [\r\n        {\r\n            \"QuestionId\": \"1\",\r\n            \"Question\": \"What is 3 + 5 = ?\",\r\n            \"QuestionAnswer\": \"8\",\r\n            \"QuestionUserAnswer\": \"8\",\r\n            \"QuestionUserAnswered\": \"1\"\r\n        },\r\n        {\r\n            \"QuestionId\": \"2\",\r\n            \"Question\": \"What is 4 + 5 = ?\",\r\n            \"QuestionAnswer\": \"9\",\r\n            \"QuestionUserAnswer\": \"7\",\r\n            \"QuestionUserAnswered\": \"2\"\r\n        },\r\n        {\r\n            \"QuestionId\": \"3\",\r\n            \"Question\": \"What is 5 + 5 = ?\",\r\n            \"QuestionAnswer\": \"10\",\r\n            \"QuestionUserAnswer\": \"10\",\r\n            \"QuestionUserAnswered\": \"3\"\r\n        },\r\n        {\r\n            \"QuestionId\": \"4\",\r\n            \"Question\": \"What is 10 + 5 = ?\",\r\n            \"QuestionAnswer\": \"15\",\r\n            \"QuestionUserAnswer\": \"N\\/A\",\r\n            \"QuestionUserAnswered\": \"0\"\r\n        },\r\n        {\r\n            \"QuestionId\": \"5\",\r\n            \"Question\": \"What is 10 - 2 = ?\",\r\n            \"QuestionAnswer\": \"8\",\r\n            \"QuestionUserAnswer\": \"8\",\r\n            \"QuestionUserAnswered\": \"1\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/postQuizAnswersByQuizId",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"postQuizAnswersByQuizId"
+					],
+					"query": [
+						{
+							"key": "quiz_id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getQuizResultById",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"quizId\":\"1\",\r\n    \"resultId\":\"27\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ser}}/getQuizResultById",
+					"host": [
+						"{{ser}}"
+					],
+					"path": [
+						"getQuizResultById"
+					],
+					"query": [
+						{
+							"key": "quiz_id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbl9pZCI6IjciLCJmdWxsX25hbWUiOiJTYWdhciBNYWhlciIsImVtYWlsIjoic2FnYXJAY29kaW5ndmlzaW9ucy5jb20iLCJtb2JpbGVfbnVtYmVyIjoiODMwODA3NTUyNCIsInBhc3N3b3JkIjpudWxsLCJnZW5kZXIiOiJtYWxlIiwicHJvZmlsZV9pbWFnZSI6bnVsbCwic2VsZWN0ZWRfZXhhbXMiOm51bGwsInNlbGVjdGVkX2V4YW1zX2lkIjpudWxsLCJsb2dpbl90eXBlIjpudWxsLCJkZXZpY2VfaWQiOiJjNDdWS3BGbFQzU3JxTU0tdTlwOEdROkFQQTkxYkZsa3Z5eVhXOU1aekVUdlRrNlVCb1hTREVTc1lnb21YRU1nRmQ0cnI5RHloMXk3aVJWd1p5QzdCUEx2LUYtdDc5MllIU1Y0ZDNCZEF4eGhLc1B6Q3JaTUx0RXppV1ZyZlRJYkhfcTBYVktIY3J0Tm10cE4wMnZlYTB5QUcwMDZadXlkVGpVIiwicGxhY2UiOm51bGwsInN0YXR1cyI6bnVsbCwiY3JlYXRlZF9vbiI6IjIwMjQtMDEtMjkgMTg6NTM6MTgiLCJzdGF0ZV9pZCI6IjE0IiwiZGlzdHJpY3RfaWQiOiIxIiwibGFzdF91c2VyX2xvZ2luIjoiMjAyNC0wNC0xNiAxMzowMDo1NSIsInBsYW5faWQiOm51bGwsImlhdCI6IjIwMjQtMDgtMjcgMjI6MTY6MzMiLCJleHAiOiIyMDI0LTExLTI1IDIyOjE2OjMzIn0.X0_X8xYfqTC3WA1960BKOO3TgZQuwyNQQaxuuoa8Ing",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "local",
+			"value": "http://localhost/eMahaTestWeb/APIController",
+			"type": "string"
+		},
+		{
+			"key": "ser",
+			"value": "https://spardhavahini.cvdemo.in/APIController",
+			"type": "string"
+		}
+	]
+}
