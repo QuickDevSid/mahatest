@@ -378,4 +378,12 @@ class Api_controller extends CI_Controller
 	{
 		$this->Api_model->get_whatsapp_number_api();
 	}
+	public function set_user_english_vocabulary_bookmark_api()
+	{
+		$this->Api_model->set_user_english_vocabulary_bookmark_api();
+	}
+	public function set_user_marathi_sabd_sangrah_bookmark_api()
+	{
+		$this->Api_model->set_user_marathi_sabd_sangrah_bookmark_api();
+	}
 }

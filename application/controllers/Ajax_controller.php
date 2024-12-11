@@ -160,6 +160,9 @@ class Ajax_controller extends CI_Controller
             foreach ($document as $print) {
                 $sub_array = array();
                 $sub_array[] = $offset++;
+                // <a href="' . base_url() . 'test-questions?test_id=' . $print->id . '" class="btn bg-info waves-effect btn-xs" style="text-decoration:none;" title="View Test Questions">
+                //                 <i class="fa fa-info">!</i>
+                //             </a>
                 $action = '<a href="' . base_url() . 'add-test-passages/' . $print->id . '" class="btn bg-primary waves-effect btn-xs" style="text-decoration:none;" title="Add Test Questions">
                                 <i class="fa fa-plus">+</i>
                             </a>
@@ -253,7 +256,7 @@ class Ajax_controller extends CI_Controller
                 $sub_array[] = $print->duration != "" ? $print->duration : '';
                 $sub_array[] = $print->total_marks != "" ? $print->total_marks : '';
                 // $sub_array[] = $print->total_questions != "" ? '<a onclick="showTestQuestions(' . $print->id . ')" style="cursor:pointer; text-decoration:underline;" data-toggle="modal" data-target="#queModal">' . $print->total_questions . '</a>' : '';
-                $sub_array[] = $print->total_questions != "" ? $print->total_questions : '';
+                $sub_array[] = $print->total_questions != "" ? '<a href="' . base_url() . 'test-questions?test_id=' . $print->id . '" target="_blank" style="text-decoration:underline;" title="View All Questions">' . $print->total_questions . '</a>' : '';
                 $sub_array[] = $print->questions_file != "" ? '<a class="btn btn-info" href="' . base_url() . 'assets/uploads/questions_bulk/' . $print->questions_file . '" target="_blank">View</a>' : '-';
                 $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#shortNoteModal' . $print->id . '">View </button>' . $short_note_modal;
                 $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#shortDescModal' . $print->id . '">View </button>' . $short_desc_modal;
@@ -263,6 +266,254 @@ class Ajax_controller extends CI_Controller
             }
         }
         $TotalProducts = $this->TestSetup_model->get_test_setup_ajx_count($search);
+        $output = array(
+            "draw" => $draw,
+            "recordsTotal" => $TotalProducts,
+            "recordsFiltered" => $TotalProducts,
+            "data" => $data
+        );
+        echo json_encode($output);
+        exit();
+    }
+    public function get_test_all_questions_ajx()
+    {
+        $draw = intval($this->input->post("draw"));
+        $start = intval($this->input->post("start"));
+        $length = intval($this->input->post("length"));
+        $order = $this->input->post("order");
+        $search = $this->input->post("search");
+        $search = $search['value'];
+        $col = 0;
+        $dir = "";
+        if (!empty($order)) {
+            foreach ($order as $o) {
+                $col = $o['column'];
+                $dir = $o['dir'];
+            }
+        }
+        if ($dir != "asc" && $dir != "desc") {
+            $dir = "desc";
+        }
+        $document = $this->TestSetup_model->get_test_questions_ajx_list($length, $start, $search);
+        $data = array();
+        if (!empty($document)) {
+            $page = $start / $length + 1;
+            $offset = ($page - 1) * $length + 1;
+            foreach ($document as $print) {
+                if($print->type == '0'){
+                    $question_type = 'Regular';
+                }elseif($print->type == '1'){
+                    $question_type = 'Image';
+                }elseif($print->type == '2'){
+                    $question_type = 'Passage';
+                    $group = $this->TestSetup_model->get_group_details($print->group_id);
+                }else{
+                    $question_type = '';
+                }
+
+                if($print->answer_column == 'option_1'){
+                    $answer_column = 'Option 1';
+                }elseif($print->answer_column == 'option_2'){
+                    $answer_column = 'Option 2';
+                }elseif($print->answer_column == 'option_3'){
+                    $answer_column = 'Option 3';
+                }elseif($print->answer_column == 'option_4'){
+                    $answer_column = 'Option 4';
+                }else{
+                    $answer_column = '';
+                }
+
+                $question = $print->question != "" ? $print->question : '';
+                $option_1 = $print->option_1 != "" ? $print->option_1 : '';
+                $option_2 = $print->option_2 != "" ? $print->option_2 : '';
+                $option_3 = $print->option_3 != "" ? $print->option_3 : '';
+                $option_4 = $print->option_4 != "" ? $print->option_4 : '';
+                
+                $question_image = $print->question_image != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$print->question_image.'" target="_blank">View</a>' : '';
+                $option_1_image = $print->option_1_image != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$print->option_1_image.'" target="_blank">View</a>' : '';
+                $option_2_image = $print->option_2_image != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$print->option_2_image.'" target="_blank">View</a>' : '';
+                $option_3_image = $print->option_3_image != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$print->option_3_image.'" target="_blank">View</a>' : '';
+                $option_4_image = $print->option_4_image != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$print->option_4_image.'" target="_blank">View</a>' : '';
+                
+                $question_image_name = $print->type == '1' && $print->question_image != "" ? $print->question_image : '';
+                $option_1_image_name = $print->type == '1' && $print->option_1_image != "" ? $print->option_1_image : '';
+                $option_2_image_name = $print->type == '1' && $print->option_2_image != "" ? $print->option_2_image : '';
+                $option_3_image_name = $print->type == '1' && $print->option_3_image != "" ? $print->option_3_image : '';
+                $option_4_image_name = $print->type == '1' && $print->option_4_image != "" ? $print->option_4_image : '';
+
+                $sub_array = array();
+                $sub_array[] = $offset++;
+                $action = '<a href="' . base_url() . 'delete-question/' . $print->test_id . '/' . $print->id . '" onclick="return confirm(\'Are you sure to delete this question?\');" class="btn bg-red waves-effect btn-xs" style="text-decoration:none;" title="Delete">
+                                <i class="material-icons">delete</i>
+                            </a>';
+                $sub_array[] = $action;
+                $sub_array[] = $print->topic . '<br>' . $print->short_note;
+                $sub_array[] = $question_type;
+
+                // $sub_array[] = $question . '' . ($print->type == '1' && $question_image != "" ? (' ' . $question_image . '') : '');
+                $question_modal = '
+                <div class="modal fade" id="questionModal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="questionModalLabel' . $print->id . '">Question</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ($question != "" ? '<p>' . $question . '</p>' : '') . '
+                                ' . ($question_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$question_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$question_image_name.'" style="width:50px;"></a>' : '') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#questionModal' . $print->id . '">View </button>' . $question_modal;
+                
+                // $sub_array[] = $option_1 . '' . ($print->type == '1' && $option_1_image != "" ? (' ' . $option_1_image . '') : '');
+                $option_1_modal = '
+                <div class="modal fade" id="option_1_Modal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="option_1_ModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="option_1_ModalLabel' . $print->id . '">Option 1</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ($option_1 != "" ? '<p>' . $option_1 . '</p>' : '') . '
+                                ' . ($option_1_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_1_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_1_image_name.'" style="width:50px;"></a>' : '') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#option_1_Modal' . $print->id . '">View </button>' . $option_1_modal;
+                
+                // $sub_array[] = $option_2 . '' . ($print->type == '1' && $option_2_image != "" ? (' ' . $option_2_image . '') : '');
+                $option_2_modal = '
+                <div class="modal fade" id="option_2_Modal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="option_2_ModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="option_2_ModalLabel' . $print->id . '">Optiopn 2</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ($option_2 != "" ? '<p>' . $option_2 . '</p>' : '') . '
+                                ' . ($option_2_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_2_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_2_image_name.'" style="width:50px;"></a>' : '') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#option_2_Modal' . $print->id . '">View </button>' . $option_2_modal;
+                
+                // $sub_array[] = $option_3 . '' . ($print->type == '1' && $option_3_image != "" ? (' ' . $option_3_image . '') : '');
+                $option_3_modal = '
+                <div class="modal fade" id="option_3_Modal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="option_3_ModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="option_3_ModalLabel' . $print->id . '">Option 3</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ($option_3 != "" ? '<p>' . $option_3 . '</p>' : '') . '
+                                ' . ($option_3_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_3_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_3_image_name.'" style="width:50px;"></a>' : '') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#option_3_Modal' . $print->id . '">View </button>' . $option_3_modal;
+                
+                // $sub_array[] = $option_4 . '' . ($print->type == '1' && $option_4_image != "" ? (' ' . $option_4_image . '') : '');
+                $option_4_modal = '
+                <div class="modal fade" id="option_4_Modal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="option_4_ModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="option_4_ModalLabel' . $print->id . '">Option 4</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ($option_4 != "" ? '<p>' . $option_4 . '</p>' : '') . '
+                                ' . ($option_4_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_4_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_4_image_name.'" style="width:50px;"></a>' : '') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#option_4_Modal' . $print->id . '">View </button>' . $option_4_modal;
+                
+                $sub_array[] = $answer_column;
+                $sub_array[] = $print->positive_mark;
+                $sub_array[] = $print->negative_mark;
+                $short_note_modal = '
+                <div class="modal fade" id="shortNoteModal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="shortNoteModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="shortNoteModalLabel' . $print->id . '">Solution</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ($print->solution != "" ? '<p>' . $print->solution . '</p>' : 'Solution not available') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#shortNoteModal' . $print->id . '">View </button>' . $short_note_modal;
+                $short_desc_modal = '
+                <div class="modal fade" id="shortDescModal' . $print->id . '" tabindex="-1" role="dialog" aria-labelledby="shortDescModalLabel' . $print->id . '" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="shortDescModalLabel' . $print->id . '">Passage</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ' . ((!empty($group) && $group->group_description != "") ?  '<p>' . $group->group_description . '</p>' : 'Passage not available') . '
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                $sub_array[] = '<button class="btn btn-info" data-toggle="modal" data-target="#shortDescModal' . $print->id . '">View </button>' . $short_desc_modal;
+                $sub_array[] = $print->asked_exam;
+                $sub_array[] = date('d-m-Y h:i A',strtotime($print->created_on));
+                $data[] = $sub_array;
+            }
+        }
+        $TotalProducts = $this->TestSetup_model->get_test_questions_ajx_count($search);
         $output = array(
             "draw" => $draw,
             "recordsTotal" => $TotalProducts,

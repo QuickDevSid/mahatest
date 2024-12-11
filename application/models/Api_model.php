@@ -1087,18 +1087,18 @@ class Api_model extends CI_Model
                             } else {
                                 $is_test_attempted = '0';
                                 $attempted_test_id = '';
-                            }                            
+                            }
 
-                            if($single_test->show_ans == 'Yes'){
+                            if ($single_test->show_ans == 'Yes') {
                                 $show_correct_ans = '1';
-                            }else{
+                            } else {
                                 $show_correct_ans = '0';
                             }
 
-                            if($single_test->download_test_pdf == 'Yes'){
+                            if ($single_test->download_test_pdf == 'Yes') {
                                 $download_test_pdf = '1';
                                 $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                            }else{
+                            } else {
                                 $download_test_pdf = '0';
                                 $test_pdf_link = '';
                             }
@@ -1113,7 +1113,8 @@ class Api_model extends CI_Model
                                 'short_description'     =>  $single_test->short_description,
                                 'duration'              =>  $single_test->duration,
                                 'total_questions'       =>  $single_test->total_questions,
-                                'total_marks'           =>  $single_test->total_marks,                        
+                                'total_marks'           =>  $single_test->total_marks,
+                                'image'                 =>  $single_test->image,
 
                                 'is_show_correct_ans'  => $show_correct_ans,
                                 'is_download_test_pdf' => $download_test_pdf,
@@ -5507,6 +5508,86 @@ class Api_model extends CI_Model
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'No Data Found.';
             $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr);
+    }
+
+    public function set_user_english_vocabulary_bookmark_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        if ($request) {
+            if (!empty($request['login_id']) && !empty($request['english_vocabulary_id'])) {
+                $login_id = $request['login_id'];
+                $english_vocabulary_id = $request['english_vocabulary_id'];
+
+                $this->db->where('english_vocabulary_id', $english_vocabulary_id);
+                $this->db->where('login_id', $login_id);
+                $result = $this->db->get('english_vocabulary_saved');
+                $result = $result->row();
+
+                if (!empty($result)) {
+                    $this->db->where('english_vocabulary_saved_id', $result->english_vocabulary_saved_id);
+                    $this->db->delete('english_vocabulary_saved');
+
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'English Vocabulary removed successfully.';
+                } else {
+                    $data = array(
+                        'login_id' => $login_id,
+                        'english_vocabulary_id' => $english_vocabulary_id,
+                        'status' => 'Active'
+                    );
+                    $this->db->insert('english_vocabulary_saved', $data);
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'English Vocabulary saved successfully.';
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'User ID and English Vocabulary ID are required.';
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Invalid request.';
+        }
+        echo json_encode($json_arr);
+    }
+
+    public function set_user_marathi_sabd_sangrah_bookmark_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        if ($request) {
+            if (!empty($request['login_id']) && !empty($request['marathi_sabd_id'])) {
+                $login_id = $request['login_id'];
+                $marathi_sabd_id = $request['marathi_sabd_id'];
+
+                $this->db->where('marathi_sabd_id', $marathi_sabd_id);
+                $this->db->where('login_id', $login_id);
+                $result = $this->db->get('marathi_sabd_saved');
+                $result = $result->row();
+
+                if (!empty($result)) {
+                    $this->db->where('marathi_sabd_saved_id', $result->marathi_sabd_saved_id);
+                    $this->db->delete('marathi_sabd_saved');
+
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'Marathi Sabd Sangrah removed successfully.';
+                } else {
+                    $data = array(
+                        'login_id' => $login_id,
+                        'marathi_sabd_id' => $marathi_sabd_id,
+                        'status' => 'Active'
+                    );
+                    $this->db->insert('marathi_sabd_saved', $data);
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'Marathi Sabd Sangrah saved successfully.';
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'User ID and Marathi Sabd Sangrah ID are required.';
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Invalid request.';
         }
         echo json_encode($json_arr);
     }

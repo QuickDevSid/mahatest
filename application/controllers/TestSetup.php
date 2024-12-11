@@ -22,6 +22,17 @@ class TestSetup extends CI_Controller
         $this->load->view('templates/footer1', $data);
         $this->load->view('testSetup/jscript.php', $data);
     }
+    public function test_gallary()
+    {
+        // $data['title'] = ucfirst('Test Setup');
+        $data['videos'] = $this->TestSetup_Model->get_all_master_images();
+        // echo '<pre>'; print_r($data['videos']); exit;
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('testSetup/add_test_gallary', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('testSetup/jscript.php', $data);
+    }
     public function add_test_passages()
     {
         // $data['title'] = ucfirst('Test Setup');
@@ -38,6 +49,15 @@ class TestSetup extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('testSetup/test_list', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('testSetup/jscript.php', $data);
+    }
+    public function questions_list()
+    {
+        $data['title'] = ucfirst('Test Questions List');
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('testSetup/questions_list', $data);
         $this->load->view('templates/footer1', $data);
         $this->load->view('testSetup/jscript.php', $data);
     }
@@ -81,41 +101,188 @@ class TestSetup extends CI_Controller
                             for ($row = 2; $row <= $highestRow; $row++) {
                                 if ($worksheet->getCell('A' . $row)->getValue() != '') {
                                     $question = $worksheet->getCell('A' . $row)->getValue();
-                                    $question_type = $worksheet->getCell('B' . $row)->getValue();
-                                    $options_1 = $worksheet->getCell('C' . $row)->getValue();
-                                    $options_2 = $worksheet->getCell('D' . $row)->getValue();
-                                    $options_3 = $worksheet->getCell('E' . $row)->getValue();
-                                    $options_4 = $worksheet->getCell('F' . $row)->getValue();
-                                    $answer_column = $worksheet->getCell('G' . $row)->getValue();
-                                    if ($answer_column == 'Option 1') {
-                                        $answer = $options_1;
-                                        $answer_column = 'option_1';
-                                    } elseif ($answer_column == 'Option 2') {
-                                        $answer = $options_2;
-                                        $answer_column = 'option_2';
-                                    } elseif ($answer_column == 'Option 3') {
-                                        $answer = $options_3;
-                                        $answer_column = 'option_3';
-                                    } elseif ($answer_column == 'Option 4') {
-                                        $answer = $options_4;
-                                        $answer_column = 'option_4';
-                                    } else {
-                                        $answer = '';
-                                        $answer_column = '';
-                                    }
-                                    $solution = $worksheet->getCell('H' . $row)->getValue();
+                                    $question_type = $worksheet->getCell('K' . $row)->getValue();
+                                    $options_1 = $worksheet->getCell('B' . $row)->getValue();
+                                    $options_2 = $worksheet->getCell('C' . $row)->getValue();
+                                    $options_3 = $worksheet->getCell('D' . $row)->getValue();
+                                    $options_4 = $worksheet->getCell('E' . $row)->getValue();
+                                    $answer_column = $worksheet->getCell('F' . $row)->getValue();
+                                    $solution = $worksheet->getCell('G' . $row)->getValue();
+                                    $asked_exam = $worksheet->getCell('H' . $row)->getValue();
                                     $positive_marks = (int)$worksheet->getCell('I' . $row)->getValue();
                                     $negative_marks = (int)$worksheet->getCell('J' . $row)->getValue();
+                                    $passage = $worksheet->getCell('L' . $row)->getValue();
+
+                                    if($question_type == 'image_question_text_option'){
+                                        $passage = '';
+                                        $question_image = $question;
+                                        $question = '';
+                                        $options_4_image = '';
+                                        $options_4 = $options_4;
+                                        $options_3_image = '';
+                                        $options_3 = $options_3;
+                                        $options_2_image = '';
+                                        $options_2 = $options_2;
+                                        $options_1_image = '';
+                                        $options_1 = $options_1;
+                                        $type = '1';
+                                        
+                                        if ($answer_column == 'Option 1') {
+                                            $answer = $options_1;
+                                            $answer_column = 'option_1';
+                                        } elseif ($answer_column == 'Option 2') {
+                                            $answer = $options_2;
+                                            $answer_column = 'option_2';
+                                        } elseif ($answer_column == 'Option 3') {
+                                            $answer = $options_3;
+                                            $answer_column = 'option_3';
+                                        } elseif ($answer_column == 'Option 4') {
+                                            $answer = $options_4;
+                                            $answer_column = 'option_4';
+                                        } else {
+                                            $answer = '';
+                                            $answer_column = '';
+                                        }
+                                    }elseif($question_type == 'text_question_image_option'){
+                                        $passage = '';
+                                        $question_image = '';
+                                        $question = $question;
+                                        $options_4_image = $options_4;
+                                        $options_4 = '';
+                                        $options_3_image = $options_3;
+                                        $options_3 = '';
+                                        $options_2_image = $options_2;
+                                        $options_2 = '';
+                                        $options_1_image = $options_1;
+                                        $options_1 = '';
+                                        $type = '1';
+
+                                        if ($answer_column == 'Option 1') {
+                                            $answer = $options_1_image;
+                                            $answer_column = 'option_1';
+                                        } elseif ($answer_column == 'Option 2') {
+                                            $answer = $options_2_image;
+                                            $answer_column = 'option_2';
+                                        } elseif ($answer_column == 'Option 3') {
+                                            $answer = $options_3_image;
+                                            $answer_column = 'option_3';
+                                        } elseif ($answer_column == 'Option 4') {
+                                            $answer = $options_4_image;
+                                            $answer_column = 'option_4';
+                                        } else {
+                                            $answer = '';
+                                            $answer_column = '';
+                                        }
+                                    }elseif($question_type == 'image_question_image_option'){
+                                        $passage = '';
+                                        $question_image = $question;
+                                        $question = '';
+                                        $options_4_image = $options_4;
+                                        $options_4 = '';
+                                        $options_3_image = $options_3;
+                                        $options_3 = '';
+                                        $options_2_image = $options_2;
+                                        $options_2 = '';
+                                        $options_1_image = $options_1;
+                                        $options_1 = '';
+                                        $type = '1';
+
+                                        if ($answer_column == 'Option 1') {
+                                            $answer = $options_1_image;
+                                            $answer_column = 'option_1';
+                                        } elseif ($answer_column == 'Option 2') {
+                                            $answer = $options_2_image;
+                                            $answer_column = 'option_2';
+                                        } elseif ($answer_column == 'Option 3') {
+                                            $answer = $options_3_image;
+                                            $answer_column = 'option_3';
+                                        } elseif ($answer_column == 'Option 4') {
+                                            $answer = $options_4_image;
+                                            $answer_column = 'option_4';
+                                        } else {
+                                            $answer = '';
+                                            $answer_column = '';
+                                        }
+                                    }elseif($question_type == 'passage'){
+                                        $passage = $passage;
+                                        $question_image = '';
+                                        $question = $question;
+                                        $options_4_image = '';
+                                        $options_4 = $options_4;
+                                        $options_3_image = '';
+                                        $options_3 = $options_3;
+                                        $options_2_image = '';
+                                        $options_2 = $options_2;
+                                        $options_1_image = '';
+                                        $options_1 = $options_1;
+                                        $type = '2';
+
+                                        if ($answer_column == 'Option 1') {
+                                            $answer = $options_1;
+                                            $answer_column = 'option_1';
+                                        } elseif ($answer_column == 'Option 2') {
+                                            $answer = $options_2;
+                                            $answer_column = 'option_2';
+                                        } elseif ($answer_column == 'Option 3') {
+                                            $answer = $options_3;
+                                            $answer_column = 'option_3';
+                                        } elseif ($answer_column == 'Option 4') {
+                                            $answer = $options_4;
+                                            $answer_column = 'option_4';
+                                        } else {
+                                            $answer = '';
+                                            $answer_column = '';
+                                        }
+                                    }else{
+                                        $passage = '';
+                                        $question_image = '';
+                                        $question = $question;
+                                        $options_4_image = '';
+                                        $options_4 = $options_4;
+                                        $options_3_image = '';
+                                        $options_3 = $options_3;
+                                        $options_2_image = '';
+                                        $options_2 = $options_2;
+                                        $options_1_image = '';
+                                        $options_1 = $options_1;
+                                        $type = '0';
+
+                                        if ($answer_column == 'Option 1') {
+                                            $answer = $options_1;
+                                            $answer_column = 'option_1';
+                                        } elseif ($answer_column == 'Option 2') {
+                                            $answer = $options_2;
+                                            $answer_column = 'option_2';
+                                        } elseif ($answer_column == 'Option 3') {
+                                            $answer = $options_3;
+                                            $answer_column = 'option_3';
+                                        } elseif ($answer_column == 'Option 4') {
+                                            $answer = $options_4;
+                                            $answer_column = 'option_4';
+                                        } else {
+                                            $answer = '';
+                                            $answer_column = '';
+                                        }
+                                    }
+
                                     $bulk_data[] = array(
-                                        'question'          => $question,
+                                        'passage'           => $passage != "" ? $passage : null,
+                                        'question'          => $question != "" ? $question : null,
+                                        'question_image'    => $question_image != "" ? $question_image : null,
                                         'question_type'     => $question_type,
-                                        'option_1'          => $options_1,
-                                        'option_2'          => $options_2,
-                                        'option_3'          => $options_3,
-                                        'option_4'          => $options_4,
-                                        'answer'            => $answer,
-                                        'answer_column'     => $answer_column,
-                                        'solution'          => $solution,
+                                        'type'              => $type,
+                                        'option_1'          => $options_1 != "" ? $options_1 : null,
+                                        'option_1_image'    => $options_1_image != "" ? $options_1_image : null,
+                                        'option_2'          => $options_2 != "" ? $options_2 : null,
+                                        'option_2_image'    => $options_2_image != "" ? $options_2_image : null,
+                                        'option_3'          => $options_3 != "" ? $options_3 : null,
+                                        'option_3_image'    => $options_3_image != "" ? $options_3_image : null,
+                                        'option_4'          => $options_4 != "" ? $options_4 : null,
+                                        'option_4_image'    => $options_4_image != "" ? $options_4_image : null,
+                                        'answer'            => $answer != "" ? $answer : null,
+                                        'answer_column'     => $answer_column != "" ? $answer_column : null,
+                                        'solution'          => $solution != "" ? $solution : null,
+                                        'asked_exam'        => $asked_exam != "" ? $asked_exam : null,
                                         'positive_marks'    => $positive_marks,
                                         'negative_marks'    => $negative_marks
                                     );
@@ -153,41 +320,188 @@ class TestSetup extends CI_Controller
                         for ($row = 2; $row <= $highestRow; $row++) {
                             if ($worksheet->getCell('A' . $row)->getValue() != '') {
                                 $question = $worksheet->getCell('A' . $row)->getValue();
-                                $question_type = $worksheet->getCell('B' . $row)->getValue();
-                                $options_1 = $worksheet->getCell('C' . $row)->getValue();
-                                $options_2 = $worksheet->getCell('D' . $row)->getValue();
-                                $options_3 = $worksheet->getCell('E' . $row)->getValue();
-                                $options_4 = $worksheet->getCell('F' . $row)->getValue();
-                                $answer_column = $worksheet->getCell('G' . $row)->getValue();
-                                if ($answer_column == 'Option 1') {
-                                    $answer = $options_1;
-                                    $answer_column = 'option_1';
-                                } elseif ($answer_column == 'Option 2') {
-                                    $answer = $options_2;
-                                    $answer_column = 'option_2';
-                                } elseif ($answer_column == 'Option 3') {
-                                    $answer = $options_3;
-                                    $answer_column = 'option_3';
-                                } elseif ($answer_column == 'Option 4') {
-                                    $answer = $options_4;
-                                    $answer_column = 'option_4';
-                                } else {
-                                    $answer = '';
-                                    $answer_column = '';
-                                }
-                                $solution = $worksheet->getCell('H' . $row)->getValue();
+                                $question_type = $worksheet->getCell('K' . $row)->getValue();
+                                $options_1 = $worksheet->getCell('B' . $row)->getValue();
+                                $options_2 = $worksheet->getCell('C' . $row)->getValue();
+                                $options_3 = $worksheet->getCell('D' . $row)->getValue();
+                                $options_4 = $worksheet->getCell('E' . $row)->getValue();
+                                $answer_column = $worksheet->getCell('F' . $row)->getValue();
+                                $solution = $worksheet->getCell('G' . $row)->getValue();
+                                $asked_exam = $worksheet->getCell('H' . $row)->getValue();
                                 $positive_marks = (int)$worksheet->getCell('I' . $row)->getValue();
                                 $negative_marks = (int)$worksheet->getCell('J' . $row)->getValue();
+                                $passage = $worksheet->getCell('L' . $row)->getValue();
+
+                                if($question_type == 'image_question_text_option'){
+                                    $passage = '';
+                                    $question_image = $question;
+                                    $question = '';
+                                    $options_4_image = '';
+                                    $options_4 = $options_4;
+                                    $options_3_image = '';
+                                    $options_3 = $options_3;
+                                    $options_2_image = '';
+                                    $options_2 = $options_2;
+                                    $options_1_image = '';
+                                    $options_1 = $options_1;
+                                    $type = '1';
+                                    
+                                    if ($answer_column == 'Option 1') {
+                                        $answer = $options_1;
+                                        $answer_column = 'option_1';
+                                    } elseif ($answer_column == 'Option 2') {
+                                        $answer = $options_2;
+                                        $answer_column = 'option_2';
+                                    } elseif ($answer_column == 'Option 3') {
+                                        $answer = $options_3;
+                                        $answer_column = 'option_3';
+                                    } elseif ($answer_column == 'Option 4') {
+                                        $answer = $options_4;
+                                        $answer_column = 'option_4';
+                                    } else {
+                                        $answer = '';
+                                        $answer_column = '';
+                                    }
+                                }elseif($question_type == 'text_question_image_option'){
+                                    $passage = '';
+                                    $question_image = '';
+                                    $question = $question;
+                                    $options_4_image = $options_4;
+                                    $options_4 = '';
+                                    $options_3_image = $options_3;
+                                    $options_3 = '';
+                                    $options_2_image = $options_2;
+                                    $options_2 = '';
+                                    $options_1_image = $options_1;
+                                    $options_1 = '';
+                                    $type = '1';
+
+                                    if ($answer_column == 'Option 1') {
+                                        $answer = $options_1_image;
+                                        $answer_column = 'option_1';
+                                    } elseif ($answer_column == 'Option 2') {
+                                        $answer = $options_2_image;
+                                        $answer_column = 'option_2';
+                                    } elseif ($answer_column == 'Option 3') {
+                                        $answer = $options_3_image;
+                                        $answer_column = 'option_3';
+                                    } elseif ($answer_column == 'Option 4') {
+                                        $answer = $options_4_image;
+                                        $answer_column = 'option_4';
+                                    } else {
+                                        $answer = '';
+                                        $answer_column = '';
+                                    }
+                                }elseif($question_type == 'image_question_image_option'){
+                                    $passage = '';
+                                    $question_image = $question;
+                                    $question = '';
+                                    $options_4_image = $options_4;
+                                    $options_4 = '';
+                                    $options_3_image = $options_3;
+                                    $options_3 = '';
+                                    $options_2_image = $options_2;
+                                    $options_2 = '';
+                                    $options_1_image = $options_1;
+                                    $options_1 = '';
+                                    $type = '1';
+
+                                    if ($answer_column == 'Option 1') {
+                                        $answer = $options_1_image;
+                                        $answer_column = 'option_1';
+                                    } elseif ($answer_column == 'Option 2') {
+                                        $answer = $options_2_image;
+                                        $answer_column = 'option_2';
+                                    } elseif ($answer_column == 'Option 3') {
+                                        $answer = $options_3_image;
+                                        $answer_column = 'option_3';
+                                    } elseif ($answer_column == 'Option 4') {
+                                        $answer = $options_4_image;
+                                        $answer_column = 'option_4';
+                                    } else {
+                                        $answer = '';
+                                        $answer_column = '';
+                                    }
+                                }elseif($question_type == 'passage'){
+                                    $passage = $passage;
+                                    $question_image = '';
+                                    $question = $question;
+                                    $options_4_image = '';
+                                    $options_4 = $options_4;
+                                    $options_3_image = '';
+                                    $options_3 = $options_3;
+                                    $options_2_image = '';
+                                    $options_2 = $options_2;
+                                    $options_1_image = '';
+                                    $options_1 = $options_1;
+                                    $type = '2';
+
+                                    if ($answer_column == 'Option 1') {
+                                        $answer = $options_1;
+                                        $answer_column = 'option_1';
+                                    } elseif ($answer_column == 'Option 2') {
+                                        $answer = $options_2;
+                                        $answer_column = 'option_2';
+                                    } elseif ($answer_column == 'Option 3') {
+                                        $answer = $options_3;
+                                        $answer_column = 'option_3';
+                                    } elseif ($answer_column == 'Option 4') {
+                                        $answer = $options_4;
+                                        $answer_column = 'option_4';
+                                    } else {
+                                        $answer = '';
+                                        $answer_column = '';
+                                    }
+                                }else{
+                                    $passage = '';
+                                    $question_image = '';
+                                    $question = $question;
+                                    $options_4_image = '';
+                                    $options_4 = $options_4;
+                                    $options_3_image = '';
+                                    $options_3 = $options_3;
+                                    $options_2_image = '';
+                                    $options_2 = $options_2;
+                                    $options_1_image = '';
+                                    $options_1 = $options_1;
+                                    $type = '0';
+
+                                    if ($answer_column == 'Option 1') {
+                                        $answer = $options_1;
+                                        $answer_column = 'option_1';
+                                    } elseif ($answer_column == 'Option 2') {
+                                        $answer = $options_2;
+                                        $answer_column = 'option_2';
+                                    } elseif ($answer_column == 'Option 3') {
+                                        $answer = $options_3;
+                                        $answer_column = 'option_3';
+                                    } elseif ($answer_column == 'Option 4') {
+                                        $answer = $options_4;
+                                        $answer_column = 'option_4';
+                                    } else {
+                                        $answer = '';
+                                        $answer_column = '';
+                                    }
+                                }
+
                                 $bulk_data[] = array(
-                                    'question'          => $question,
+                                    'passage'           => $passage != "" ? $passage : null,
+                                    'question'          => $question != "" ? $question : null,
+                                    'question_image'    => $question_image != "" ? $question_image : null,
                                     'question_type'     => $question_type,
-                                    'option_1'          => $options_1,
-                                    'option_2'          => $options_2,
-                                    'option_3'          => $options_3,
-                                    'option_4'          => $options_4,
-                                    'answer'            => $answer,
-                                    'answer_column'     => $answer_column,
-                                    'solution'          => $solution,
+                                    'type'              => $type,
+                                    'option_1'          => $options_1 != "" ? $options_1 : null,
+                                    'option_1_image'    => $options_1_image != "" ? $options_1_image : null,
+                                    'option_2'          => $options_2 != "" ? $options_2 : null,
+                                    'option_2_image'    => $options_2_image != "" ? $options_2_image : null,
+                                    'option_3'          => $options_3 != "" ? $options_3 : null,
+                                    'option_3_image'    => $options_3_image != "" ? $options_3_image : null,
+                                    'option_4'          => $options_4 != "" ? $options_4 : null,
+                                    'option_4_image'    => $options_4_image != "" ? $options_4_image : null,
+                                    'answer'            => $answer != "" ? $answer : null,
+                                    'answer_column'     => $answer_column != "" ? $answer_column : null,
+                                    'solution'          => $solution != "" ? $solution : null,
+                                    'asked_exam'        => $asked_exam != "" ? $asked_exam : null,
                                     'positive_marks'    => $positive_marks,
                                     'negative_marks'    => $negative_marks
                                 );
@@ -325,6 +639,74 @@ class TestSetup extends CI_Controller
                 $this->session->set_userdata('alert_msg', $art_msg);
                 redirect('test-setup', $data);
             }
+        }
+    }
+    
+    public function delete_question()
+    {
+        $result = $this->TestSetup_Model->delete_question($this->uri->segment(3),$this->uri->segment(2));
+        redirect('test-questions?test_id=' . $this->uri->segment(2));
+    }
+    public function delete_image()
+    {
+        if (isset($_GET['path']) && $_GET['path'] != "") {
+            $path = $_GET['path'];
+
+            $file_path = FCPATH . $path;
+
+            if (file_exists($file_path)) {
+                if (unlink($file_path)) {
+                    $this->session->set_flashdata("success", "Image deleted successfully.");
+                } else {
+                    $this->session->set_flashdata("error", "Error deleting the image.");
+                }
+            } else {
+                $this->session->set_flashdata("error", "File not found.");
+            }
+        } else {
+            $this->session->set_flashdata("error", "No file specified for deletion.");
+        }
+
+        redirect('test-gallary');
+    }
+
+    public function add_test_gallary()
+    {
+        $this->form_validation->set_rules('zipfile', 'File', 'required');
+        if ($this->form_validation->run() === FALSE) {
+            $upload_image = $this->input->post('current_group_image');
+            if (isset($_FILES['zipfile']) && $_FILES['zipfile']['name'] != "") {
+                $gst_config = array(
+                    'upload_path'   => "assets/uploads/master_gallary_files",
+                    'allowed_types' => "*",
+                    'encrypt_name'  => true,
+                );
+                $this->upload->initialize($gst_config);
+                if ($this->upload->do_upload('zipfile')) {
+                    $data = $this->upload->data();
+                    $upload_image = $data['file_name'];
+                    $zip_file_path = $data['full_path']; 
+                    $zip = new ZipArchive;
+                    if ($zip->open($zip_file_path) === TRUE) {
+                        $extracted_folder = 'assets/uploads/master_gallary/';
+    
+                        $zip->extractTo($extracted_folder);
+                        $zip->close();
+                    } else {    
+                        $error = array('error' => 'Failed to extract the ZIP file');
+                        $this->session->set_flashdata("error", $error['error']);
+                        exit;
+                        return;
+                    }
+                } else {
+                    $error = array('error' => $this->upload->display_errors());
+                    $this->session->set_flashdata("error", $error['error']);
+                    exit;
+                    return;
+                }
+            }
+            $result = $this->TestSetup_Model->add_master_gallary_data($upload_image);
+            redirect('test-gallary');
         }
     }
     public function delete_test()

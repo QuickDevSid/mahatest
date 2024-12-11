@@ -160,7 +160,11 @@ $route['get_coupon_api'] = 'Api_controller/get_coupon_api';
 $route['test_submit'] = 'Api_controller/test_submit';
 $route['test-setup'] = 'TestSetup/test_setup';
 $route['test-list'] = 'TestSetup/test_list';
+$route['test-questions'] = 'TestSetup/questions_list';
+$route['test-gallary'] = 'TestSetup/test_gallary';
+$route['delete_image'] = 'TestSetup/delete_image';
 $route['test-setup/(:any)'] = 'TestSetup/test_setup/$1';
+$route['delete-question/(:any)/(:any)'] = 'TestSetup/delete_question/$1';
 // $route['doc_videos/add-test/(:any)'] = 'Doc_Videos/add_test/$1';
 $route['delete-test/(:any)'] = 'TestSetup/delete_test';
 $route['add-test-passages/(:any)'] = 'TestSetup/add_test_passages';
@@ -203,6 +207,9 @@ $route['get_saved_news'] = 'Api_controller/get_saved_news';
 
 $route['get_saved_english_vocabulary'] = 'Api_controller/get_saved_english_vocabulary';
 $route['get_saved_marathi_sabd'] = 'Api_controller/get_saved_marathi_sabd';
+
+$route['set_user_marathi_sabd_sangrah_bookmark_api'] = 'Api_controller/set_user_marathi_sabd_sangrah_bookmark_api';
+$route['set_user_english_vocabulary_bookmark_api'] = 'Api_controller/set_user_english_vocabulary_bookmark_api';
 
 
 

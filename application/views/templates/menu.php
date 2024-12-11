@@ -155,6 +155,10 @@ if (!$this->session->userdata('logged_in')) {
                             <a href="<?php echo base_url() . "test-list"; ?>">
                                 <i class="material-icons">inventory</i> <span>Test List</span> </a>
                         </li>
+                        <li id="gallary">
+                            <a href="<?php echo base_url() . "test-gallary"; ?>">
+                                <i class="material-icons">image</i> <span>Master Gallary</span> </a>
+                        </li>
                     </ul>
                 </li>
                 <li id="ebook_category">

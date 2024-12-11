@@ -1,4 +1,41 @@
 <script>
+    $(document).ready(function() {
+        $('#test_series_data_list').DataTable({
+            dom: 'lfrtip',
+            responsive: false,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            buttons: [{
+                extend: 'excel',
+                footer: true,
+                filename: 'Master Gallary list',
+                exportOptions: {
+                    columns: [0, 2]
+                }
+            }],
+        });
+        $("#test_gallary_submit").validate({
+            ignore: [],
+            rules: {
+                zipfile: "required",
+            },
+            messages: {
+                zipfile: "Please select zip file!",
+            },
+            submitHandler: function(form) {
+                if (confirm("Do you want to upload gallary?")) {
+                    document.getElementById("test_gallary_submit").addEventListener("gallary_submit", function(event) {
+                        var submitButton = document.getElementById("gallary_submit");
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = "Submitting...";
+                    });
+                    form.submit();
+                }
+            }
+        });
+    });
     function showPassageField(){
         var question_type = $('#question_type').val();
         if(question_type == '2'){
@@ -218,5 +255,72 @@
                 $('[data-toggle="tooltip"]').tooltip();
             },
         });
+    });
+    
+    
+    var oldExportAction = function(self, e, dt, button, config) {
+        if (button[0].className.indexOf('buttons-excel') >= 0) {
+            if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+                $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+            } else {
+                $.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+            }
+        } else if (button[0].className.indexOf('buttons-print') >= 0) {
+            $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+        }
+    };
+    var newExportAction = function(e, dt, button, config) {
+        var self = this;
+        var oldStart = dt.settings()[0]._iDisplayStart;
+        dt.one('preXhr', function(e, s, data) {
+            data.start = 0;
+            data.length = 2147483647;
+            dt.one('preDraw', function(e, settings) {
+                oldExportAction(self, e, dt, button, config);
+                dt.one('preXhr', function(e, s, data) {
+                    settings._iDisplayStart = oldStart;
+                    data.start = oldStart;
+                });
+                setTimeout(dt.ajax.reload, 0);
+                return false;
+            });
+        });
+        dt.ajax.reload();
+    };
+    var table = $('#user_question_data').DataTable({
+        "lengthChange": true,
+        "lengthMenu": [10, 25, 50, 100, 200],
+        'searching': true,
+        "processing": true,
+        "serverSide": true,
+        "cache": false,
+        "order": [],
+        "columnDefs": [{
+            "orderable": false,
+            "targets": "_all"
+        }],
+        buttons: [{
+            extend: "excelHtml5",
+            messageBottom: '',
+            filename: 'Customer-list',
+            exportOptions: {
+                columns: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                modifier: {
+                    search: 'applied',
+                    order: 'applied'
+                },
+            },
+        }],
+        dom: "Blfrtip",
+        "ajax": {
+            "url": "<?= base_url(); ?>Ajax_controller/get_test_all_questions_ajx",
+            "type": "POST",
+            "data": function(d) {
+                d.test_id = '<?php if(isset($_GET['test_id'])) { echo $_GET['test_id']; } ?>';
+            }
+        },
+        "complete": function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        },
     });
 </script>

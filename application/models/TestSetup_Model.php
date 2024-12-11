@@ -14,14 +14,11 @@ class TestSetup_model extends CI_Model
         $sequence_no = $this->input->post('sequence_no');
         if ($status) {
             $bulk_data = $bulk_upload_data['bulk_data'];
+            // echo '<pre>'; print_r($bulk_data); exit();
             if (!empty($bulk_data)) {
                 $total_questions = $bulk_upload_data['total_questions'];
                 $total_marks = $bulk_upload_data['total_marks'];
-                if ($id) {
-                    // echo "<pre>";
-                    // print_r($_POST);
-                    // exit;
-                    // Update existing test
+                if ($id != "") {
                     $this->db->select('sequence_no');
                     $this->db->from('tbl_test_setups');
                     $this->db->where('id', $id);
@@ -42,7 +39,6 @@ class TestSetup_model extends CI_Model
                                 $this->db->update('tbl_test_setups');
                             }
                         }
-                        // Update test data
                         $data = array(
                             'topic'             => $this->input->post('topic'),
                             'short_note'        => $this->input->post('short_note'),
@@ -62,23 +58,58 @@ class TestSetup_model extends CI_Model
                         );
                         $this->db->where('id', $id);
                         $this->db->update('tbl_test_setups', $data);
+
                         $this->db->where('test_id', $id);
-                        $this->db->where_in('type', ['0','1']);
+                        // $this->db->where_in('type', ['0','1']);
                         $this->db->delete('tbl_test_questions');
-                        // Reinsert updated questions
+
                         foreach ($bulk_data as $bulk) {
+                            $type = $bulk['type'];
+                            $group_id = null;
+                            $group_type = null;
+                            if($type == '2'){
+                                $group_description = $bulk['passage'];
+                                $group_type = '0';
+                                $this->db->where('is_deleted','0');
+                                $this->db->where('test_id',$id);
+                                $this->db->where('group_description',$group_description);
+                                $exist_passage = $this->db->get('tbl_test_groups')->row();
+                                if(!empty($exist_passage)){
+                                    $group_id = $exist_passage->id;
+                                }else{
+                                    $data = array(
+                                        'test_id'           => $id,
+                                        'group_type'        => $group_type,
+                                        'group_title'       => null,
+                                        'group_description' => $group_description,
+                                        'group_image'       => null,
+                                        'created_on'        => date('Y-m-d H:i:s'),
+                                    );
+                                    $this->db->insert('tbl_test_groups', $data);
+                                    $group_id = $this->db->insert_id();
+                                }
+                            }
                             $upload_bulk = array(
                                 'test_id'       => $id,
+                                'type'          => $type,
+                                'group_id'      => $group_id,
+                                'group_type'    => $group_type,
+                                'question_image'=> $bulk['question_image'],
                                 'question'      => $bulk['question'],
                                 'option_1'      => $bulk['option_1'],
+                                'option_1_image'=> $bulk['option_1_image'],
                                 'option_2'      => $bulk['option_2'],
+                                'option_2_image'=> $bulk['option_2_image'],
                                 'option_3'      => $bulk['option_3'],
+                                'option_3_image'=> $bulk['option_3_image'],
                                 'option_4'      => $bulk['option_4'],
+                                'option_4_image'=> $bulk['option_4_image'],
                                 'answer'        => $bulk['answer'],
                                 'answer_column' => $bulk['answer_column'],
                                 'solution'      => $bulk['solution'],
                                 'positive_mark' => $bulk['positive_marks'],
                                 'negative_mark' => $bulk['negative_marks'],
+                                'asked_exam'    => $bulk['asked_exam'],
                                 'created_on'    => date('Y-m-d H:i:s'),
                             );
                             $this->db->insert('tbl_test_questions', $upload_bulk);
@@ -86,8 +117,6 @@ class TestSetup_model extends CI_Model
                         return 1;
                     }
                 } else {
-                    // echo "into insert";
-                    // exit;
                     $this->db->select('id');
                     $this->db->from('tbl_test_setups');
                     $this->db->where('sequence_no', $sequence_no);
@@ -117,18 +146,53 @@ class TestSetup_model extends CI_Model
                     $this->db->insert('tbl_test_setups', $data);
                     $test_id = $this->db->insert_id();
                     foreach ($bulk_data as $bulk) {
+                        $type = $bulk['type'];
+                        $group_id = null;
+                        $group_type = null;
+                        if($type == '2'){
+                            $group_description = $bulk['passage'];
+                            $group_type = '0';
+                            $this->db->where('is_deleted','0');
+                            $this->db->where('test_id',$test_id);
+                            $this->db->where('group_description',$group_description);
+                            $exist_passage = $this->db->get('tbl_test_groups')->row();
+                            if(!empty($exist_passage)){
+                                $group_id = $exist_passage->id;
+                            }else{
+                                $data = array(
+                                    'test_id'           => $test_id,
+                                    'group_type'        => $group_type,
+                                    'group_title'       => null,
+                                    'group_description' => $group_description,
+                                    'group_image'       => null,
+                                    'created_on'        => date('Y-m-d H:i:s'),
+                                );
+                                $this->db->insert('tbl_test_groups', $data);
+                                $group_id = $this->db->insert_id();
+                            }
+                        }
+
                         $upload_bulk = array(
                             'test_id'       => $test_id,
+                            'type'          => $type,
+                            'group_id'      => $group_id,
+                            'group_type'    => $group_type,
+                            'question_image'=> $bulk['question_image'],
                             'question'      => $bulk['question'],
                             'option_1'      => $bulk['option_1'],
+                            'option_1_image'=> $bulk['option_1_image'],
                             'option_2'      => $bulk['option_2'],
+                            'option_2_image'=> $bulk['option_2_image'],
                             'option_3'      => $bulk['option_3'],
+                            'option_3_image'=> $bulk['option_3_image'],
                             'option_4'      => $bulk['option_4'],
+                            'option_4_image'=> $bulk['option_4_image'],
                             'answer'        => $bulk['answer'],
                             'answer_column' => $bulk['answer_column'],
                             'solution'      => $bulk['solution'],
                             'positive_mark' => $bulk['positive_marks'],
                             'negative_mark' => $bulk['negative_marks'],
+                            'asked_exam'    => $bulk['asked_exam'],
                             'created_on'    => date('Y-m-d H:i:s'),
                         );
                         $this->db->insert('tbl_test_questions', $upload_bulk);
@@ -144,7 +208,18 @@ class TestSetup_model extends CI_Model
             return 2;
         }
     }
-    
+    public function check_image_is_allocated($name){
+        $this->db->where('is_deleted','0');
+        $this->db->group_start();
+        $this->db->or_where('question_image',$name);
+        $this->db->or_where('option_1_image',$name);
+        $this->db->or_where('option_2_image',$name);
+        $this->db->or_where('option_3_image',$name);
+        $this->db->or_where('option_4_image',$name);
+        $this->db->group_end();
+        $result = $this->db->get('tbl_test_questions')->num_rows();
+        return $result;
+    }
     public function add_test_passage_data($upload_image)
     {
 
@@ -321,6 +396,15 @@ class TestSetup_model extends CI_Model
             return false;
         }
     }
+    public function add_master_gallary_data($name){
+        $data = array(
+            'uploaded_file'     =>  $name,
+            'uploaded_on'       =>  date('Y-m-d H:i:s'),
+            'created_on'        =>  date('Y-m-d H:i:s')
+        );
+        $this->db->insert('tbl_master_gallary_upload_status',$data);
+        return false;
+    }
     public function get_test_setup_ajx_list($length, $start, $search)
     {
         $ids = $this->input->post('ids');
@@ -358,6 +442,13 @@ class TestSetup_model extends CI_Model
 
     public function get_test_setup_ajx_count($search)
     {
+        $ids = $this->input->post('ids');
+        if ($ids != "") {
+            $ids = explode(',', $ids);
+            if (!empty($ids)) {
+                $this->db->where_in('id', $ids);
+            }
+        }
         $this->db->where('is_deleted', '0');
 
         if ($search !== "") {
@@ -373,6 +464,126 @@ class TestSetup_model extends CI_Model
 
         $this->db->order_by('id', 'desc');
         $result = $this->db->get('tbl_test_setups');
+        return $result->num_rows();
+    }
+    public function get_group_details($id){
+        $this->db->where('id', $id);
+        $result = $this->db->get('tbl_test_groups');
+        return $result->row();
+    }
+    public function get_test_questions_ajx_list($length, $start, $search)
+    {
+        $this->db->select('tbl_test_questions.*, tbl_test_setups.topic, tbl_test_setups.short_note, tbl_test_setups.short_description');
+        $this->db->join('tbl_test_setups', 'tbl_test_questions.test_id = tbl_test_setups.id');
+        $this->db->where('tbl_test_setups.is_deleted', '0');
+        $this->db->where('tbl_test_questions.is_deleted', '0');
+        if ($search !== "") {
+            $this->db->group_start();
+            $this->db->like('tbl_test_setups.topic', $search);
+            $this->db->like('tbl_test_setups.short_note', $search);
+            $this->db->like('tbl_test_setups.short_description', $search);
+            $this->db->like('tbl_test_questions.question', $search);
+            $this->db->like('tbl_test_questions.question_image', $search);
+            $this->db->like('tbl_test_questions.option_1', $search);
+            $this->db->like('tbl_test_questions.option_2', $search);
+            $this->db->like('tbl_test_questions.option_3', $search);
+            $this->db->like('tbl_test_questions.option_4', $search);
+            $this->db->like('tbl_test_questions.option_1_image', $search);
+            $this->db->like('tbl_test_questions.option_2_image', $search);
+            $this->db->like('tbl_test_questions.option_3_image', $search);
+            $this->db->like('tbl_test_questions.option_4_image', $search);
+            $this->db->like('tbl_test_questions.answer_column', $search);
+            $this->db->like('tbl_test_questions.solution', $search);
+            $this->db->like('tbl_test_questions.positive_mark', $search);
+            $this->db->like('tbl_test_questions.negative_mark', $search);
+            $this->db->like('tbl_test_questions.asked_exam', $search);
+            $this->db->like('tbl_test_questions.created_on', $search);
+            $this->db->group_end();
+        }
+        if($this->input->post('test_id') != ""){
+            $this->db->where('tbl_test_questions.test_id', $this->input->post('test_id'));
+        }
+        $this->db->limit($length, $start);
+        $this->db->order_by('tbl_test_questions.id', 'desc');
+        $this->db->group_by('tbl_test_questions.id');
+        $result = $this->db->get('tbl_test_questions');
+        return $result->result();
+    }
+    public function delete_question($id,$test_id){
+        $this->db->where('tbl_test_questions.id',$id);
+        $this->db->where('tbl_test_questions.test_id',$test_id);
+        $this->db->update('tbl_test_questions',array('is_deleted'=>'1'));
+
+        $this->calculate_test_totals($test_id);
+        return true;
+    }
+    public function calculate_test_totals($id){
+        $this->db->where('is_deleted','0');
+        $this->db->where('id',$id);
+        $exist = $this->db->get('tbl_test_setups')->row();
+        if(!empty($exist)){
+            $total_questions = $exist->total_questions;
+            $total_marks = $exist->total_marks;
+            
+            $new_total_questions = 0;
+            $new_total_marks = 0;
+            $this->db->where('is_deleted','0');
+            $this->db->where('test_id',$exist->id);
+            $result = $this->db->get('tbl_test_questions')->result();
+            if(!empty($result)){
+                foreach($result as $data){
+                    $new_total_questions += 1;
+                    $new_total_marks += ($data->positive_mark != "" ? (float)$data->positive_mark : 0);
+                }
+                $total_questions = $new_total_questions;
+                $total_marks = $new_total_marks;
+            }
+
+            $update_data = array(
+                'total_questions'   =>  $total_questions,
+                'total_marks'       =>  $total_marks,
+            );
+            $this->db->where('id',$exist->id);
+            $this->db->update('tbl_test_setups',$update_data);
+        }
+        return true;
+    }
+
+    public function get_test_questions_ajx_count($search)
+    {
+        $this->db->select('tbl_test_questions.*, tbl_test_setups.topic, tbl_test_setups.short_note, tbl_test_setups.short_description');
+        $this->db->join('tbl_test_setups', 'tbl_test_questions.test_id = tbl_test_setups.id');
+        $this->db->where('tbl_test_setups.is_deleted', '0');
+        $this->db->where('tbl_test_questions.is_deleted', '0');
+        if ($search !== "") {
+            $this->db->group_start();
+            $this->db->like('tbl_test_setups.topic', $search);
+            $this->db->like('tbl_test_setups.short_note', $search);
+            $this->db->like('tbl_test_setups.short_description', $search);
+            $this->db->like('tbl_test_questions.question', $search);
+            $this->db->like('tbl_test_questions.question_image', $search);
+            $this->db->like('tbl_test_questions.option_1', $search);
+            $this->db->like('tbl_test_questions.option_2', $search);
+            $this->db->like('tbl_test_questions.option_3', $search);
+            $this->db->like('tbl_test_questions.option_4', $search);
+            $this->db->like('tbl_test_questions.option_1_image', $search);
+            $this->db->like('tbl_test_questions.option_2_image', $search);
+            $this->db->like('tbl_test_questions.option_3_image', $search);
+            $this->db->like('tbl_test_questions.option_4_image', $search);
+            $this->db->like('tbl_test_questions.answer_column', $search);
+            $this->db->like('tbl_test_questions.solution', $search);
+            $this->db->like('tbl_test_questions.positive_mark', $search);
+            $this->db->like('tbl_test_questions.negative_mark', $search);
+            $this->db->like('tbl_test_questions.asked_exam', $search);
+            $this->db->like('tbl_test_questions.created_on', $search);
+            $this->db->group_end();
+        }
+        if($this->input->post('test_id') != ""){
+            $this->db->where('tbl_test_questions.test_id', $this->input->post('test_id'));
+        }
+        $this->db->order_by('tbl_test_questions.id', 'desc');
+        $this->db->group_by('tbl_test_questions.id');
+        $result = $this->db->get('tbl_test_questions');
         return $result->num_rows();
     }
     public function get_test_questions_ajx()
@@ -472,4 +683,26 @@ class TestSetup_model extends CI_Model
         $result = $result->row();
         return $result;
     }
+    
+    public function get_all_master_images()
+    {
+        // Define the directory path
+        $directory = 'assets/uploads/master_gallary/';
+        
+        // Check if the directory exists
+        if (is_dir($directory)) {
+            // Get all files and folders in the directory
+            $files = scandir($directory);
+            
+            // Filter out "." and ".."
+            $files = array_diff($files, array('.', '..'));
+            
+            // Return the list of files (optional, you can return the full path if needed)
+            return $files;
+        } else {
+            // If directory doesn't exist, return an empty array or handle the error as needed
+            return array();
+        }
+    }
+
 }
