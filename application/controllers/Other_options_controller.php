@@ -496,7 +496,7 @@ class Other_options_controller extends CI_Controller
             $upload_image = $this->input->post('current_image');
             if (isset($_FILES['image']) && $_FILES['image']['name'] != "") {
                 $gst_config = array(
-                    'upload_path'   => "assets/uploads/doc_n_videos/images",
+                    'upload_path'   => "assets/uploads/other_options/images",
                     'allowed_types' => "*",
                     'encrypt_name'  => true,
                 );
@@ -510,7 +510,7 @@ class Other_options_controller extends CI_Controller
                     $this->session->set_flashdata("error", $error['error']);
                     echo "new error";
                     exit;
-                    redirect('doc_videos/document_list');
+                    redirect('other_option_new/other_option_list');
                     return;
                 }
             }
@@ -518,7 +518,7 @@ class Other_options_controller extends CI_Controller
             $upload_pdf = $this->input->post('current_pdf');
             if (isset($_FILES['pdf']) && $_FILES['pdf']['name'] != "") {
                 $config = array(
-                    'upload_path'   => "assets/uploads/doc_n_videos/pdfs",
+                    'upload_path'   => "assets/uploads/other_options/pdfs",
                     'allowed_types' => "pdf",
                     'encrypt_name'  => true,
                 );
@@ -530,12 +530,14 @@ class Other_options_controller extends CI_Controller
                 } else {
                     $error = array('error' => $this->upload->display_errors());
                     $this->session->set_flashdata("error", $error['error']);
-                    redirect('doc_videos/document_list');
+                    echo "error";
+                    exit;
+                    redirect('other_option_new/other_option_list');
                     return;
                 }
             }
 
-            $res = $this->Other_option_model->set_doc_n_videos_details($upload_image, $upload_pdf);
+            $res = $this->Other_option_model->set_other_options_details($upload_image, $upload_pdf);
 
             if ($res == "1") {
                 ini_set('display_errors', 1);
@@ -544,39 +546,39 @@ class Other_options_controller extends CI_Controller
                 $this->session->set_flashdata("success", "Doc and Videos details added successfully!");
                 // echo "inserted";
                 // exit;
-                redirect('doc_videos/document_list');
+                redirect('other_option_new/other_option_list');
             } elseif ($res == "2") {
                 $this->session->set_flashdata("success", "Doc and Videos entry updated!");
                 // echo "updated";
                 // exit;
-                redirect('doc_videos/document_list');
+                redirect('other_option_new/other_option_list');
             } else {
                 $this->session->set_flashdata("error", "Error updating Doc and Videos.");
-                redirect('doc_videos/document_list');
+                redirect('other_option_new/other_option_list');
             }
         }
     }
 
-    public function document_list()
+    public function other_option_list()
     {
-        $data['category'] = $this->Other_option_model->get_single_document_list();
+        $data['category'] = $this->Other_option_model->get_single_other_option_list();
         // echo '<pre>';
         // print_r($data['category']);
         // exit();
-        $this->load->view('doc_videos/document_list', $data);
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
+        $this->load->view('other_option_new/other_option_list', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('doc_videos/newscript.php', $data);
+        $this->load->view('other_option_new/otheroptionscript.php', $data);
         // $this->load->view('courses/newjscript.php', $data);
     }
 
-    public function delete_document_list($id)
+    public function delete_other_option_list($id)
     {
-        $this->Other_option_model->delete_document_list($id);
+        $this->Other_option_model->delete_other_option_list($id);
         $this->session->set_flashdata('delete', 'Record deleted successfully');
 
-        redirect('doc_videos/document_list');
+        redirect('other_option_new/other_option_list');
     }
 
     public function add_text()

@@ -35,7 +35,13 @@
                 'can_download': {
                     required: true,
                 },
+                'other_option_type': {
+                    required: true,
+                },
                 'description': {
+                    required: true,
+                },
+                'short_description': {
                     required: true,
                 },
                 'image': {
@@ -57,9 +63,22 @@
                 'source_id': {
                     required: "Please select course",
                 },
+
+                'other_option_type': {
+                    required: "Please select type",
+                },
+
+                'can_download': {
+                    required: "Please select can download option",
+                },
+
                 'description': {
                     required: "Please enter description",
                 },
+                'short_description': {
+                    required: "Please enter short description",
+                },
+
                 'image': {
                     required: "Please choose an image",
                 },

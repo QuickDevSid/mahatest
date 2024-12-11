@@ -8,6 +8,20 @@ class Other_option_model extends CI_Model
     var $table = "docs_videos";
     var $select_column = array("id", "type", "source_type", "title", "description", "can_download", "image_url", "pdf_url", "video_source", "video_url", "views_count", "status", "created_at", "source_id", "	num_of_questions", "time", "created_at");
 
+
+
+    public function get_select_category()
+    {
+        // $this->db->where('tbl_other_option.new_status', '1');
+        // $this->db->where('tbl_other_option_category.is_deleted', '0');
+        $this->db->order_by('tbl_other_option_category.id', 'DESC');
+        $result = $this->db->get('tbl_other_option_category');
+        return $result->result();
+    }
+
+
+
+
     function make_query()
     {
         $this->db->select($this->select_column);
@@ -251,8 +265,8 @@ class Other_option_model extends CI_Model
     //New work 23/11/24
     public function get_single_other_option()
     {
-        // $this->db->where('tbl_other_option.is_deleted', '0');
-        $this->db->where('tbl_other_option.status', 'Active');
+        $this->db->where('tbl_other_option.is_deleted', '0');
+        $this->db->where('tbl_other_option.new_status', '1');
         $this->db->where('tbl_other_option.id', $this->uri->segment(3));
         $result = $this->db->get('tbl_other_option');
         $result = $result->row();
@@ -262,11 +276,15 @@ class Other_option_model extends CI_Model
     {
         $data = array(
             'title' => $this->input->post('title'),
+            'other_option_category_id' => $this->input->post('other_option_category_id'),
             'can_download' => $this->input->post('can_download'),
+            'status' => $this->input->post('status'),
+            'short_description' => $this->input->post('short_description'),
+            'other_option_type' => $this->input->post('other_option_type'),
             'description' => $this->input->post('description'),
             'image_url' => $upload_image,
             'pdf_url' => $upload_pdf,
-            'created_at' => date('Y-m-d H:i:s')
+            'created_on' => date('Y-m-d H:i:s')
         );
         // print_r($data);
         // exit;
@@ -278,18 +296,18 @@ class Other_option_model extends CI_Model
             // echo "update";
             // exit;
             $this->db->where('id', $id);
-            $this->db->update('docs_videos', $data);
+            $this->db->update('tbl_other_option', $data);
             return 2;
         } else {
-            // echo "insert";
-            // exit;
+
             try {
                 foreach ($data as $key => $value) {
                     if (is_array($value)) {
                         $data[$key] = implode(', ', $value);
                     }
                 }
-                if (!$this->db->insert('docs_videos', $data)) {
+
+                if (!$this->db->insert('tbl_other_option', $data)) {
                     $error = $this->db->error();
                     echo "Database Error: " . $error['message'];
                     log_message('error', 'Insert failed: ' . $error['message']);
@@ -297,6 +315,7 @@ class Other_option_model extends CI_Model
                     return 1;
                 }
             } catch (Exception $e) {
+
                 log_message('error', 'Exception caught during insert: ' . $e->getMessage());
                 echo "Exception caught: " . $e->getMessage();
                 exit;
@@ -305,26 +324,25 @@ class Other_option_model extends CI_Model
         }
     }
 
-    public function get_single_document_list()
+    public function get_single_other_option_list()
     {
         $this->db->select('*');
-        $this->db->where('docs_videos.type', 'Docs');
-        $this->db->where('docs_videos.source_type', 'doc_video');
-        $this->db->where('docs_videos.status', '1');
-        $this->db->where('docs_videos.is_deleted', '0');
-        $this->db->order_by('docs_videos.id', 'DESC');
-        $result = $this->db->get('docs_videos');
+        $this->db->where('tbl_other_option.new_status', '1');
+        $this->db->where('tbl_other_option.is_deleted', '0');
+        $this->db->order_by('tbl_other_option.id', 'DESC');
+        $result = $this->db->get('tbl_other_option');
         return $result->result();
     }
 
-    public function delete_document_list($id)
+    public function delete_other_option_list($id)
     {
         $data = array(
-            'status' => 0,
+            'status' => 'Inactive',
+            'new_status' => 0,
             'is_deleted' => 1
         );
         $this->db->where('id', $this->uri->segment(3));
-        $this->db->update('docs_videos', $data);
+        $this->db->update('tbl_other_option', $data);
     }
 
     public function get_single_text()

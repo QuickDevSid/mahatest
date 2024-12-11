@@ -4,7 +4,7 @@
 
         <div class="block-header">
 
-            <h2>DASHBOARD -> Ebook - Ebook Sub Category List</h2>
+            <h2>DASHBOARD -> Ebook - Ebook Setup List</h2>
 
         </div>
 
@@ -22,7 +22,7 @@
 
                         <h2>
 
-                            <strong>Sub Category List</strong>
+                            <strong>Ebook Setup List</strong>
 
                         </h2>
 
@@ -66,10 +66,10 @@
 
                                     <th>Sr. No.</th>
 
-                                    <th>Title</th>
-
+                                    <th>Book Name</th>
+                                    <th>Category Name</th>
+                                    <th>Sub Category Name</th>
                                     <th>Image Uploaded</th>
-
                                     <th>Action</th>
 
                                 </tr>
@@ -89,31 +89,27 @@
                                             <td><?= $i++; ?></td>
 
                                             <td><?= htmlspecialchars($cat->title); ?></td>
+                                            <td><?= htmlspecialchars($cat->category_id); ?></td>
+                                            <td><?= htmlspecialchars($cat->sub_category_id); ?></td>
 
                                             <td>
-
-                                                <?php if ($cat->icon != '') { ?>
-
-                                                    <img src="<?= base_url() ?>assets/ebook_images/<?= $cat->icon ?>" alt="Image" style="width: 100px; height: auto;" />
+                                                <?php if ($cat->image != '') { ?>
+                                                    <img src="<?= base_url() ?>assets/ebook_images/<?= $cat->image ?>" alt="Image" style="width: 100px; height: auto;" />
 
                                                 <?php } else { ?>
-
                                                     No Image
-
                                                 <?php } ?>
-
                                             </td>
 
                                             <td>
 
-                                                <a href="<?= base_url('ebook_cat/ebooks__cat/' . $cat->id); ?>" class="btn btn-primary btn-sm">Edit</a>
+                                                <a href="<?= base_url('ebook_cat/ebooks_setup/' . $cat->id); ?>" class="btn btn-primary btn-sm">Edit</a>
 
-                                                <a class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this record?');" href="<?= base_url('ebook_cat/delete_ebooks__cat/' . $cat->id); ?>">
-
+                                                <a class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this record?');" href="<?= base_url('ebook_cat/delete_ebooks_setup/' . $cat->id); ?>">
                                                     Delete
-
                                                 </a>
-
+                                                <a href="<?= base_url('ebook_cat/ebooks_chapter_setup/' . $cat->id); ?>" class="btn btn-primary btn-sm">Add Chapter</a>
+                                                <a href="<?= base_url('ebook_cat/ebooks_video_setup/' . $cat->id); ?>" class="btn btn-success btn-sm">Add Videos</a>
                                             </td>
 
                                         </tr>

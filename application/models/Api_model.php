@@ -1128,10 +1128,12 @@ class Api_model extends CI_Model
                     $json_arr['status'] = 'true';
                     $json_arr['message'] = 'Courses tests retrieved successfully.';
                     $json_arr['data'] = $tests;
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
                 } else {
                     $json_arr['status'] = 'false';
                     $json_arr['message'] = 'Course tests not available.';
                     $json_arr['data'] = [];
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
                 }
             } else {
                 $json_arr['status'] = 'false';
@@ -1142,6 +1144,7 @@ class Api_model extends CI_Model
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'Course not available.';
             $json_arr['data'] = [];
+            $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
         }
 
         echo json_encode($json_arr);

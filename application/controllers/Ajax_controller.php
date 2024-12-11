@@ -363,7 +363,7 @@ class Ajax_controller extends CI_Controller
                             </div>
                             <div class="modal-body">
                                 ' . ($question != "" ? '<p>' . $question . '</p>' : '') . '
-                                ' . ($question_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$question_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$question_image_name.'" style="width:50px;"></a>' : '') . '
+                                ' . ($question_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$question_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$question_image_name.'" style="width:250px;"></a>' : '') . '
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -386,7 +386,7 @@ class Ajax_controller extends CI_Controller
                             </div>
                             <div class="modal-body">
                                 ' . ($option_1 != "" ? '<p>' . $option_1 . '</p>' : '') . '
-                                ' . ($option_1_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_1_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_1_image_name.'" style="width:50px;"></a>' : '') . '
+                                ' . ($option_1_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_1_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_1_image_name.'" style="width:250px;"></a>' : '') . '
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -409,7 +409,7 @@ class Ajax_controller extends CI_Controller
                             </div>
                             <div class="modal-body">
                                 ' . ($option_2 != "" ? '<p>' . $option_2 . '</p>' : '') . '
-                                ' . ($option_2_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_2_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_2_image_name.'" style="width:50px;"></a>' : '') . '
+                                ' . ($option_2_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_2_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_2_image_name.'" style="width:250px;"></a>' : '') . '
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -432,7 +432,7 @@ class Ajax_controller extends CI_Controller
                             </div>
                             <div class="modal-body">
                                 ' . ($option_3 != "" ? '<p>' . $option_3 . '</p>' : '') . '
-                                ' . ($option_3_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_3_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_3_image_name.'" style="width:50px;"></a>' : '') . '
+                                ' . ($option_3_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_3_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_3_image_name.'" style="width:250px;"></a>' : '') . '
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -455,7 +455,7 @@ class Ajax_controller extends CI_Controller
                             </div>
                             <div class="modal-body">
                                 ' . ($option_4 != "" ? '<p>' . $option_4 . '</p>' : '') . '
-                                ' . ($option_4_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_4_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_4_image_name.'" style="width:50px;"></a>' : '') . '
+                                ' . ($option_4_image_name != "" ? '<a href="'.base_url().'assets/uploads/master_gallary/'.$option_4_image_name.'" download><img src="'.base_url().'assets/uploads/master_gallary/'.$option_4_image_name.'" style="width:250px;"></a>' : '') . '
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -1,45 +1,24 @@
 <script>
     $(document).ready(function() {
-        $("#ebook_setup_submit").validate({
+        $("#video_setup_submit").validate({
             rules: {
-                'category': {
-                    required: true,
-                },
-                'sub_category': {
-                    required: true,
-                },
-                'book_name': {
-                    required: true,
-                },
-                'image': {
-                    required: function(element) {
-                        return $('input[name="current_image_main"]').val() == "";
-                    }
-                },
-                'test_id[]': {
-                    required: true,
-                },
+                // 'category': {
+                //     required: true,
+                // }
             },
             messages: {
-                'category': {
-                    required: "Please select category  cscsc",
-                },
-                'sub_category': {
-                    required: "Please select sub category",
-                },
-                'book_name': {
-                    required: "Please enter book name",
-                },
-                'image': {
-                    required: "Please choose an image",
-                },
-                'test_id[]': {
-                    required: "Please select single test",
-                },
+                // 'category': {
+                //     required: "Please select category",
+                // }
             },
             submitHandler: function(form) {
-                console.log("Form is valid and being submitted.");
-                form.submit();
+                var isUpdateMode = <?= !empty($single->id) ? 'true' : 'false' ?>;
+
+                if ($('#dynamic_field_container').children().length > 0 || isUpdateMode) {
+                    form.submit();
+                } else {
+                    alert("Please add at least one video before submitting the form.");
+                }
             }
         });
 
@@ -58,7 +37,7 @@
                 <div class="row">
                     <input type="hidden" value="${i}" name="indices[]">
                     <div class="col-md-4">
-                        <b>Chapter Name</b>
+                        <b>Title</b>
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="material-icons">person</i>
@@ -69,43 +48,13 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <b>Chapter Solution</b>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="material-icons">person</i>
-                            </span>
-                            <div class="form-line">
-                                <input type="text" name="solution_${i}" id="solution_${i}" class="form-control text" placeholder="Chapter Solution" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <b>Image</b>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="material-icons">perm_media</i>
-                            </span>
-                            <div class="form-line">
-                                <input type="file" name="image_${i}" id="image_${i}" class="form-control text" required accept="image/*">
-                                <input type="hidden" name="current_image_${i}" value="${currentImagePath || ''}">
-                            </div>
-                        </div>
-                        ${currentImagePath ? `
-                            <img src="${currentImagePath}" alt="Image" style="width: 100px; height: auto;" />
-                        ` : ''}
-                        <div id="errorMessage_${i}" class="error" style="color: red;"></div>
-                    </div>
-                    <div class="col-md-4">
                         <b>Video</b>
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="material-icons">perm_media</i>
                             </span>
                             <div class="form-line">
-                                <input type="file" name="video_${i}" id="video_${i}" class="form-control text" required accept="video/*">
-                                <input type="hidden" name="current_video_${i}" value="${currentVideoPath || ''}">
+                                <input type="file" name="videos_${i}" id="videos_${i}" class="form-control text" required accept="video/*">
                             </div>
                         </div>
                         ${currentVideoPath ? `
@@ -116,25 +65,6 @@
                         ` : ''}
                         <div id="videoErrorMessage_${i}" class="error" style="color: red;"></div>
                     </div>
-                    <div class="col-md-4">
-                        <b>Chapter Test</b> 
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="material-icons">person</i>
-                            </span>
-                            <div class="form-line">
-                                <input type="text" name="questions_papers_${i}" id="questions_papers_${i}" class="form-control text" placeholder="Chapter Test" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <div class="input-group">
-                        <p><b>Chapter Description</b></p>
-                        <textarea class="form-control text" name="description_${i}" id="description_${i}" placeholder="Chapter Description" rows="5" cols="5" required></textarea>
-                    </div>
-                     </div>
                 </div>
                 <button type="button" class="remove_field btn btn-danger">Remove</button>
                 <br><br>
@@ -166,7 +96,7 @@
                         },
                     });
                 });
-                $(".image_upload").each(function() {
+                $(".video_upload").each(function() {
                     $(this).rules("add", {
                         required: true,
                         messages: {
@@ -194,9 +124,9 @@
                 // Handle image selection
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    $(`input[name="current_image_${index}"]`).val(e.target.result);
+                    $(`input[name="current_video_${index}"]`).val(e.target.result);
                     // Update image preview
-                    $(`#image_${index}`).next("img").attr("src", e.target.result);
+                    $(`#video_${index}`).next("img").attr("src", e.target.result);
                 };
                 reader.readAsDataURL(this.files[0]);
             } else if ($(this).attr("id").includes("video")) {

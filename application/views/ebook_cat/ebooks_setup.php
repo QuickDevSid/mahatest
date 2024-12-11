@@ -13,11 +13,12 @@
                             <strong>Ebook Setup</strong>
                         </h2>
                         <hr>
-                        <form id="test_submit" enctype="multipart/form-data" action="<?php echo base_url() ?>Ebook_Category/add_ebook_setup_data" method="POST">
+                        <form id="ebook_setup_submit" enctype="multipart/form-data" action="<?php echo base_url() ?>Ebook_Category/add_ebook_setup_data" method="POST">
                             <input type="hidden" name="source_type" value="test_series">
                             <input type="text" id="id" name="id" style="display:none;" value="<?php if (!empty($single)) {
                                                                                                     echo $single->id;
                                                                                                 } ?>">
+
                             <div class="row clearfix">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="body">
@@ -49,13 +50,28 @@
                                                 </div>
 
                                                 <div class="col-md-4">
+                                                    <b>Sub Category*</b>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="material-icons">title</i>
+                                                        </span>
+                                                        <div class="form-line">
+                                                            <input type="text" name="sub_category" id="sub_category"
+                                                                class="form-control text" placeholder="Enter Sub Category" value="<?php if (!empty($single)) {
+                                                                                                                                        echo $single->sub_category_id;
+                                                                                                                                    } ?>">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- <div class="col-md-4">
                                                     <label for="sub_category">Sub Category</label>
                                                     <select class="form-control" id="sub_category" name="sub_category" value="<?php if (!empty($single)) {
-                                                                                                                                    echo $single->sub_category;
+                                                                                                                                    echo $single->sub_category_id;
                                                                                                                                 } ?>">
                                                         <option value="">Select Sub Category</option>
                                                     </select>
-                                                </div>
+                                                </div> -->
 
                                                 <div class="col-md-4">
                                                     <b>Book Name*</b>
@@ -66,7 +82,7 @@
                                                         <div class="form-line">
                                                             <input type="text" name="book_name" id="book_name"
                                                                 class="form-control text" placeholder="Enter Book Name" value="<?php if (!empty($single)) {
-                                                                                                                                    echo $single->book_name;
+                                                                                                                                    echo $single->title;
                                                                                                                                 } ?>">
                                                         </div>
                                                     </div>
@@ -81,27 +97,46 @@
                                                         </span>
                                                         <div class="form-line">
                                                             <input style="height: 100px !important" type="file" name="image" id="image" class="form-control" accept="image/*">
-                                                            <input type="hidden" name="current_image" value="<?= isset($single) && !empty($single->icon) ? htmlspecialchars($single->icon) : '' ?>">
+                                                            <input type="hidden" name="current_image_main" value="<?= isset($single) && !empty($single->image) ? htmlspecialchars($single->image) : '' ?>">
                                                         </div>
                                                     </div>
-                                                    <?php if (!empty($single) && !empty($single->icon)): ?>
-                                                        <img src="<?= base_url() ?>assets/ebook_images/<?= htmlspecialchars($single->icon); ?>" alt="Image" style="width: 100px; height: auto;" />
+                                                    <?php if (!empty($single) && !empty($single->image)): ?>
+                                                        <img src="<?= base_url() ?>assets/ebook_images/<?= htmlspecialchars($single->image); ?>" alt="Image" style="width: 100px; height: auto;" />
                                                     <?php endif; ?>
                                                     <div id="errorMessage" class="error" style="color: red;"></div>
                                                 </div>
 
-                                                <div class="col-md-4">
-                                                    <button type="button" id="add_more" class="btn btn-success">ADD CHAPTER</button>
-                                                    <!-- <button type="button" id="add_more" class="btn btn-link waves-effect">ADD CHAPTER</button> -->
+                                                <div class="col-md-8">
+                                                    <b>Tests*</b>
+                                                    <select class="form-control show-tick" name="test_id[]" id="test_id" multiple>
+                                                        <option value="">Select Tests</option>
+                                                        <?php
+                                                        $tests = $this->EbookCategory_model->get_tests_ebook_setup();
+                                                        if (!empty($tests)) {
+                                                            foreach ($tests as $row) {
+                                                        ?>
+                                                                <option value="<?= $row->id; ?>" <?php if (!empty($single) && in_array($row->id, explode(',', $single->tests))) {
+                                                                                                        echo 'selected';
+                                                                                                    } ?>><?= $row->topic; ?></option>
+                                                        <?php
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </select>
                                                 </div>
+
+                                                <!-- <div class="col-md-4">
+                                                    <button type="button" id="add_more" class="btn btn-success">ADD CHAPTER</button>
+
+                                                </div> -->
                                             </div>
-                                            <div class="row">
+                                            <!-- <div class="row">
                                                 <div class="row">
                                                     <div id="dynamic_field_container">
 
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4">

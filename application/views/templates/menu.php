@@ -481,10 +481,10 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="<?php echo base_url() . "Pariksha_paddhati_abhyaskram"; ?>"> <i class="material-icons">people</i>
                         <span>Pariksha Paddhati Abhyaskram</span> </a>
                 </li> -->
-                <li id="other_option_main">
+                <!-- <li id="other_option_main">
                     <a href="<?php echo base_url() . "other_option"; ?>"> <i class="material-icons">people</i>
                         <span>Other option</span> </a>
-                </li>
+                </li> -->
 
                 <li id="other_options">
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>

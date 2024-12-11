@@ -187,6 +187,18 @@ $route['ebook_cat/ebooks_setup_list'] = 'Ebook_Category/ebooks_setup_list';
 $route['ebook_cat/ebooks_setup/(:any)'] = 'Ebook_Category/add_ebook_setup_data';
 $route['ebook_cat/delete_ebooks_setup/(:any)'] = 'Ebook_Category/delete_ebooks_setup/$1';
 
+$route['ebook_cat/ebooks_chapter_setup'] = 'Ebook_Category/add_ebooks_chapter_setup';
+$route['ebook_cat/ebooks_chapter_setup/(:any)'] = 'Ebook_Category/add_ebooks_chapter_setup/$1';
+$route['ebook_cat/ebooks_chapter_setup/(:any)/(:any)'] = 'Ebook_Category/add_ebooks_chapter_setup/$1/$1';
+$route['ebook_cat/ebooks_chapter_setup_list'] = 'Ebook_Category/ebooks_chapter_setup_list';
+$route['ebook_cat/delete_ebooks_chapter_setup/(:any)'] = 'Ebook_Category/delete_ebooks_chapter_setup/$1';
+
+$route['ebook_cat/ebooks_video_setup'] = 'Ebook_Category/add_ebooks_video_setup';
+$route['ebook_cat/ebooks_video_setup/(:any)'] = 'Ebook_Category/add_ebooks_video_setup/$1';
+$route['ebook_cat/ebooks_video_setup/(:any)/(:any)'] = 'Ebook_Category/add_ebooks_video_setup/$1/$1';
+$route['ebook_cat/ebooks_video_setup_list'] = 'Ebook_Category/ebooks_video_setup_list';
+$route['ebook_cat/delete_ebooks_video_setup/(:any)'] = 'Ebook_Category/delete_ebooks_video_setup/$1';
+
 $route['new_coupon/add_coupon'] = 'Mahatest_Coupon/add_coupon';
 $route['new_coupon/add_coupon_list'] = 'Mahatest_Coupon/add_coupon_list';
 $route['new_coupon/add_coupon/(:any)'] = 'Mahatest_Coupon/add_coupon';
