@@ -1,6 +1,18 @@
 <script>
     $(document).ready(function() {
         $("#test_submit").validate({
+
+            $(function() {
+
+                $('#ebooks').addClass('active');
+                $('#ebooks .menu-toggle').addClass('toggled');
+                $('#ebooks .ml-menu').css('display', 'block');
+
+                $('#ebooks').addClass('active');
+                getData();
+            });
+
+
             rules: {
                 'title': {
                     required: true,

@@ -30,6 +30,16 @@
 </script>
 <script>
     $(document).ready(function() {
+        $(function() {
+
+            $('#docs_and_videos').addClass('active');
+            $('#docs_and_videos .menu-toggle').addClass('toggled');
+            $('#docs_and_videos .ml-menu').css('display', 'block');
+
+            $('#docs_and_videos').addClass('active');
+            getData();
+        });
+
         $.validator.addMethod("noLeadingWhitespace", function(value, element) {
             return this.optional(element) || /^[^\s].*$/.test(value); // Ensures the first character is not whitespace
         }, "Please don't start with a blank space.");

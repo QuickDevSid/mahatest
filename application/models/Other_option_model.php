@@ -272,6 +272,15 @@ class Other_option_model extends CI_Model
         $result = $result->row();
         return $result;
     }
+    public function get_single_other_option_category()
+    {
+        $this->db->where('tbl_other_option_category.is_deleted', '0');
+        $this->db->where('tbl_other_option_category.new_status', '1');
+        $this->db->where('tbl_other_option_category.id', $this->uri->segment(3));
+        $result = $this->db->get('tbl_other_option_category');
+        $result = $result->row();
+        return $result;
+    }
     public function set_other_options_details($upload_image, $upload_pdf)
     {
         $data = array(
@@ -315,7 +324,6 @@ class Other_option_model extends CI_Model
                     return 1;
                 }
             } catch (Exception $e) {
-
                 log_message('error', 'Exception caught during insert: ' . $e->getMessage());
                 echo "Exception caught: " . $e->getMessage();
                 exit;
@@ -323,6 +331,61 @@ class Other_option_model extends CI_Model
             return 1;
         }
     }
+    public function set_other_options_category_details()
+    {
+        $data = array(
+            'title' => $this->input->post('title'),
+            'description' => $this->input->post('description'),
+            'created_at' => date('Y-m-d H:i:s')
+        );
+        // print_r($data);
+        // exit;
+        $id = $this->input->post('id');
+        // echo $id;
+        // exit;
+        if ($id) {
+            // echo "update";
+            // exit;
+            $this->db->where('id', $id);
+            $this->db->update('tbl_other_option_category', $data);
+            return 2;
+        } else {
+            try {
+                foreach ($data as $key => $value) {
+                    if (is_array($value)) {
+                        $data[$key] = implode(', ', $value);
+                    }
+                }
+                if (!$this->db->insert('tbl_other_option_category', $data)) {
+                    $error = $this->db->error();
+                    echo "Database Error: " . $error['message'];
+                    log_message('error', 'Insert failed: ' . $error['message']);
+                } else {
+                    return 1;
+                }
+            } catch (Exception $e) {
+                log_message('error', 'Exception caught during insert: ' . $e->getMessage());
+                echo "Exception caught: " . $e->getMessage();
+                exit;
+            }
+            return 1;
+        }
+    }
+
+    public function get_duplicate_other_option_title()
+    {
+        $id = $this->input->post('id');
+        $this->db->select('title');
+        $this->db->where('title', $this->input->post('title'));
+        $this->db->where('is_deleted', '0');
+        $this->db->where('new_status', '1');
+        if (!empty($id)) {
+            $this->db->where('id !=', $id);
+        }
+        $query = $this->db->get('tbl_other_option_category');
+        echo $query->num_rows();
+    }
+
 
     public function get_single_other_option_list()
     {
@@ -344,6 +407,26 @@ class Other_option_model extends CI_Model
         $this->db->where('id', $this->uri->segment(3));
         $this->db->update('tbl_other_option', $data);
     }
+
+    public function get_single_other_option_category_list()
+    {
+        $this->db->select('*');
+        $this->db->where('tbl_other_option_category.new_status', '1');
+        $this->db->where('tbl_other_option_category.is_deleted', '0');
+        $this->db->order_by('tbl_other_option_category.id', 'DESC');
+        $result = $this->db->get('tbl_other_option_category');
+        return $result->result();
+    }
+    // public function delete_other_option_category_list($id)
+    // {
+    //     $data = array(
+    //         'status' => 'Inactive',
+    //         'new_status' => 0,
+    //         'is_deleted' => 1
+    //     );
+    //     $this->db->where('id', $this->uri->segment(3));
+    //     $this->db->update('tbl_other_option_category', $data);
+    // }
 
     public function get_single_text()
     {

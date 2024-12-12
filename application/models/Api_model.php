@@ -594,24 +594,17 @@ class Api_model extends CI_Model
         $offset = $request['offset'];
         $limit = $request['limit'];
         $this->db->select('tbl_news.*,tbl_news_category.title, 1 AS issave');
-        $this->db->from('tbl_news_saved');
-
+        $this->db->join('tbl_news', 'tbl_news.id  = tbl_news_saved.news_id');
+        $this->db->join('tbl_news_category', 'tbl_news_category.id = tbl_news.category');
         if ($request['category'] != "") {
             $this->db->where('tbl_news.category', $request['category']);
         }
-
         $this->db->where('tbl_news_saved.login_id', $request['login_id']);
-        $this->db->where('tbl_news.status', 'Active');
-        $this->db->join('tbl_news', 'tbl_news.id  = tbl_news_saved.news_id');
-        $this->db->join('tbl_news_category', 'tbl_news_category.id = tbl_news.category', 'left');
+        $this->db->where('tbl_news.status', '1');
         $this->db->order_by('tbl_news.sequence_no', 'ASC');
         $this->db->limit($limit, $offset);
-        $result = $this->db->get();
+        $result = $this->db->get('tbl_news_saved');
         $result = $result->result();
-        // echo $this->db->last_query();
-        // echo "<pre>";
-        // print_r($result);
-        // exit;
         if (!empty($result)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'success';
@@ -985,12 +978,16 @@ class Api_model extends CI_Model
         if (!empty($exist)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'Courses PDF retrieved successfully.';
-            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/pdfs/';
+            $json_arr['pdf_path'] = base_url() . 'assets/uploads/courses/pdfs/';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
+
             $json_arr['data'] = $exist;
         } else {
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'Course Pdf not available.';
-            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/pdfs/';
+            $json_arr['pdf_path'] = base_url() . 'assets/uploads/courses/pdfs/';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
+
             $json_arr['data'] = [];
         }
 
@@ -1015,12 +1012,15 @@ class Api_model extends CI_Model
         if (!empty($exist)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'Course videos retrieved successfully.';
-            $json_arr['video_path'] = base_url();
+            $json_arr['video_path'] = base_url() . 'assets/uploads/courses/videos/';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
+
             $json_arr['data'] = $exist;
         } else {
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'Course videos not available.';
-            $json_arr['video_path'] = base_url();
+            $json_arr['video_path'] = base_url() . 'assets/uploads/courses/videos/';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
             $json_arr['data'] = [];
         }
 
@@ -1045,12 +1045,12 @@ class Api_model extends CI_Model
         if (!empty($exist)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'Courses texts retrieved successfully.';
-            $json_arr['image_path'] = base_url();
+            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
             $json_arr['data'] = $exist;
         } else {
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'Course texts not available.';
-            $json_arr['image_path'] = base_url();
+            $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
             $json_arr['data'] = [];
         }
 
@@ -1139,6 +1139,7 @@ class Api_model extends CI_Model
                 $json_arr['status'] = 'false';
                 $json_arr['message'] = 'Course tests not available.';
                 $json_arr['data'] = [];
+                $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
             }
         } else {
             $json_arr['status'] = 'false';
@@ -1245,14 +1246,14 @@ class Api_model extends CI_Model
         if (!empty($result)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'Other options retrieved successfully.';
-            $json_arr['image_path'] = base_url() . 'AppAPI/abhyas_sahitya/images/';
-            $json_arr['pdf_path'] = base_url() . 'AppAPI/abhyas_sahitya/pdf/';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/other_options/images/';
+            $json_arr['pdf_path'] = base_url() . 'assets/uploads/other_options/pdfs/';
             $json_arr['data'] = $result;
         } else {
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'No other options available.';
-            $json_arr['image_path'] = base_url() . 'AppAPI/abhyas_sahitya/images/';
-            $json_arr['pdf_path'] = base_url() . 'AppAPI/abhyas_sahitya/pdf/';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/other_options/images/';
+            $json_arr['pdf_path'] = base_url() . 'assets/uploads/other_options/pdfs/';
             $json_arr['data'] = [];
         }
         echo json_encode($json_arr);
@@ -1583,9 +1584,10 @@ class Api_model extends CI_Model
                                 $data[] = array(
                                     'id'          => $ebook_chapter_result->id,         // ID from tbl_ebook_chapters
                                     'ebook_id'    => $ebook_chapter_result->ebook_id,   // Aliased ID from tbl_ebooks
-                                    'title'       => $ebook_chapter_result->title,
-                                    'image'       => $ebook_chapter_result->image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->image) : '',
-                                    'description' => $ebook_chapter_result->description,
+                                    'title'       => $ebook_chapter_result->chapter_name,
+                                    'image'       => $ebook_chapter_result->chapter_image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->chapter_image) : '',
+                                    'description' => $ebook_chapter_result->chapter_description,
+                                    'chapter_solution' => $ebook_chapter_result->chapter_solution,
                                 );
                             }
                             $json_arr['status'] = 'true';
@@ -1648,10 +1650,10 @@ class Api_model extends CI_Model
                                 $data[] = array(
                                     'id'          => $ebook_chapter_result->id,         // ID from tbl_ebook_chapters
                                     'ebook_id'    => $ebook_chapter_result->ebook_id,   // Aliased ID from tbl_ebooks
-                                    'title'       => $ebook_chapter_result->title,
-                                    'image'       => $ebook_chapter_result->image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->image) : '',
-                                    'description' => $ebook_chapter_result->description,
-                                    'solution'    => $ebook_chapter_result->solution,
+                                    'title'       => $ebook_chapter_result->chapter_name,
+                                    'image'       => $ebook_chapter_result->chapter_image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->chapter_image) : '',
+                                    'description' => $ebook_chapter_result->chapter_description,
+                                    'solution'    => $ebook_chapter_result->chapter_solution,
                                 );
                             }
                             $json_arr['status'] = 'true';
@@ -1700,18 +1702,18 @@ class Api_model extends CI_Model
                 $single = $this->db->get('user_login')->row();
                 if (!empty($single)) {
                     if (!empty($ebook_id)) {
-                        $this->db->select('tbl_ebook_chapters.*, tbl_ebooks.id AS ebook_id');
-                        $this->db->from('tbl_ebook_chapters');
-                        $this->db->join('tbl_ebooks', 'tbl_ebooks.id = tbl_ebook_chapters.ebook_id', 'left');
-                        $this->db->where('tbl_ebook_chapters.is_deleted', '0');
-                        $this->db->where('tbl_ebook_chapters.status', '1');
-                        if ($chapter_id != "") {
-                            $this->db->where('tbl_ebook_chapters.id', $chapter_id);
-                        }
-                        if ($ebook_id != "") {
-                            $this->db->where('tbl_ebook_chapters.ebook_id', $ebook_id);
-                        }
-                        $this->db->order_by('tbl_ebook_chapters.id', 'DESC');
+                        $this->db->select('tbl_ebooks.*');
+                        $this->db->from('tbl_ebooks');
+                        // $this->db->join('tbl_ebooks', 'tbl_ebooks.id = tbl_ebook_chapters.ebook_id', 'left');
+                        $this->db->where('tbl_ebooks.is_deleted', '0');
+                        $this->db->where('tbl_ebooks.status', '1');
+                        // if ($chapter_id != "") {
+                        //     $this->db->where('tbl_ebook_chapters.id', $chapter_id);
+                        // }
+                        // if ($ebook_id != "") {
+                        //     $this->db->where('tbl_ebook_chapters.ebook_id', $ebook_id);
+                        // }
+                        $this->db->order_by('tbl_ebooks.id', 'DESC');
                         $result = $this->db->get();
                         $ebook_chapter = $result->result();
 
@@ -1740,16 +1742,16 @@ class Api_model extends CI_Model
                                                 $attempted_test_id = '';
                                             }
 
-                                            if($single_test->show_ans == 'Yes'){
+                                            if ($single_test->show_ans == 'Yes') {
                                                 $show_correct_ans = '1';
-                                            }else{
+                                            } else {
                                                 $show_correct_ans = '0';
                                             }
-            
-                                            if($single_test->download_test_pdf == 'Yes'){
+
+                                            if ($single_test->download_test_pdf == 'Yes') {
                                                 $download_test_pdf = '1';
                                                 $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                                            }else{
+                                            } else {
                                                 $download_test_pdf = '0';
                                                 $test_pdf_link = '';
                                             }
@@ -1774,7 +1776,7 @@ class Api_model extends CI_Model
                                 }
                                 $data[] = array(
                                     'id'          => $ebook_chapter_result->id,         // ID from tbl_ebook_chapters
-                                    'ebook_id'    => $ebook_chapter_result->ebook_id,   // Aliased ID from tbl_ebooks
+                                    'ebook_id'    => $ebook_chapter_result->id,   // Aliased ID from tbl_ebooks
                                     'title'       => $ebook_chapter_result->title,
                                     'image'       => $ebook_chapter_result->image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->image) : '',
                                     'tests'       => $all_tests,
@@ -1812,6 +1814,92 @@ class Api_model extends CI_Model
     }
 
 
+    // public function get_ebooks_video_separate_api()
+    // {
+    //     $request = json_decode(file_get_contents('php://input'), true);
+    //     if ($request) {
+    //         if (!empty($request['login_id'])) {
+    //             $user_id = $request['login_id'];
+    //             $ebook_id = $request['ebook_id'];
+    //             $this->db->where('login_id', $user_id);
+    //             $single = $this->db->get('user_login')->row();
+    //             if (!empty($single)) {
+    //                 if (!empty($ebook_id)) {
+    //                     $this->db->select('tbl_ebook_chapters.*, tbl_ebooks.title as ebook_title, tbl_ebooks.id AS ebook_id');
+    //                     $this->db->from('tbl_ebook_chapters');
+    //                     $this->db->join('tbl_ebooks', 'tbl_ebooks.id = tbl_ebook_chapters.ebook_id', 'left');
+    //                     $this->db->where('tbl_ebook_chapters.is_deleted', '0');
+    //                     $this->db->where('tbl_ebook_chapters.status', '1');
+    //                     if (isset($ebook_id)) {
+    //                         $this->db->where('tbl_ebook_chapters.ebook_id', $ebook_id);
+    //                     }
+    //                     $this->db->order_by('tbl_ebook_chapters.id', 'DESC');
+    //                     $result = $this->db->get();
+    //                     $ebook_chapter = $result->result();
+
+    //                     if (!empty($ebook_chapter)) {
+    //                         $data = [];
+    //                         foreach ($ebook_chapter as $ebook_chapter_result) {
+    //                             $this->db->select('tbl_ebook_videos.*, tbl_ebooks.title as ebook_title, tbl_ebooks.id AS ebook_id');
+    //                             $this->db->from('tbl_ebook_videos');
+    //                             $this->db->join('tbl_ebooks', 'tbl_ebooks.id = tbl_ebook_videos.ebook_id', 'left');
+    //                             $this->db->where('tbl_ebook_videos.is_deleted', '0');
+    //                             $this->db->where('tbl_ebook_videos.status', '1');
+    //                             $this->db->where('tbl_ebook_videos.ebook_id', $ebook_chapter_result->ebook_id);
+    //                             $this->db->where('tbl_ebook_videos.ebook_chapter_id', $ebook_chapter_result->id);
+    //                             $this->db->order_by('tbl_ebook_videos.id', 'DESC');
+    //                             $result = $this->db->get();
+    //                             $ebook_solution = $result->result();
+    //                             $all_videos = [];
+    //                             if (!empty($ebook_solution)) {
+    //                                 foreach ($ebook_solution as $ebook_solution_result) {
+    //                                     if ($ebook_solution_result->file_name  != "") {
+    //                                         $all_videos[] = array(
+    //                                             'title'     =>  $ebook_solution_result->title != "" ? $ebook_solution_result->title : '',
+    //                                             'file_path' =>  base_url('/assets/ebook_images/' . $ebook_solution_result->file_name)
+    //                                         );
+    //                                     }
+    //                                 }
+    //                                 $data[] = array(
+    //                                     'id'          => $ebook_chapter_result->id,
+    //                                     'ebook_id'    => $ebook_chapter_result->ebook_id,
+    //                                     'title'       => $ebook_chapter_result->ebook_title,
+    //                                     'image'       => $ebook_chapter_result->image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->image) : '',
+    //                                     'videos'      => $all_videos
+    //                                 );
+    //                             }
+    //                         }
+    //                         $json_arr['status'] = 'true';
+    //                         $json_arr['message'] = 'Success';
+    //                         $json_arr['data'] = $data;
+    //                     } else {
+    //                         $json_arr['status'] = 'false';
+    //                         $json_arr['message'] = 'Ebook Videos not found';
+    //                         $json_arr['data'] = [];
+    //                     }
+    //                 } else {
+    //                     $json_arr['status'] = 'false';
+    //                     $json_arr['message'] = 'Ebook not found';
+    //                     $json_arr['data'] = [];
+    //                 }
+    //             } else {
+    //                 $json_arr['status'] = 'false';
+    //                 $json_arr['message'] = 'User not found';
+    //                 $json_arr['data'] = [];
+    //             }
+    //         } else {
+    //             $json_arr['status'] = 'false';
+    //             $json_arr['message'] = 'Login not available.';
+    //             $json_arr['data'] = [];
+    //         }
+    //     } else {
+    //         $json_arr['status'] = 'false';
+    //         $json_arr['message'] = 'Request not found.';
+    //         $json_arr['data'] = [];
+    //     }
+    //     echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    // }
+
     public function get_ebooks_video_separate_api()
     {
         $request = json_decode(file_get_contents('php://input'), true);
@@ -1844,7 +1932,6 @@ class Api_model extends CI_Model
                                 $this->db->where('tbl_ebook_videos.is_deleted', '0');
                                 $this->db->where('tbl_ebook_videos.status', '1');
                                 $this->db->where('tbl_ebook_videos.ebook_id', $ebook_chapter_result->ebook_id);
-                                $this->db->where('tbl_ebook_videos.ebook_chapter_id', $ebook_chapter_result->id);
                                 $this->db->order_by('tbl_ebook_videos.id', 'DESC');
                                 $result = $this->db->get();
                                 $ebook_solution = $result->result();
@@ -1861,8 +1948,8 @@ class Api_model extends CI_Model
                                     $data[] = array(
                                         'id'          => $ebook_chapter_result->id,
                                         'ebook_id'    => $ebook_chapter_result->ebook_id,
-                                        'title'       => $ebook_chapter_result->ebook_title,
-                                        'image'       => $ebook_chapter_result->image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->image) : '',
+                                        'title'       => $ebook_chapter_result->chapter_name,
+                                        'image'       => $ebook_chapter_result->chapter_image != "" ? base_url('/assets/ebook_images/' . $ebook_chapter_result->chapter_image) : '',
                                         'videos'      => $all_videos
                                     );
                                 }
@@ -2069,7 +2156,7 @@ class Api_model extends CI_Model
                     if ($course_id != "") {
                         $this->db->select('courses.*');
                         $this->db->from('courses');
-                        // $this->db->where('courses.is_deleted', '0');
+                        $this->db->where('id', $course_id);
                         $result = $this->db->get();
                         $course = $result->row();
 
@@ -2139,6 +2226,21 @@ class Api_model extends CI_Model
                                         'payment_on'        => date('Y-m-d H:i:s'),
                                     );
                                     $this->db->insert('tbl_user_contents', $my_buy_data);
+                                    
+                                    $payment_data = array(
+                                        'user_id'           => $user_id,
+                                        'payment_for'       => '1',
+                                        'payment_on'        => date('Y-m-d H:i:s'),
+                                        'transaction_id'    => $transaction_id,
+                                        'payment_status'    => $payment_status,
+                                        'payment_amount'    => $payment_amount,
+                                        'primary_table_id'  => $insert_id,
+                                        'primary_table_name'=> 'tbl_bought_courses'
+                                    );
+                                    $payment_id = $this->set_user_payment($payment_data);
+                                    
+                                    $this->db->where('id', $insert_id);
+                                    $this->db->update('tbl_bought_courses',array('payment_table_id'=>$payment_id));
 
                                     $json_arr['status'] = 'true';
                                     $json_arr['message'] = 'Success';
@@ -3819,6 +3921,7 @@ class Api_model extends CI_Model
                     if ($test_id != "") {
                         $this->db->select('test_series.*');
                         $this->db->from('test_series');
+                        $this->db->where('id', $test_id);
                         $result = $this->db->get();
                         $test_series_data = $result->row();
 
@@ -3890,6 +3993,21 @@ class Api_model extends CI_Model
                                         'payment_on'        => date('Y-m-d H:i:s'),
                                     );
                                     $this->db->insert('tbl_user_contents', $my_buy_data);
+                                    
+                                    $payment_data = array(
+                                        'user_id'           => $user_id,
+                                        'payment_for'       => '2',
+                                        'payment_on'        => date('Y-m-d H:i:s'),
+                                        'transaction_id'    => $transaction_id,
+                                        'payment_status'    => $payment_status,
+                                        'payment_amount'    => $payment_amount,
+                                        'primary_table_id'  => $insert_id,
+                                        'primary_table_name'=> 'tbl_bought_test_series'
+                                    );
+                                    $payment_id = $this->set_user_payment($payment_data);
+                                    
+                                    $this->db->where('id', $insert_id);
+                                    $this->db->update('tbl_bought_test_series',array('payment_table_id'=>$payment_id));
 
                                     $json_arr['status'] = 'true';
                                     $json_arr['message'] = 'Success';
@@ -3931,7 +4049,253 @@ class Api_model extends CI_Model
         }
         echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
     }
+    
+    public function buy_membership()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
 
+        if ($request) {
+            if (!empty($request['login_id'])) {
+                $user_id = $request['login_id'];
+                $memership_id = isset($request['membership_id']) ? $request['membership_id'] : '';
+                $transaction_id = isset($request['transaction_id']) ? $request['transaction_id'] : '';
+                $this->db->where('login_id', $user_id);
+                $single = $this->db->get('user_login')->row();
+                if (!empty($single)) {
+                    if ($memership_id != "") {
+                        $this->db->select('membership_plans.*');
+                        $this->db->from('membership_plans');
+                        $this->db->where('id', $memership_id);
+                        $result = $this->db->get();
+                        $test_series_data = $result->row();
+
+                        if (!empty($test_series_data)) {
+                            $payment_status = $request['payment_status'];
+                            $is_coupon_applied = $request['is_coupon_applied'];
+                            $applied_coupon_id = $request['applied_coupon_id'];
+                            $payment_amount = $request['payment_amount'];
+                            if ($payment_status == '1') {
+                                $mrp = $test_series_data->price != "" ? (float)$test_series_data->price : 0;
+                                $test_series_course_discount_rate = $test_series_data->discount_per != "" ? (float)$test_series_data->discount_per : 0;
+                                $test_series_course_discount = ($test_series_course_discount_rate * $mrp / 100);
+                                $sale_price = $test_series_data->actual_price != "" ? (float)$test_series_data->actual_price : 0;
+                                $coupon_discount_amount = 0;
+                                $coupons_discount_type = null;
+                                $discount = 0;
+                                if ($is_coupon_applied == '1') {
+                                    $this->db->where('id', $applied_coupon_id);
+                                    $coupons = $this->db->get('tbl_coupons')->row();
+                                    if (!empty($coupons)) {
+                                        $applied_coupon_id = $coupons->id;
+                                        $discount = $coupons->discount != "" ? $coupons->discount : 0;
+                                        if ($coupons->discount_type == '0') {
+                                            $coupon_discount_amount = $mrp * $discount;
+                                        } elseif ($coupons->discount_type == '1') {
+                                            $coupon_discount_amount = $discount;
+                                        } else {
+                                            $coupon_discount_amount = 0;
+                                        }
+                                    }
+                                }
+                                $original_sale_pice = $sale_price - $coupon_discount_amount;
+                                $total_discount_amount = $coupon_discount_amount + $test_series_course_discount;
+                                if ($payment_amount == $original_sale_pice) {
+                                    $start_date = (new DateTime())->format('Y-m-d');                                    
+                                    $end_date = (new DateTime())->add(new DateInterval('P' . $test_series_data->no_of_months . 'M'))->format('Y-m-d');
+                                    
+                                    $buy_data = array(
+                                        'login_id'              => $user_id,
+                                        'membership_id'         => $memership_id,
+
+                                        'start_date'            => $start_date,
+                                        'end_date'              => $end_date,
+                                        'duration'              => $test_series_data->no_of_months,
+                                        'amount'                => $payment_amount,
+
+                                        'original_price'            => $mrp,
+                                        'original_discount_rate'    => $test_series_course_discount_rate,
+                                        'original_discount_amount'  => $test_series_course_discount,
+                                        'original_sale_amount'      => $sale_price,
+
+                                        'payment_status'            => $payment_status,
+                                        'is_coupon_applied'         => $is_coupon_applied,
+                                        'applied_coupon_id'         => $applied_coupon_id,
+                                        'coupon_discount_type'      => $coupons_discount_type,
+                                        'coupon_discount'           => $discount,
+                                        'coupon_discount_amount'    => $coupon_discount_amount,
+                                        'total_discount_amount'     => $total_discount_amount,
+
+                                        'payment_id'                => $transaction_id,
+                                        'created_on'        => date('Y-m-d H:i:s'),
+                                        'payment_on'        => date('Y-m-d H:i:s'),
+                                    );
+                                    $this->db->insert('tbl_my_membership', $buy_data);
+                                    $insert_id = $this->db->insert_id();
+                                    
+                                    $payment_data = array(
+                                        'user_id'           => $user_id,
+                                        'payment_for'       => '0',
+                                        'payment_on'        => date('Y-m-d H:i:s'),
+                                        'transaction_id'    => $transaction_id,
+                                        'payment_status'    => $payment_status,
+                                        'payment_amount'    => $payment_amount,
+                                        'primary_table_id'  => $insert_id,
+                                        'primary_table_name'=> 'tbl_my_membership'
+                                    );
+                                    $payment_id = $this->set_user_payment($payment_data);
+                                    
+                                    $this->db->where('id', $insert_id);
+                                    $this->db->update('tbl_my_membership',array('payment_table_id'=>$payment_id));
+
+                                    $json_arr['status'] = 'true';
+                                    $json_arr['message'] = 'Success';
+                                    $json_arr['data'] = [$insert_id];
+                                } else {
+                                    $json_arr['status'] = 'false';
+                                    $json_arr['message'] = 'Payment amount is not correct. It should be Rs. ' . $original_sale_pice;
+                                    $json_arr['data'] = [];
+                                }
+                            } else {
+                                $json_arr['status'] = 'false';
+                                $json_arr['message'] = 'Payment is not successfull';
+                                $json_arr['data'] = [];
+                            }
+                        } else {
+                            $json_arr['status'] = 'false';
+                            $json_arr['message'] = 'Membership Details not found';
+                            $json_arr['data'] = [];
+                        }
+                    } else {
+                        $json_arr['status'] = 'false';
+                        $json_arr['message'] = 'Membership ID Required';
+                        $json_arr['data'] = [];
+                    }
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'User not found';
+                    $json_arr['data'] = [];
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Login not available.';
+                $json_arr['data'] = [];
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Request not found.';
+            $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    }
+    
+    public function user_payments()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+
+        if ($request) {
+            if (!empty($request['login_id'])) {
+                $user_id = $request['login_id'];
+                $type = isset($request['type']) ? $request['type'] : '';
+                $this->db->where('login_id', $user_id);
+                $single = $this->db->get('user_login')->row();
+                if (!empty($single)) {
+                    $this->db->select('id,payment_for,payment_on,transaction_id,payment_status,payment_amount');
+                    $this->db->where('user_id', $user_id);
+                    if($type != ""){
+                        $this->db->where('payment_for', $type);
+                    }
+                    $this->db->where('is_deleted', '0');
+                    $this->db->order_by('payment_on', 'desc');
+                    $result = $this->db->get('tbl_user_payments');
+                    $test_series_data = $result->result();
+
+                    if (!empty($test_series_data)) {
+                        $json_arr['status'] = 'true';
+                        $json_arr['message'] = 'Success';
+                        $json_arr['data'] = $test_series_data;
+                    } else {
+                        $json_arr['status'] = 'false';
+                        $json_arr['message'] = 'Payments not available';
+                        $json_arr['data'] = [];
+                    }
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'User not found';
+                    $json_arr['data'] = [];
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Login not available.';
+                $json_arr['data'] = [];
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Request not found.';
+            $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    }
+    
+    public function user_payment_details()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+
+        if ($request) {
+            if (!empty($request['login_id'])) {
+                $user_id = $request['login_id'];
+                $payment_id = isset($request['payment_id']) ? $request['payment_id'] : '';
+                if ($payment_id != "") {
+                    $this->db->where('login_id', $user_id);
+                    $single = $this->db->get('user_login')->row();
+                    if (!empty($single)) {
+                        $this->db->select('id,payment_for,payment_on,transaction_id,payment_status,payment_amount');
+                        $this->db->where('user_id', $user_id);
+                        $this->db->where('id', $payment_id);
+                        $this->db->where('is_deleted', '0');
+                        $result = $this->db->get('tbl_user_payments');
+                        $test_series_data = $result->row();
+
+                        $data = [];
+                        if (!empty($test_series_data)) {
+                            $json_arr['status'] = 'true';
+                            $json_arr['message'] = 'Success';
+                            $json_arr['data'] = $data;
+                        } else {
+                            $json_arr['status'] = 'false';
+                            $json_arr['message'] = 'Payment details not available';
+                            $json_arr['data'] = [];
+                        }
+                    } else {
+                        $json_arr['status'] = 'false';
+                        $json_arr['message'] = 'User not found';
+                        $json_arr['data'] = [];
+                    }
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'Payment ID not available.';
+                    $json_arr['data'] = [];
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Login not available.';
+                $json_arr['data'] = [];
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Request not found.';
+            $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    }
+    public function set_user_payment($array){
+        $date = array(
+            'created_on'        => date('Y-m-d H:i:s')
+        );
+        $data = array_merge($array,$date);
+        $this->db->insert('tbl_user_payments', $data);
+        $insert_id = $this->db->insert_id();
+        return $insert_id;
+    }
     public function get_test_series_pdf_api()
     {
         $request = json_decode(file_get_contents('php://input'), true);

@@ -10,6 +10,7 @@ class Ajax_controller extends CI_Controller
         $this->load->model("CurrentAffairs_model");
         $this->load->model("news_model");
         $this->load->model("EbookCategory_model");
+        $this->load->model("User_Payments_model");
     }
     // public function get_test_setup_ajx()
     // {
@@ -133,6 +134,73 @@ class Ajax_controller extends CI_Controller
     //     echo json_encode($output);
     //     exit();
     // }
+    public function get_all_payments_ajx()
+    {
+        $draw = intval($this->input->post("draw"));
+        $start = intval($this->input->post("start"));
+        $length = intval($this->input->post("length"));
+        $order = $this->input->post("order");
+        $search = $this->input->post("search");
+        $search = $search['value'];
+        $col = 0;
+        $dir = "";
+        if (!empty($order)) {
+            foreach ($order as $o) {
+                $col = $o['column'];
+                $dir = $o['dir'];
+            }
+        }
+        if ($dir != "asc" && $dir != "desc") {
+            $dir = "desc";
+        }
+        $document = $this->User_Payments_model->get_payments_ajx_list($length, $start, $search);
+        $data = array();
+        if (!empty($document)) {
+            $page = $start / $length + 1;
+            $offset = ($page - 1) * $length + 1;
+            foreach ($document as $print) {
+                $sub_array = array();
+
+                if($print->payment_status == '0'){
+                    $payment_status = '<label class="label label-warning">Pending</label>';
+                }elseif($print->payment_status == '1'){
+                    $payment_status = '<label class="label label-success">Success</label>';
+                }elseif($print->payment_status == '2'){
+                    $payment_status = '<label class="label label-danger">Canceled</label>';
+                }else{
+                    $payment_status = '-';
+                }
+                
+                if($print->payment_for == '0'){
+                    $payment_for = 'Membership';
+                }elseif($print->payment_for == '1'){
+                    $payment_for = 'Course';
+                }elseif($print->payment_for == '2'){
+                    $payment_for = 'Test Series';
+                }else{
+                    $payment_for = '-';
+                }
+
+                $sub_array[] = $offset++;
+                $sub_array[] = $print->full_name != "" ? $print->full_name . '<br>' . $print->mobile_number . '<br>' . $print->email : '';
+                $sub_array[] = $payment_status;
+                $sub_array[] = $print->payment_amount;
+                $sub_array[] = $print->transaction_id;
+                $sub_array[] = $print->payment_on != "" ? date('d-m-Y h:i A',strtotime($print->payment_on)) : '-';
+                $sub_array[] = $payment_for;
+                $data[] = $sub_array;
+            }
+        }
+        $TotalProducts = $this->User_Payments_model->get_payments_ajx_count($search);
+        $output = array(
+            "draw" => $draw,
+            "recordsTotal" => $TotalProducts,
+            "recordsFiltered" => $TotalProducts,
+            "data" => $data
+        );
+        echo json_encode($output);
+        exit();
+    }
     public function get_test_setup_ajx()
     {
         $draw = intval($this->input->post("draw"));

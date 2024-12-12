@@ -17,6 +17,17 @@
 </script>
 <script>
     $(document).ready(function() {
+
+        $(function() {
+
+            $('#other_options').addClass('active');
+            $('#other_options .menu-toggle').addClass('toggled');
+            $('#other_options .ml-menu').css('display', 'block');
+
+            $('#other_options').addClass('active');
+            getData();
+        });
+
         $.validator.addMethod("noLeadingWhitespace", function(value, element) {
             return this.optional(element) || /^[^\s].*$/.test(value);
         }, "Please don't start with a blank space.");

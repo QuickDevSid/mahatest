@@ -1,5 +1,17 @@
 <script>
     $(document).ready(function() {
+
+        $(function() {
+
+            $('#ebooks').addClass('active');
+            $('#ebooks .menu-toggle').addClass('toggled');
+            $('#ebooks .ml-menu').css('display', 'block');
+
+            $('#ebooks').addClass('active');
+            getData();
+        });
+
+
         $("#ebook_setup_submit").validate({
             rules: {
                 'category': {

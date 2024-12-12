@@ -53,8 +53,7 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">assignment</i>
                         <span>App Setting</span> </a>
                     <ul class="ml-menu">
-
-                        <li id="AppSetting">
+                        <!-- <li id="AppSetting">
                             <a href="#" data-toggle="modal" data-target="#membership_setting" onclick="getAppSettingEdit()">
                                 <i class="material-icons">card_travel</i> <span>App Settings</span> </a>
                         </li>
@@ -87,35 +86,31 @@ if (!$this->session->userdata('logged_in')) {
                             <a href="<?php echo base_url() . "chapters"; ?>">
                                 <i class="material-icons">people</i> <span>Manage Chapter</span> </a>
                         </li>
-                        <!-- <li id="All_exam_list">
+                        <li id="All_exam_list">
                             <a href="<?php //echo base_url() . "All_exam_list"; 
                                         ?>"> <i class="material-icons">people</i>
                                 <span>Manage Exam</span> </a>
-                        </li> -->
-
-
-                        <li id="Banner">
-                            <a href="<?php echo base_url() . "Banner"; ?>"> <i class="material-icons">people</i>
-                                <span>Banner Image</span> </a>
-                        </li>
-                        <li id="introduction_screens">
-                            <a href="<?php echo base_url() . "introduction_screens"; ?>"> <i class="material-icons">people</i>
-                                <span>Introduction Screen</span> </a>
                         </li>
                         <li id="AppHelp">
                             <a href="<?php echo base_url() . "AppHelp"; ?>"> <i class="material-icons">people</i>
                                 <span>App Help Content</span> </a>
                         </li>
-
-
                         <li id="faq">
                             <a href="<?php echo base_url() . "faq"; ?>"> <i class="material-icons">people</i>
                                 <span>FAQ</span> </a>
+                        </li> -->
+                        <li id="Banner">
+                            <a href="<?php echo base_url() . "Banner"; ?>"> <i class="material-icons">people</i>
+                                <span>Banner Image</span> </a>
                         </li>
                         <li id="admin_users">
                             <a href="<?php echo base_url() . "users"; ?>">
                                 <i class="material-icons">people</i> <span>Admin Users</span> </a>
                         </li>
+                        <!-- <li id="introduction_screens">
+                            <a href="<?php echo base_url() . "introduction_screens"; ?>"> <i class="material-icons">people</i>
+                                <span>Introduction Screen</span> </a>
+                        </li> -->
                     </ul>
                 </li>
                 <li id="app_users">
@@ -161,31 +156,31 @@ if (!$this->session->userdata('logged_in')) {
                         </li>
                     </ul>
                 </li>
-                <li id="ebook_category">
+                <li id="ebooks">
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Ebooks</span> </a>
                     <ul class="ml-menu">
-                        <li id="docs">
+                        <li id="ebooks">
                             <a href="<?php echo base_url() . "ebook_cat/ebooks__cat"; ?>">
                                 <i class="material-icons">description</i> <span>Ebook Category</span> </a>
                         </li>
-                        <li id="docs">
+                        <li id="ebooks">
                             <a href="<?php echo base_url() . "ebook_cat/ebooks__cat_list"; ?>">
                                 <i class="material-icons">inventory</i> <span>Ebook Category List</span> </a>
                         </li>
-                        <li id="texts">
+                        <li id="ebooks">
                             <a href="<?php echo base_url() . "ebook_cat/ebooks_sub_cat"; ?>">
                                 <i class="material-icons">description</i> <span>Ebook Sub Category</span> </a>
                         </li>
-                        <li id="texts">
+                        <li id="ebooks">
                             <a href="<?php echo base_url() . "ebook_cat/ebooks_sub_cat_list"; ?>">
                                 <i class="material-icons">inventory</i> <span>Ebook Sub Category List</span> </a>
                         </li>
-                        <li id="videos">
+                        <li id="ebooks">
                             <a href="<?php echo base_url() . "ebook_cat/ebooks_setup"; ?>">
                                 <i class="material-icons">description</i> <span>Ebooks</span> </a>
                         </li>
-                        <li id="videos">
+                        <li id="ebooks">
                             <a href="<?php echo base_url() . "ebook_cat/ebooks_setup_list"; ?>">
                                 <i class="material-icons">inventory</i> <span>Ebooks List</span> </a>
                         </li>
@@ -276,15 +271,15 @@ if (!$this->session->userdata('logged_in')) {
                         </li> -->
                     </ul>
                 </li>
-                <li id="ebook_category">
+                <li id="coupon">
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Coupon</span> </a>
                     <ul class="ml-menu">
-                        <li id="docs">
+                        <li id="coupon">
                             <a href="<?php echo base_url() . "new_coupon/add_coupon"; ?>">
                                 <i class="material-icons">description</i> <span>Add Coupon</span> </a>
                         </li>
-                        <li id="docs">
+                        <li id="coupon">
                             <a href="<?php echo base_url() . "new_coupon/add_coupon_list"; ?>">
                                 <i class="material-icons">description</i> <span>Coupon List</span> </a>
                         </li>
@@ -294,31 +289,31 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Docs and Videos</span> </a>
                     <ul class="ml-menu">
-                        <li id="docs">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/add_document"; ?>">
                                 <i class="material-icons">description</i> <span>Docs</span> </a>
                         </li>
-                        <li id="docs">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/document_list"; ?>">
                                 <i class="material-icons">description</i> <span>Docs List</span> </a>
                         </li>
-                        <li id="texts">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/add_text"; ?>">
                                 <i class="material-icons">inventory</i> <span>Texts</span> </a>
                         </li>
-                        <li id="texts">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/text_list"; ?>">
                                 <i class="material-icons">inventory</i> <span>Texts List</span> </a>
                         </li>
-                        <li id="videos">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/add_videos"; ?>">
                                 <i class="material-icons">movie</i> <span>Videos</span> </a>
                         </li>
-                        <li id="videos">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/videos_list"; ?>">
                                 <i class="material-icons">movie</i> <span>Videos List</span> </a>
                         </li>
-                        <li id="dv_tests">
+                        <li id="docs_and_videos">
                             <a href="<?php echo base_url() . "doc_videos/tests"; ?>">
                                 <i class="material-icons">inventory</i> <span>Tests</span> </a>
                         </li>
@@ -336,42 +331,44 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">question_mark</i>
                         <span>Exam Material</span> </a>
                     <ul class="ml-menu">
-                        <li id="solve_question">
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/add_subject"; ?>">
+                                <i class="material-icons">description</i> <span>Add Subject</span> </a>
+                        </li>
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/subject_list"; ?>">
+                                <i class="material-icons">inventory</i> <span>Subject List</span> </a>
+                        </li>
+
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/add_exam"; ?>">
+                                <i class="material-icons">description</i> <span>Add Exam</span> </a>
+                        </li>
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/exam_list"; ?>">
+                                <i class="material-icons">inventory</i> <span>Exam List</span> </a>
+                        </li>
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/add_exam_year"; ?>">
+                                <i class="material-icons">description</i> <span>Add Exam Year</span> </a>
+                        </li>
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/exam_year_list"; ?>">
+                                <i class="material-icons">inventory</i> <span>Exam Year List</span> </a>
+                        </li>
+
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/add_exam_sub"; ?>">
+                                <i class="material-icons">description</i> <span>Add Exam Sub Type</span> </a>
+                        </li>
+                        <li id="exam_material">
+                            <a href="<?php echo base_url() . "exam_material/exam_sub_list"; ?>">
+                                <i class="material-icons">inventory</i> <span>Exam Sub Type List</span> </a>
+                        </li>
+                        <li id="exam_material">
                             <a href="<?php echo base_url() . "exam_material/exam_material_list"; ?>">
-                                <i class="material-icons">quiz</i> <span>Exam Material List</span> </a>
+                                <i class="material-icons">inventory</i> <span>Exam Material List</span> </a>
                         </li>
-                        <!-- <li id="tcs_ibps_exm">
-                            <a href="#">
-                                <i class="material-icons">picture_as_pdf</i> <span>TCS | IBPS Exams</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>Police Bharti</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>Math Reasoning</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>Grammar Marathi</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>UPSC & SCC</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>State Board / NCERT / YCM</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>Syllabus</span> </a>
-                        </li>
-                        <li id="police_bharti">
-                            <a href="#">
-                                <i class="material-icons">movie</i> <span>Previous Paper</span> </a>
-                        </li> -->
                     </ul>
                 </li>
                 <li id="current_affairs">
@@ -455,19 +452,19 @@ if (!$this->session->userdata('logged_in')) {
                             <a href="<?= base_url() ?>current_affairs_category">
                                 <i class="material-icons">people</i> <span>News</span> </a>
                         </li> -->
-                        <li id="news_content">
+                        <li id="news">
                             <a href="<?php echo base_url() . "news/add_news"; ?>">
                                 <i class="material-icons">people</i> <span>News</span> </a>
                         </li>
-                        <li id="news_content">
+                        <li id="news">
                             <a href="<?php echo base_url() . "news/news_list"; ?>">
                                 <i class="material-icons">people</i> <span>News List</span> </a>
                         </li>
-                        <li id="news_category">
+                        <li id="news">
                             <a href="<?= base_url() ?>news/add_news_categorys">
                                 <i class="material-icons">people</i> <span>Category</span> </a>
                         </li>
-                        <li id="news_category">
+                        <li id="news">
                             <a href="<?= base_url() ?>news/news_cat_list">
                                 <i class="material-icons">people</i> <span>Category List</span> </a>
                         </li>
@@ -490,18 +487,33 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Other Options Details</span> </a>
                     <ul class="ml-menu">
-                        <li id="manage_other_options">
+                        <li id="other_options">
                             <a href="<?= base_url('other_option_new/add_other_option') ?>">
                                 <i class="material-icons">description</i> <span>Manage Other Option</span> </a>
                         </li>
-                        <li id="manage_other_options">
+                        <li id="other_options">
                             <a href="<?= base_url('other_option_new/other_option_list') ?>">
                                 <i class="material-icons">description</i> <span>Other Option List</span> </a>
+                        </li>
+
+                        <li id="other_options">
+                            <a href="<?= base_url('other_option_new/other_option_category_list') ?>">
+                                <i class="material-icons">description</i> <span>Category List</span> </a>
                         </li>
 
                     </ul>
                 </li>
 
+                <li id="other_options">
+                    <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
+                        <span>User Payments</span> </a>
+                    <ul class="ml-menu">
+                        <li id="manage_other_options">
+                            <a href="<?= base_url('all_payments') ?>">
+                                <i class="material-icons">description</i> <span>Payments List</span> </a>
+                        </li>
+                    </ul>
+                </li>
                 <li id="whatsapp_details">
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Whatsapp Details</span> </a>

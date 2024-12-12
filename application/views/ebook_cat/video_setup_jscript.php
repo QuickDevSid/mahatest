@@ -1,6 +1,16 @@
 <script>
     $(document).ready(function() {
         $("#video_setup_submit").validate({
+            $(function() {
+
+                $('#news').addClass('active');
+                $('#news .menu-toggle').addClass('toggled');
+                $('#news .ml-menu').css('display', 'block');
+
+                $('#news').addClass('active');
+                getData();
+            });
+
             rules: {
                 // 'category': {
                 //     required: true,
@@ -47,7 +57,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4"> 
                         <b>Video</b>
                         <div class="input-group">
                             <span class="input-group-addon">

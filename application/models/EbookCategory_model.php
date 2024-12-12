@@ -450,45 +450,36 @@ class EbookCategory_model extends CI_Model
 
 
         if ($id) {
-            echo $upload_image_update;
-            exit;
+            // echo $upload_video_update;
+            // echo "new";
+            // exit;
             $data = array(
-                'chapter_name'             => $this->input->post('chapter_name'),
-                'chapter_description'       => $this->input->post('chapter_description'),
-                'chapter_solution'          => $this->input->post('chapter_solution'),
-                'chapter_image'             => $upload_video_update,
+                'title'             => $this->input->post('title'),
+                'file_name'             => $upload_video_update,
                 'created_on'        => date('Y-m-d H:i:s'),
                 'ebook_id'          => $ebook_id
             );
             // print_r($data);
-            // echo $id;
             // exit;
             $this->db->where('id', $id);
-            $this->db->update('tbl_ebooks', $data);
+            $this->db->update('tbl_ebook_videos', $data);
             return 2;
         } else {
-            echo "insert";
-            exit;
+            // echo "insert";
+            // exit;
             $files = !empty($upload_video) ? explode(',', $upload_video) : [];
             $indices = $this->input->post('indices');
-            // $id = $this->input->get('id');
-            // echo $ebook_id;
-            // // $id = $this->request->getGet('id');
-            // // echo $id;
-            // exit;
             if (!empty($indices)) {
-
                 for ($i = 0; $i < count($indices); $i++) {
-                    $image = array_key_exists($i, $files) ? $files[$i] : null;
+                    $video = array_key_exists($i, $files) ? $files[$i] : null;
+
                     $data = array(
-                        'chapter_name'             => $this->input->post('title_' . $indices[$i]),
-                        'chapter_description'       => $this->input->post('description_' . $indices[$i]),
-                        'chapter_solution'          => $this->input->post('solution_' . $indices[$i]),
-                        'chapter_image'             => $image,
+                        'title'             => $this->input->post('title_' . $indices[$i]),
+                        'file_name	'             => $video,
                         'created_on'        => date('Y-m-d H:i:s'),
                         'ebook_id'          => $ebook_id
                     );
-                    $this->db->insert('tbl_ebook_chapters', $data);
+                    $this->db->insert('tbl_ebook_videos', $data);
                 }
                 return 1;
             }
@@ -609,6 +600,20 @@ class EbookCategory_model extends CI_Model
         }
     }
 
+    public function get_ebook_video_setup()
+    {
+        $this->db->select('`tbl_ebook_videos`.*');
+        $this->db->where('tbl_ebook_videos.status', '1');
+        $this->db->where('tbl_ebook_videos.is_deleted', '0');
+        $this->db->order_by('tbl_ebook_videos.id', 'DESC');
+        $result = $this->db->get('tbl_ebook_videos');
+        if ($result && $result->num_rows() > 0) {
+            return $result->result();
+        } else {
+            return [];
+        }
+    }
+
     public function delete_ebooks_sub_cat($id)
     {
         $data = array(
@@ -637,6 +642,16 @@ class EbookCategory_model extends CI_Model
         );
         $this->db->where('id', $id);
         $this->db->update('tbl_ebook_chapters', $data);
+    }
+
+    public function delete_ebooks_video_setup($id)
+    {
+        $data = array(
+            'status' => 0,
+            'is_deleted' => 1
+        );
+        $this->db->where('id', $id);
+        $this->db->update('tbl_ebook_videos', $data);
     }
 
     public function delete_ebooks__cat($id)

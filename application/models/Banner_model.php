@@ -18,7 +18,7 @@
      }
 
      var $table = "banner";
-      var $select_column = array("banner_id  as id", "banner_image", "status", "created_at", "section_id","sub_section_id","sequence_no");
+      var $select_column = array("banner_id  as id", "banner_image", "status", "created_on", "section_id","sub_section_id","sequence_no");
 
      function make_query()
      {
@@ -55,7 +55,7 @@
      //API call - get a licenses record by id
 
      function getAllData(){
-        $this->db->select('banner_id,section_id,status,CONCAT("'.base_url().'","AppAPI/banner-images/",banner_image) as banner_image,sequence_no,sub_section_id,created_at');
+        $this->db->select('banner_id,section_id,status,CONCAT("'.base_url().'","AppAPI/banner-images/",banner_image) as banner_image,sequence_no,sub_section_id,created_on');
         $this->db->where('status','Active');
         $this->db->order_by('sequence_no','asc');
         $this->db->from($this->table);

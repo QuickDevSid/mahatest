@@ -19,7 +19,7 @@ class Banner_model_Api extends CI_Model
     
     function save_upload($image, $banner_status, $bannerOn, $section_id,$sub_section_id,$sequence)
     {
-        $data = array('banner_image' => $image, 'status' => $banner_status, 'created_at' => $bannerOn, 'sequence_no'=>$sequence,'section_id'=>$section_id,'sub_section_id'=>$sub_section_id);
+        $data = array('banner_image' => $image, 'status' => $banner_status, 'created_on' => $bannerOn, 'sequence_no'=>$sequence,'section_id'=>$section_id,'sub_section_id'=>$sub_section_id);
         
         if ($this->db->insert('banner', $data)) {
             return "Inserted";
@@ -32,7 +32,7 @@ class Banner_model_Api extends CI_Model
     {
         //echo $id;
         //$this->load->model("CurrentAffairs_model");
-        $this->db->select('banner_id,CONCAT("'.base_url().'","AppAPI/banner-images/",banner_image) as banner_image,banner_image as image_name,status,created_at,section_id,sub_section_id,sequence_no');
+        $this->db->select('banner_id,CONCAT("'.base_url().'","AppAPI/banner-images/",banner_image) as banner_image,banner_image as image_name,status,created_on,section_id,sub_section_id,sequence_no');
         $this->db->from('banner');
         $this->db->where('banner_id', $id);
         $query = $this->db->get();

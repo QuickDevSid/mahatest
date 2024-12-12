@@ -85,7 +85,7 @@
                 $('#s_sub_section_id').html(result[0]["sub_section_id"]);
                 $('#s_sub_section_id').selectpicker('refresh');
                 $('#s_sequence').val(result[0]["sequence_no"]);
-                $('#s_created_at').val(result[0]["created_at"]);
+                $('#s_created_at').val(result[0]["created_on"]);
             },
             error: function () {
                 alert('Some error occurred!');

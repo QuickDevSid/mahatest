@@ -1,5 +1,15 @@
 <script type="text/javascript">
     //Tooltip
+    $(function() {
+
+        $('#coupon').addClass('active');
+        $('#coupon .menu-toggle').addClass('toggled');
+        $('#coupon .ml-menu').css('display', 'block');
+
+        $('#coupon').addClass('active');
+        getData();
+    });
+
 
     $('[data-toggle="tooltip"]').tooltip({
         container: 'body'
@@ -7,12 +17,6 @@
 
     $(function() {
 
-        $('#docs_and_videos').addClass('active');
-        $('#docs_and_videos .menu-toggle').addClass('toggled');
-        $('#docs_and_videos .ml-menu').css('display', 'block');
-
-        $('#' + id).addClass('active');
-        getData();
         $('#video_source,#edit_video_source').change(function() {
             if ($(this).val() === 'Hosted') {
                 $('#url-section,#edit_url-section').hide();

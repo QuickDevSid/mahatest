@@ -3,45 +3,29 @@
 
         $(function() {
 
-            $('#ebooks').addClass('active');
-            $('#ebooks .menu-toggle').addClass('toggled');
-            $('#ebooks .ml-menu').css('display', 'block');
+            $('#exam_material').addClass('active');
+            $('#exam_material .menu-toggle').addClass('toggled');
+            $('#exam_material .ml-menu').css('display', 'block');
 
-            $('#ebooks').addClass('active');
+            $('#exam_material').addClass('active');
             getData();
         });
 
-
         $.validator.addMethod("noLeadingWhitespace", function(value, element) {
-            return this.optional(element) || /^[^\s].*$/.test(value); // Ensures the first character is not whitespace
+            return this.optional(element) || /^[^\s].*$/.test(value);
         }, "Please don't start with a blank space.");
 
-
-        $("#test_submit").validate({
+        $("#exam_year_submit").validate({
             rules: {
                 'title': {
                     required: true,
                     noLeadingWhitespace: true,
-                },
-                'image': {
-                    required: function(element) {
-                        return $('input[name="current_image"]').val() == "";
-                    }
-                },
-                'category': {
-                    required: true,
                 }
             },
             messages: {
                 'title': {
                     required: "Please enter title",
                     noLeadingWhitespace: "This field cannot start with a blank space.",
-                },
-                'image': {
-                    required: "Please choose an image",
-                },
-                'category': {
-                    required: "Please select category",
                 }
             },
             submitHandler: function(form) {
@@ -54,10 +38,8 @@
             const roundName = $('#title').val();
             let roundValid = $('#title_error').is(':hidden');
             if (roundValid) {
-                $("#submit").show();
                 $("#submit").prop("disabled", false);
             } else {
-                $("#submit").hide();
                 $("#submit").prop("disabled", true);
             }
         }
@@ -70,7 +52,7 @@
             var title = $('#title').val();
             console.log("name: " + title);
             $.ajax({
-                url: "<?= base_url() ?>Ebook_Category/get_duplicate_sub_cat_title",
+                url: "<?= base_url() ?>Exam_Material/get_duplicate_exam_year_title",
                 type: "post",
                 data: {
                     'id': id,
@@ -89,5 +71,22 @@
                 }
             });
         });
+
+        function calculateSalePrice() {
+            var mrp = parseFloat($('#mrp').val());
+            var discount = parseFloat($('#discount').val());
+            if (!isNaN(mrp) && !isNaN(discount)) {
+                var salePrice = mrp - (mrp * discount / 100);
+                $('#sale_price').val(salePrice.toFixed(2));
+            } else {
+                $('#sale_price').val('');
+            }
+        }
+        $('#mrp, #discount').on('input', function() {
+            calculateSalePrice();
+        });
+        if ($('#mrp').val() && $('#discount').val()) {
+            calculateSalePrice();
+        }
     });
 </script>

@@ -1,5 +1,16 @@
 <script>
     $(document).ready(function() {
+        $(function() {
+
+            $('#ebooks').addClass('active');
+            $('#ebooks .menu-toggle').addClass('toggled');
+            $('#ebooks .ml-menu').css('display', 'block');
+
+            $('#ebooks').addClass('active');
+            getData();
+        });
+
+
         $("#chapter_submit").validate({
             rules: {
                 // 'category': {
@@ -87,7 +98,7 @@
                     <div class="col-md-4">
                         <b>Image</b>
                         <div class="input-group">
-                            <span class="input-group-addon">
+                            <span class="input-group-addon">   
                                 <i class="material-icons">perm_media</i>
                             </span>
                             <div class="form-line">

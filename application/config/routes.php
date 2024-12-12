@@ -109,6 +109,9 @@ $route['other_option_new/status_other_option_list_active/(:any)'] = 'Other_optio
 $route['other_option_new/status_other_option_list_in_active/(:any)'] = 'Other_options_controller/status_other_option_list_in_active/$1';
 
 
+$route['other_option_new/add_other_option_category/(:any)'] = 'Other_options_controller/add_other_option_category/$1';
+$route['other_option_new/other_option_category_list'] = 'Other_options_controller/other_option_category_list';
+$route['other_option_new/delete_other_option_category_list/(:any)'] = 'Other_options_controller/delete_other_option_category_list/$1';
 
 $route['whatsapp_details/add_whatsapp_details'] = 'Whatsapp_details/add_whatsapp_details';
 $route['whatsapp_details/add_whatsapp_details/(:any)'] = 'Whatsapp_details/add_whatsapp_details/$1';
@@ -116,6 +119,26 @@ $route['whatsapp_details/whatsapp_details_list'] = 'Whatsapp_details/whatsapp_de
 $route['whatsapp_details/delete_whatsapp_details_list/(:any)'] = 'Whatsapp_details/delete_whatsapp_details_list/$1';
 $route['whatsapp_details/status_whatsapp_details_list_active/(:any)'] = 'Whatsapp_details/status_whatsapp_details_list_active/$1';
 $route['whatsapp_details/status_whatsapp_details_list_in_active/(:any)'] = 'Whatsapp_details/status_whatsapp_details_list_in_active/$1';
+
+$route['exam_material/add_subject'] = 'Exam_Material/add_subject';
+$route['exam_material/add_subject/(:any)'] = 'Exam_Material/add_subject/$1';
+$route['exam_material/subject_list'] = 'Exam_Material/subject_list';
+$route['exam_material/delete_subject_list/(:any)'] = 'Exam_Material/delete_subject_list/$1';
+
+$route['exam_material/add_exam'] = 'Exam_Material/add_exam';
+$route['exam_material/add_exam/(:any)'] = 'Exam_Material/add_exam/$1';
+$route['exam_material/exam_list'] = 'Exam_Material/exam_list';
+$route['exam_material/delete_exam_list/(:any)'] = 'Exam_Material/delete_exam_list/$1';
+
+$route['exam_material/add_exam_year'] = 'Exam_Material/add_exam_year';
+$route['exam_material/add_exam_year/(:any)'] = 'Exam_Material/add_exam_year/$1';
+$route['exam_material/exam_year_list'] = 'Exam_Material/exam_year_list';
+$route['exam_material/delete_exam_year_list/(:any)'] = 'Exam_Material/delete_exam_year_list/$1';
+ 
+$route['exam_material/add_exam_sub'] = 'Exam_Material/add_exam_sub';
+$route['exam_material/add_exam_sub/(:any)'] = 'Exam_Material/add_exam_sub/$1';
+$route['exam_material/exam_sub_list'] = 'Exam_Material/exam_sub_list';
+$route['exam_material/delete_exam_sub_list/(:any)'] = 'Exam_Material/delete_exam_sub_list/$1';
 
 
 $route['get_membership_section_details'] = 'Membership_Plans/get_membership_section_details';
@@ -134,6 +157,7 @@ $route['doc_videos/add-test/(:any)'] = 'Doc_Videos/add_test/$1';
 $route['doc_videos/delete-test/(:any)'] = 'Doc_Videos/delete_test/$1';
 
 
+$route['test_notification'] = 'Common_controller/test_notification';
 $route['free_test/add-test'] = 'Free_test/add_test';
 $route['free_test/add-test/(:any)'] = 'Free_test/add_test/$1';
 $route['free_test/delete-test/(:any)'] = 'Free_test/delete_test/$1';
@@ -155,11 +179,15 @@ $route['my-contents'] = 'Api_controller/my_contents';
 $route['bought-content-details'] = 'Api_controller/bought_content_details';
 
 $route['buy_test_series'] = 'Api_controller/buy_test_series';
+$route['buy_membership'] = 'Api_controller/buy_membership';
+$route['user_payments'] = 'Api_controller/user_payments';
+$route['user_payment_details'] = 'Api_controller/user_payment_details';
 
 $route['get_coupon_api'] = 'Api_controller/get_coupon_api';
 $route['test_submit'] = 'Api_controller/test_submit';
 $route['test-setup'] = 'TestSetup/test_setup';
 $route['test-list'] = 'TestSetup/test_list';
+$route['all_payments'] = 'Payments_controller/all_payments';
 $route['test-questions'] = 'TestSetup/questions_list';
 $route['test-gallary'] = 'TestSetup/test_gallary';
 $route['delete_image'] = 'TestSetup/delete_image';

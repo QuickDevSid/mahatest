@@ -1,5 +1,16 @@
 <script type="text/javascript">
     $(document).ready(function() {
+
+        $(function() {
+
+            $('#docs_and_videos').addClass('active');
+            $('#docs_and_videos .menu-toggle').addClass('toggled');
+            $('#docs_and_videos .ml-menu').css('display', 'block');
+
+            $('#docs_and_videos').addClass('active');
+            getData();
+        });
+
         $("#test_submit").validate({
             ignore: [],
             rules: {
@@ -28,14 +39,8 @@
 
     $(function () {
 
-        $('#docs_and_videos').addClass('active');
-        $('#docs_and_videos .menu-toggle').addClass('toggled');
-        $('#docs_and_videos .ml-menu').css('display','block');
-
-        $('#'+id).addClass('active');
-        getData();
-        $('#video_source,#edit_video_source').change(function (){
-            if($(this).val()==='Hosted'){
+        $('#video_source,#edit_video_source').change(function() {
+            if ($(this).val() === 'Hosted') {
                 $('#url-section,#edit_url-section').hide();
                 $('#video-section,#edit_video-section').show();
             }else{

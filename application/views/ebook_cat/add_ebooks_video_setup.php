@@ -48,67 +48,41 @@
                                                 <input type="hidden" name="validate" id="validate" value="1">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <b>Chapter Name*</b>
+                                                        <b>Title*</b>
                                                         <div class="input-group">
                                                             <span class="input-group-addon">
                                                                 <i class="material-icons">title</i>
                                                             </span>
                                                             <div class="form-line">
-                                                                <input type="text" name="chapter_name" id="chapter_name"
+                                                                <input type="text" name="title" id="title"
                                                                     class="form-control text" placeholder="Enter Chapter Name" value="<?php if (!empty($single)) {
-                                                                                                                                            echo $single->chapter_name;
+                                                                                                                                            echo $single->title;
                                                                                                                                         } ?>">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <b>Chapter Description*</b>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon">
-                                                                <i class="material-icons">title</i>
-                                                            </span>
-                                                            <div class="form-line">
-                                                                <input type="text" name="chapter_description" id="chapter_description"
-                                                                    class="form-control text" placeholder="Enter Chapter Description" value="<?php if (!empty($single)) {
-                                                                                                                                                    echo $single->chapter_description;
-                                                                                                                                                } ?>">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <b>Chapter Solution*</b>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon">
-                                                                <i class="material-icons">title</i>
-                                                            </span>
-                                                            <div class="form-line">
-                                                                <input type="text" name="chapter_solution" id="chapter_solution"
-                                                                    class="form-control text" placeholder="Enter Chapter Description" value="<?php if (!empty($single)) {
-                                                                                                                                                    echo $single->chapter_solution;
-                                                                                                                                                } ?>">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <b>Image*</b>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon">
-                                                                <i class="material-icons">image</i>
-                                                            </span>
-                                                            <div class="form-line">
-                                                                <input style="height: 100px !important" type="file" name="image" id="image" class="form-control" accept="image/*">
-                                                                <input type="hidden" name="current_image_update" value="<?= isset($single) && !empty($single->chapter_image) ? htmlspecialchars($single->chapter_image) : '' ?>">
-                                                            </div>
-                                                        </div>
-                                                        <?php if (!empty($single) && !empty($single->chapter_image)): ?>
-                                                            <img src="<?= base_url() ?>assets/ebook_images/<?= htmlspecialchars($single->chapter_image); ?>" alt="Image" style="width: 100px; height: auto;" />
-                                                        <?php endif; ?>
-                                                        <div id="errorMessage" class="error" style="color: red;"></div>
-                                                    </div>
-                                                </div>
 
+
+                                                    <div class="col-md-4" id="video-section">
+                                                        <b>Video File</b>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="material-icons">perm_media</i>
+                                                            </span>
+                                                            <div class="form-line">
+                                                                <?php if (isset($single) && !empty($single->file_name)): ?>
+                                                                    <p>Current Video: <?= basename($single->file_name) ?></p>
+                                                                    <input type="file" name="file_name" id="file_name" class="form-control text" accept="video/*">
+                                                                    <input type="hidden" name="current_video_update" value="<?= isset($single) && !empty($single->file_name) ? htmlspecialchars($single->file_name) : '' ?>">
+                                                                <?php else: ?>
+                                                                    <input type="file" name="file_name" id="file_name" class="form-control text" accept="video/*">
+                                                                    <input type="hidden" name="current_video_update" value="<?= isset($single) && !empty($single->file_name) ? htmlspecialchars($single->file_name) : '' ?>">
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             <?php
                                             } ?>
                                         </div>

@@ -232,6 +232,18 @@ class Api_controller extends CI_Controller
 	{
 		$this->Api_model->buy_test_series();
 	}
+	public function buy_membership()
+	{
+		$this->Api_model->buy_membership();
+	}
+	public function user_payments()
+	{
+		$this->Api_model->user_payments();
+	}
+	public function user_payment_details()
+	{
+		$this->Api_model->user_payment_details();
+	}
 
 	public function get_test_series_pdf_api()
 	{

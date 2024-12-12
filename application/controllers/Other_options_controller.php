@@ -581,6 +581,67 @@ class Other_options_controller extends CI_Controller
         redirect('other_option_new/other_option_list');
     }
 
+    public function get_duplicate_other_option_title()
+    {
+        $this->Other_option_model->get_duplicate_other_option_title();
+    }
+
+    public function add_other_option_category()
+    {
+        $title = $this->input->post('title');
+        $this->form_validation->set_rules('title', 'Title', 'required');
+        if ($this->form_validation->run() === FALSE) {
+            $data['single'] = $this->Other_option_model->get_single_other_option_category(); //
+            $this->load->view('templates/header1', $data);
+            $this->load->view('templates/menu', $data);
+            $this->load->view('other_option_new/add_other_option_category', $data);   //pending
+            $this->load->view('templates/footer1', $data);
+            $this->load->view('other_option_new/otheroption_categoryscript', $data);  //pending
+            $this->session->set_flashdata("error", "Error updating Courses.");
+        } else {
+            $res = $this->Other_option_model->set_other_options_category_details();
+            if ($res == "1") {
+                ini_set('display_errors', 1);
+                ini_set('display_startup_errors', 1);
+                error_reporting(E_ALL);
+                $this->session->set_flashdata("success", "Doc and Videos details added successfully!");
+                // echo "inserted";
+                // exit;
+                redirect('other_option_new/other_option_category_list');
+            } elseif ($res == "2") {
+                $this->session->set_flashdata("success", "Doc and Videos entry updated!");
+                // echo "updated";
+                // exit;
+                redirect('other_option_new/other_option_category_list');
+            } else {
+                $this->session->set_flashdata("error", "Error updating Doc and Videos.");
+                redirect('other_option_new/other_option_category_list');
+            }
+        }
+    }
+
+    public function other_option_category_list()
+    {
+        $data['category'] = $this->Other_option_model->get_single_other_option_category_list();
+        // echo '<pre>';
+        // print_r($data['category']);
+        // exit();
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('other_option_new/other_option_category_list', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('other_option_new/otheroption_categoryscript.php', $data);
+        // $this->load->view('courses/newjscript.php', $data);
+    }
+    // public function delete_other_option_category_list($id)
+    // {
+    //     $this->Other_option_model->delete_other_option_category_list($id);
+    //     $this->session->set_flashdata('delete', 'Record deleted successfully');
+    //     redirect('other_option_new/other_option_category_list');
+    // }
+
+
+
     public function add_text()
     {
 

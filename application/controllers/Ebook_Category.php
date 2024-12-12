@@ -394,10 +394,10 @@ class Ebook_Category extends CI_Controller
             $this->load->view('templates/footer1', $data);
             $this->load->view('ebook_cat/video_setup_jscript.php', $data);
         } else {
-            echo "<pre>";
-            print_r($_POST);
-            print_r($_FILES);
-            exit;
+            // echo "<pre>";
+            // print_r($_POST);
+            // print_r($_FILES);
+            // exit;
             $indices = $this->input->post('indices');
             $upload_video = $this->input->post('current_video');
             $video_uploads = [];
@@ -410,8 +410,8 @@ class Ebook_Category extends CI_Controller
                             'allowed_types' => "*",
                             'encrypt_name'  => true,
                         );
-                        print_r($gst_config);
-                        exit;
+                        // print_r($gst_config);
+                        // exit;
                         $this->upload->initialize($gst_config);
                         if ($this->upload->do_upload('videos_' . $indices[$i])) {
                             $data = $this->upload->data();
@@ -427,9 +427,10 @@ class Ebook_Category extends CI_Controller
                 $upload_video = implode(',', $video_uploads);
             }
 
-            $upload_video_update = $this->input->post('current_image_update');  // Get the current image from the hidden field
+            $upload_video_update = $this->input->post('current_video_update');  // Get the current image from the hidden field
 
-            if (isset($_FILES['video']) && $_FILES['video']['name'] != "") {
+            if (isset($_FILES['file_name']) && $_FILES['file_name']['name'] != "") {
+
                 $gst_config = array(
                     'upload_path'   => "assets/ebook_images/",
                     'allowed_types' => "*",  // You can specify the types if needed
@@ -438,7 +439,7 @@ class Ebook_Category extends CI_Controller
                 $this->upload->initialize($gst_config);
 
                 // Handle file upload
-                if ($this->upload->do_upload('video')) {
+                if ($this->upload->do_upload('file_name')) {
                     $data = $this->upload->data();
                     $upload_video_update = $data['file_name'];  // Store the uploaded image's file name
                 } else {
@@ -447,33 +448,43 @@ class Ebook_Category extends CI_Controller
                     $this->session->set_flashdata("error", $error['error']);
                     echo "problem in main video";
                     exit;
-                    redirect('ebook_cat/ebooks_setup_list');
+                    redirect('ebook_cat/ebooks_video_setup_list');
                     return;
                 }
             }
-            print_r($upload_video_update);
-            print_r($upload_video);
-            echo "test";
-            exit;
-
-
+            // print_r($upload_video_update);
+            // // print_r($upload_video);
+            // exit;
             $res = $this->EbookCategory_model->set_ebook_video_details($upload_video, $upload_video_update);
             if ($res == "1") {
                 // echo "1";
                 // exit;
                 $this->session->set_flashdata("success", "Ebook Setup details added successfully!");
-                redirect('ebook_cat/ebooks_chapter_setup_list');
+                redirect('ebook_cat/ebooks_video_setup_list');
             } elseif ($res == "2") {
                 $this->session->set_flashdata("success", "Ebook Setup entry updated!");
                 // echo "2";
                 // exit;
-                redirect('ebook_cat/ebooks_chapter_setup_list');
+                redirect('ebook_cat/ebooks_video_setup_list');
             } else {
                 echo "0";
                 exit;
                 $this->session->set_flashdata("error", "Error updating Ebook Sub Category.");
             }
         }
+    }
+
+    public function ebooks_video_setup_list()
+    {
+        $data['category'] = $this->EbookCategory_model->get_ebook_video_setup();
+        // echo '<pre>';
+        // print_r($data['category']);
+        // exit();
+        $this->load->view('ebook_cat/ebooks_video_setup_list', $data);
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('ebook_cat/video_setup_jscript.php', $data);
     }
 
 
@@ -647,6 +658,14 @@ class Ebook_Category extends CI_Controller
         $this->session->set_flashdata('delete', 'Record deleted successfully');
 
         redirect('ebook_cat/ebooks_chapter_setup_list');
+    }
+
+    public function delete_ebooks_video_setup($id)
+    {
+        $this->EbookCategory_model->delete_ebooks_video_setup($id);
+        $this->session->set_flashdata('delete', 'Record deleted successfully');
+
+        redirect('ebook_cat/ebooks_video_setup_list');
     }
 
     public function ebooks_setup_list()

@@ -5,10 +5,12 @@
     });
 
     $(function() {
-        $('#master').addClass('active');
-        $('#master .menu-toggle').addClass('toggled');
-        $('#master .ml-menu').css('display', 'block');
-        $('#current_affairs_setting').addClass('active');
+
+        $('#news').addClass('active');
+        $('#news .menu-toggle').addClass('toggled');
+        $('#news .ml-menu').css('display', 'block');
+
+        $('#news').addClass('active');
         getData();
     });
 

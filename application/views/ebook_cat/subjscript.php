@@ -1,5 +1,17 @@
 <script>
     $(document).ready(function() {
+
+        $(function() {
+
+            $('#ebooks').addClass('active');
+            $('#ebooks .menu-toggle').addClass('toggled');
+            $('#ebooks .ml-menu').css('display', 'block');
+
+            $('#ebooks').addClass('active');
+            getData();
+        });
+
+
         $.validator.addMethod("noLeadingWhitespace", function(value, element) {
             return this.optional(element) || /^[^\s].*$/.test(value); // Ensures the first character is not whitespace
         }, "Please don't start with a blank space.");

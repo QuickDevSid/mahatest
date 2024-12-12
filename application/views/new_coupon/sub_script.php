@@ -1,5 +1,16 @@
 <script>
     $(document).ready(function() {
+
+        $(function() {
+
+            $('#coupon').addClass('active');
+            $('#coupon .menu-toggle').addClass('toggled');
+            $('#coupon .ml-menu').css('display', 'block');
+
+            $('#coupon').addClass('active');
+            getData();
+        });
+
         $.validator.addMethod("noLeadingWhitespace", function(value, element) {
             return this.optional(element) || /^[^\s].*$/.test(value);
         }, "Please don't start with a blank space.");
