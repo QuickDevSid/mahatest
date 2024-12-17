@@ -24,6 +24,14 @@ class App_Users extends CI_Controller
         $this->load->view('templates/footer1', $data);
         $this->load->view('app_users/jscript.php', $data);
     }
+    public function app_users_details(){        
+        $data['title'] = ucfirst('App User Devices Details');
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('app_users/app_user_details', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('app_users/jscript_device.php', $data);
+	}
 
     function fetch_user()
     {
@@ -32,11 +40,25 @@ class App_Users extends CI_Controller
         $data = array();
         foreach ($fetch_data as $row) {
             $sub_array = array();
-
-            $sub_array[] = '<button type="button" name="Details" onclick="getUserDetails(this.id)" id="details_' . $row->id . '" class="btn bg-grey waves-effect btn-xs" data-toggle="modal" data-target="#UserDetailModel">
-          <i class="material-icons">visibility</i></button>
-           <button type="button" name="Delete" onclick="deleteUserDetails(this.id)" id="delete_' . $row->id . '" data-type="confirm" class="btn bg-red waves-effect btn-xs">
-            <i class="material-icons">delete</i></button>';
+            $membership_details_text = '-';
+            if($row->is_active_membership == '1'){
+                $membership_details = $this->AppUsers_model->check_membership($row->id,$row->my_membership_id);
+                if(!empty($membership_details)){
+                    $membership_details_text = $membership_details->membership_title . '<br>Period: ' . date('d-m-Y',strtotime($membership_details->start_date)) . ' to ' . date('d-m-Y',strtotime($membership_details->end_date)) . '<br>Purchased On: ' . date('d-m-Y h:i A',strtotime($membership_details->created_at));
+                }
+            }
+            // <button type="button" name="Details" onclick="getUserDetails(this.id)" id="details_' . $row->id . '" class="btn bg-grey waves-effect btn-xs" data-toggle="modal" data-target="#UserDetailModel">
+            // <i class="material-icons">visibility</i></button>
+            $sub_array[] = '<a type="button" title="All Payments" name="Payments" href="'.base_url().'all_payments?user_id='.$row->id.'" id="payments_' . $row->id . '" class="btn bg-blue waves-effect btn-xs">
+                                <i class="material-icons">money</i>
+                            </a>
+                            <a type="button" title="All Contents" name="Payments" href="'.base_url().'all_bought_contents?user_id='.$row->id.'" id="payments_' . $row->id . '" style="background-color:#3c4856 !important;" class="btn bg-blue waves-effect btn-xs">
+                                <i class="material-icons">description</i>
+                            </a>
+            <button type="button" name="Delete" onclick="deleteUserDetails(this.id)" id="delete_' . $row->id . '" data-type="confirm" class="btn bg-red waves-effect btn-xs">
+                <i class="material-icons">delete</i>
+            </button>';
+            $sub_array[] = $membership_details_text;
             $sub_array[] = $row->Name;
             $sub_array[] = $row->Email_ID;
             $sub_array[] = $row->Gender;

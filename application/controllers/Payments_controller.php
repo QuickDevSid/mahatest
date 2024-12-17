@@ -17,4 +17,12 @@ class Payments_controller extends CI_Controller
         $this->load->view('templates/footer1', $data);
         $this->load->view('payments/jscript.php', $data);
     }
+    public function all_bought_contents(){
+        $data['title'] = ucfirst('Bought Contents List');
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('payments/all_bought_contents', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('payments/jscript_content.php', $data);
+    }
 }

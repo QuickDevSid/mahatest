@@ -34,7 +34,7 @@ class TestSetup extends CI_Controller
         $this->load->view('templates/menu', $data);
         $this->load->view('testSetup/add_test_gallary', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('testSetup/jscript.php', $data);
+        $this->load->view('testSetup/test_gallary_script.php', $data);
     }
     public function add_test_passages()
     {
@@ -53,7 +53,7 @@ class TestSetup extends CI_Controller
         $this->load->view('templates/menu', $data);
         $this->load->view('testSetup/test_list', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('testSetup/jscript.php', $data);
+        $this->load->view('testSetup/test_list_script.php', $data);
     }
     public function questions_list()
     {
@@ -563,8 +563,9 @@ class TestSetup extends CI_Controller
                 } else {
                     $error = array('error' => $this->upload->display_errors());
                     $this->session->set_flashdata("error", $error['error']);
-                    echo '<pre>'; print_r($error);
-                    exit;
+                    // echo '<pre>';
+                    // print_r($error);
+                    // exit;
                     // redirect('courses/courses_list');
                     return;
                 }
@@ -603,7 +604,7 @@ class TestSetup extends CI_Controller
             $upload_image = $this->input->post('current_group_image');
             if (isset($_FILES['group_image']) && $_FILES['group_image']['name'] != "") {
                 $gst_config = array(
-                    'upload_path'   => "assets/uploads/question_images",
+                    'upload_path'   => "assets/uploads/master_gallary",
                     'allowed_types' => "*",
                     'encrypt_name'  => true,
                 );
@@ -732,11 +733,12 @@ class TestSetup extends CI_Controller
         }
     }
 
-    
-	public function test_notification() {
-		$client = new Client();
-		$title = 'Test Notification Title';
-		$message = 'Description';
+
+    public function test_notification()
+    {
+        $client = new Client();
+        $title = 'Test Notification Title';
+        $message = 'Description';
         $serviceAccountPath = 'ms-saloon-d57c7b983485.json';
 		
 		$device_token = 'f9GQ2s92T52jw1TQeVPp7V:APA91bHGkcyx-KwdG7MgkxnNFHeznPcebNroTr6yGC93UaZU4SM59dlHW1AsRIDhaUF6eXvf83jTg_IN1sxcljh9RBMBOaZBmkXOzlOUvK4ANMLaORfSnpGN4ke8ntLU4QOQ8Q6CDctV';
@@ -773,9 +775,10 @@ class TestSetup extends CI_Controller
         } catch (RequestException $e) {
            echo 'Error: ' . $e->getMessage();
         }
-	}
-	public function send_app_notification($device_token,$title,$message,$data) {
-		$client = new Client();
+    }
+    public function send_app_notification($device_token, $title, $message, $data)
+    {
+        $client = new Client();
 
 		$serviceAccountPath = 'ms-saloon-d57c7b983485.json';
 
@@ -828,7 +831,8 @@ class TestSetup extends CI_Controller
 		}
 	}
 
-	private function generate_jwt($jsonKey) {
+    private function generate_jwt($jsonKey)
+    {
         $now_seconds = time();
         $payload = array(
             "iss" => $jsonKey['client_email'],

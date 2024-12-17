@@ -65,7 +65,7 @@
             $('#marathi_sabd .menu-toggle').addClass('toggled');
             $('#marathi_sabd .ml-menu').css('display', 'block');
 
-            $('#marathi_sabd').addClass('active');
+            $('#marathi_sabd_form').addClass('active');
             getData();
         });
 

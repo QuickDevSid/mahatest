@@ -67,10 +67,14 @@ $route['users'] = 'Users';
 $route['app_users'] = 'App_Users';
 $route['mobile_app_users'] = "admin/Admin_controller/app_Users";
 $route['app_users'] = 'App_Users';
+$route['delete_user/(:any)'] = 'Users/delete_user/$1';
+$route['User/updateUser'] = 'Users/updateUser';
 $route['current_affairs'] = 'CurrentAffairs';
 $route['current_affairs_category'] = 'CurrentAffairs/current_affairs_category';
 $route['news_category'] = 'News/news_category';
 $route['add_news_category_form'] = 'News/add_news_category_form';
+
+$route['exam_material/exam_material_list'] = 'Exam_Material/exam_material_list';
 $route['add_news_category_form/(:any)'] = 'News/add_news_category_form/$1';
 $route['add_news_category'] = 'News/add_news_category';
 $route['add_current_affairs_category_form'] = 'CurrentAffairs/add_current_affairs_category_form';
@@ -85,6 +89,7 @@ $route['current_affairs/add-test/(:any)'] = 'CurrentAffairs/add_test/$1';
 $route['current_affairs/delete-test/(:any)'] = 'CurrentAffairs/delete_test/$1';
 $route['current_affairs_category_api'] = 'Api_controller/current_affairs_category_api';
 $route['get_current_affairs_test_api'] = 'Api_controller/get_current_affairs_test_api';
+// $route['get_recent_post_api_exam_material'] = 'Api_controller/get_recent_post_api_exam_material';
 $route['other_option'] = 'Other_option';
 $route['news'] = 'News';
 $route['current_affairs_setting'] = 'CurrentAffairs/current_affairs_setting';
@@ -134,11 +139,47 @@ $route['exam_material/add_exam_year'] = 'Exam_Material/add_exam_year';
 $route['exam_material/add_exam_year/(:any)'] = 'Exam_Material/add_exam_year/$1';
 $route['exam_material/exam_year_list'] = 'Exam_Material/exam_year_list';
 $route['exam_material/delete_exam_year_list/(:any)'] = 'Exam_Material/delete_exam_year_list/$1';
- 
+
 $route['exam_material/add_exam_sub'] = 'Exam_Material/add_exam_sub';
 $route['exam_material/add_exam_sub/(:any)'] = 'Exam_Material/add_exam_sub/$1';
 $route['exam_material/exam_sub_list'] = 'Exam_Material/exam_sub_list';
 $route['exam_material/delete_exam_sub_list/(:any)'] = 'Exam_Material/delete_exam_sub_list/$1';
+
+$route['exam_material/add_examwise_pdf/(:any)'] = 'Exam_material/add_examwise_pdf/$1';
+$route['exam_material/add_examwise_pdf/(:any)/(:any)'] = 'Exam_material/add_examwise_pdf/$1/$1';
+$route['exam_material/examwise_pdf_list'] = 'Exam_material/examwise_pdf_list';
+$route['exam_material/delete_examwise_pdf/(:any)'] = 'Exam_material/delete_examwise_pdf/$1';
+
+$route['exam_material/add_examwise_test/(:any)'] = 'Exam_material/add_examwise_test/$1';
+$route['exam_material/add_examwise_test/(:any)/(:any)'] = 'Exam_material/add_examwise_test/$1/$1';
+$route['exam_material/examwise_test_list'] = 'Exam_material/examwise_test_list';
+$route['exam_material/delete_examwise_test/(:any)'] = 'Exam_material/delete_examwise_test/$1';
+
+$route['exam_material/add_document/(:any)'] = 'Exam_material/add_document/$1';
+$route['exam_material/document_list'] = 'Exam_material/document_list';
+
+
+
+
+$route['exam_material/add_subjectwise_pdf/(:any)'] = 'Exam_Material/add_subjectwise_pdf/$1';
+$route['exam_material/add_subjectwise_pdf/(:any)/(:any)'] = 'Exam_Material/add_subjectwise_pdf/$1/$1';
+$route['exam_material/subjectwise_pdf_list'] = 'Exam_Material/subjectwise_pdf_list';
+$route['exam_material/delete_subjectwise_pdf/(:any)'] = 'Exam_Material/delete_subjectwise_pdf/$1';
+
+$route['exam_material/add_examwise_pdf/(:any)'] = 'Exam_Material/add_examwise_pdf/$1';
+$route['exam_material/add_examwise_pdf/(:any)/(:any)'] = 'Exam_Material/add_examwise_pdf/$1/$1';
+$route['exam_material/examwise_pdf_list'] = 'Exam_Material/examwise_pdf_list';
+$route['exam_material/delete_examwise_pdf/(:any)'] = 'Exam_Material/delete_examwise_pdf/$1';
+
+$route['exam_material/add_subjectwise_test/(:any)'] = 'Exam_Material/add_subjectwise_test/$1';
+$route['exam_material/add_subjectwise_test/(:any)/(:any)'] = 'Exam_Material/add_subjectwise_test/$1/$1';
+$route['exam_material/subjectwise_test_list'] = 'Exam_Material/subjectwise_test_list';
+$route['exam_material/delete_subjectwise_test/(:any)'] = 'Exam_Material/delete_subjectwise_test/$1';
+
+$route['exam_material/add_examwise_test/(:any)'] = 'Exam_Material/add_examwise_test/$1';
+$route['exam_material/add_examwise_test/(:any)/(:any)'] = 'Exam_Material/add_examwise_test/$1/$1';
+$route['exam_material/examwise_test_list'] = 'Exam_Material/examwise_test_list';
+$route['exam_material/delete_examwise_test/(:any)'] = 'Exam_Material/delete_examwise_tests/$1';
 
 
 $route['get_membership_section_details'] = 'Membership_Plans/get_membership_section_details';
@@ -188,6 +229,7 @@ $route['test_submit'] = 'Api_controller/test_submit';
 $route['test-setup'] = 'TestSetup/test_setup';
 $route['test-list'] = 'TestSetup/test_list';
 $route['all_payments'] = 'Payments_controller/all_payments';
+$route['all_bought_contents'] = 'Payments_controller/all_bought_contents';
 $route['test-questions'] = 'TestSetup/questions_list';
 $route['test-gallary'] = 'TestSetup/test_gallary';
 $route['delete_image'] = 'TestSetup/delete_image';
@@ -252,6 +294,9 @@ $route['set_user_marathi_sabd_sangrah_bookmark_api'] = 'Api_controller/set_user_
 $route['set_user_english_vocabulary_bookmark_api'] = 'Api_controller/set_user_english_vocabulary_bookmark_api';
 
 
+// CRON DAILY MIDNIGHT
+$route['update_memberships'] = 'Api_controller/update_memberships';
+
 
 $route['get_manage_test_series_api'] = 'Api_controller/get_manage_test_series_api';
 $route['get_single_test_series_api'] = 'Api_controller/get_single_test_series_api';
@@ -265,6 +310,7 @@ $route['get_my_membership'] = 'Api_controller/get_my_membership';
 
 $route['get_help_master_api'] = 'Api_controller/get_help_master_api';
 
+$route['get_syllabus_api'] = 'Api_controller/get_syllabus_api';
 $route['get_other_options_api'] = 'Api_controller/get_other_options_api';
 $route['get_membership_plans_api'] = 'Api_controller/get_membership_plans_api';
 
@@ -294,6 +340,7 @@ $route['get_user_profile_api'] = 'Api_controller/get_user_profile_api';
 
 $route['set_logged_in_user'] = 'Api_controller/set_logged_in_user';
 $route['set_user_logout'] = 'Api_controller/set_user_logout';
+$route['user_notifications'] = 'Api_controller/user_notifications';
 
 $route['exam_materials_api'] = 'Api_controller/exam_materials_api';
 $route['exam_material_subjects_api'] = 'Api_controller/exam_material_subjects_api';
@@ -320,7 +367,19 @@ $route['get_all_category_marathi_sabd_api'] = 'Api_controller/get_all_category_m
 $route['get_marathi_sabd_api'] = 'Api_controller/get_marathi_sabd_api';
 $route['get_english_vocabulary_api'] = 'Api_controller/get_english_vocabulary_api';
 
+
 $route['get_whatsapp_number_api'] = 'Api_controller/get_whatsapp_number_api';
+
+$route['delete_active_user'] = 'Api_controller/delete_active_user';
+
+$route['get_mpsc_all_api'] = 'Api_controller/get_mpsc_all_api';
+$route['mpsc_all_subjectwise_external_api'] = 'Api_controller/mpsc_all_subjectwise_external_api';
+$route['exam_material_subjectwise_api'] = 'Api_controller/exam_material_subjectwise_api';
+$route['exam_material_examwise_api'] = 'Api_controller/exam_material_examwise_api';
+$route['exam_material_subjectwise_tests_api'] = 'Api_controller/exam_material_subjectwise_tests_api';
+$route['exam_material_examwise_tests_api'] = 'Api_controller/exam_material_examwise_tests_api';
+
+$route['get_recent_post_api_exam_material'] = 'Api_controller/get_recent_post_api_exam_material';
 
 
 // $route['exam_material_previous_paper_examwise_pdf'] = 'Api_controller/exam_material_previous_paper_examwise_pdf ';
@@ -368,7 +427,7 @@ $route['marathi_sabd/delete_marathi_sabd_category/(:any)'] = 'MarathiSabd/delete
 //admin routes staret   
 $route['add_help_master'] = "admin/Admin_controller/add_help_master";
 // $route['app_users'] = "admin/Admin_controller/app_users";
-$route['mobile_app_users'] = "admin/Admin_controller/app_Users";
+$route['mobile_app_users'] = "App_Users/app_users_details";
 $route['add_other_option_category'] = "admin/Admin_controller/add_other_option_category";
 
 /*27-02-2024*/
@@ -391,6 +450,12 @@ $route['courses/texts_list'] = 'Courses/texts_list';
 $route['courses/add_pdfs'] = 'Courses/add_pdfs';
 $route['courses/add_pdfs/(:any)'] = 'Courses/add_pdfs/$1';
 $route['courses/pdfs_list'] = 'Courses/pdfs_list';
+
+
+// $route['exam_material/previous_examwise_pdf/(:any)'] = 'Exam_material/previous_examwise_pdf/$1';
+
+// $route['exam_material/add_document/(:any)'] = 'Exam_material/add_document/$1';
+// $route['exam_material/document_list'] = 'Exam_material/document_list';
 
 
 $route['doc_videos/add_document'] = 'Doc_Videos/add_document';

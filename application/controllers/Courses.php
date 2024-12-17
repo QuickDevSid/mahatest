@@ -75,7 +75,7 @@ class Courses extends CI_Controller
         $this->load->view('templates/menu', $data);
         $this->load->view('courses/tests', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('courses/jscript.php', $data);
+        $this->load->view('courses/tests_script.php', $data);
     }
     public function videos()
     {
@@ -404,7 +404,7 @@ class Courses extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('courses/newjscript.php', $data);
+        $this->load->view('courses/course_list_script.php', $data);
     }
 
 
@@ -481,10 +481,13 @@ class Courses extends CI_Controller
                         return;
                     }
 
-                    $target_file = $target_dir . uniqid() . '.' . $file_ext;
+                    // $target_file = $target_dir . uniqid() . '.' . $file_ext;
+                    $unique_filename = uniqid() . '.' . $file_ext;
+                    $target_file = $target_dir . $unique_filename;
 
                     if (move_uploaded_file($_FILES['video_file']['tmp_name'], $target_file)) {
                         $video_url = $target_file;
+                        $video_url = $unique_filename;
                     } else {
                         $this->session->set_flashdata("error", "Error uploading video.");
                         redirect('courses/courses_video_list');
@@ -539,7 +542,7 @@ class Courses extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('courses/newjscriptvideo.php', $data);
+        $this->load->view('courses/course_video_list_script.php', $data);
     }
 
 
@@ -1506,7 +1509,7 @@ class Courses extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('courses/textsscript.php', $data);
+        $this->load->view('courses/texts_list_script.php', $data);
         // $this->load->view('courses/newjscript.php', $data);
     }
 
@@ -1610,7 +1613,7 @@ class Courses extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('courses/pdfsscript.php', $data);
+        $this->load->view('courses/pdf_list_script.php', $data);
         // $this->load->view('courses/newjscript.php', $data);
     }
 

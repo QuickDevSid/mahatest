@@ -277,7 +277,7 @@ class TestSetup_model extends CI_Model
                     }
 
                     $gst_config = array(
-                        'upload_path'   => "assets/uploads/question_images",
+                        'upload_path'   => "assets/uploads/master_gallary",
                         'allowed_types' => "*",
                         'encrypt_name'  => true,
                     );

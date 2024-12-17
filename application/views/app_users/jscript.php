@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Web Based Software Activation System
  * Developed By
@@ -10,20 +11,29 @@
 ?>
 
 <script type="text/javascript">
-
     //Tooltip
     $('[data-toggle="tooltip"]').tooltip({
         container: 'body'
     });
 
-    $(function () {
+    // $(function() {
+    //     $('#app_users').addClass('active');
+    //     getData();
+    // });
+
+    $(function() {
+        $('#app_user_management').addClass('active');
+        $('#app_user_management .menu-toggle').addClass('toggled');
+        $('#app_user_management .ml-menu').css('display', 'block');
+
         $('#app_users').addClass('active');
         getData();
     });
 
     function getData() {
+        var is_member = '<?php if(isset($_GET['is_member'])){ echo $_GET['is_member']; }?>';
 //Table data featching.
-        var ur = "<?php echo base_url() ?>App_Users/fetch_user";
+        var ur = "<?php echo base_url() ?>App_Users/fetch_user?is_member=" + is_member;
         //Exportable table
         $('#user_data').DataTable({
             dom: 'Bfrtip',
@@ -110,7 +120,7 @@
                   data: "id=" + lid,
                   success: function (data) {
                       $('#success_message').html(data);
-                      console.log(data);
+                      console.log('response: ',data);
                       myFunctionSuc();
                       if (data === "Success") {
                           swal("Deleted!", "Your User details has been deleted.", "success");
@@ -119,6 +129,7 @@
                           $("#error_message").html(data);
                           myFunctionEr();
                       }
+                      location.reload();
                   }
               });
           }

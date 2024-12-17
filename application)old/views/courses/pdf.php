@@ -1,0 +1,464 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>DASHBOARD -> Courses - Pdf </h2>
+        </div>
+
+        <div class="row clearfix">
+            <!-- Task Info -->
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>
+                            Pdf
+                            <button type="button" class="btn bg-teal waves-effect pull-right" data-toggle="modal"
+                                data-target="#add">
+                                <i class="material-icons">person_add</i>
+                                <span>Add Pdf</span>
+                            </button>
+                        </h2>
+
+                    </div>
+                    <div class="body">
+                        <div class="table-responsive js-sweetalert">
+                            <table id="user_data"
+                                class="table table-bordered table-striped table-hover dataTable js-exportable nowrap" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="10%">Action</th>
+                                        <th>Title</th>
+                                        <th>Time</th>
+                                        <th>Can Download</th>
+                                        <th>PDF</th>
+                                        <th>Image</th>
+                                        <th>Status</th>
+
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th width="10%">Action</th>
+                                        <th>Title</th>
+                                        <th>Time</th>
+                                        <th>Can Download</th>
+                                        <th>PDF</th>
+                                        <th>Image</th>
+                                        <th>Status</th>
+
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Task Info -->
+
+        </div>
+    </div>
+</section>
+
+
+<div class="modal fade" id="add" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <form id="submit" enctype="multipart/form-data" action="<?php echo base_url() ?>Courses/add_pdf_data" method="POST">
+            <input type="hidden" name="source_type" value="courses">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="defaultModalLabel">Add New Pdf </h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Masked Input -->
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="card">
+
+                                <div class="body">
+                                    <div class="demo-masked-input">
+                                        <div class="row clearfix">
+                                            <div class="col-md-4">
+                                                <b>Title</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">person</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="text" name="title" id="title"
+                                                            class="form-control text" placeholder="Title" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Courses</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="source_id" id="source_id">
+                                                    <option value="">Select Course</option>
+                                                    <?php
+                                                    $courses = courses();
+                                                    if (isset($courses) && !empty($courses)) {
+                                                        foreach ($courses as $row) { ?>
+                                                            <option value="<?= $row->id; ?>"><?= $row->title; ?></option>
+                                                    <?php
+                                                        }
+                                                    }
+                                                    ?>
+
+                                                </select>
+                                            </div>
+                                            <!-- time  -->
+
+                                            <div class="col-md-4">
+                                                <b>Time</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">access_time</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <!-- Input field for the time -->
+                                                        <input type="number" name="time" id="time" class="form-control text" required min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- end time -->
+
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Can Download</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="can_download">
+                                                    <option value="Yes">Yes</option>
+                                                    <option value="No">No</option>
+
+                                                </select>
+
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>Image</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">perm_media</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="file" name="image" id="coursess"
+                                                            class="form-control text" required accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>PDF</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">perm_media</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="file" name="pdf" id="pdf"
+                                                            class="form-control text" required accept="application/pdf">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Status</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="status">
+                                                    <option value="Active">Active</option>
+                                                    <option value="InActive">InActive</option>
+
+                                                </select>
+
+                                            </div>
+                                            <div class="col-md-12">
+                                                <p>
+                                                    <b>Description</b>
+                                                </p>
+                                                <textarea class="form-control text" name="description" id="description" placeholder="Description" rows="5" cols="5"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- #END# Masked Input -->
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="submit" id="submit" class="btn btn-link waves-effect">SAVE PDF
+                    </button>
+                    <button type="button" class="btn btn-link waves-effect"
+                        data-dismiss="modal">CLOSE
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="edit" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <form id="submit_examsection" enctype="multipart/form-data" action="<?php echo base_url() ?>Courses/update_pdf_data" method="POST">
+            <input type="hidden" name="source_type" value="courses">
+            <input type="hidden" name="id" id="edit_id" value="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="defaultModalLabel">update New pdf </h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Masked Input -->
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="card">
+
+                                <div class="body">
+                                    <div class="demo-masked-input">
+                                        <div class="row clearfix">
+                                            <div class="col-md-4">
+                                                <b>Title</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">person</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="text" name="title" id="edit_title"
+                                                            class="form-control text" placeholder="Title" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Courses</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="source_id" id="edit_source_id">
+                                                    <option value="">Select Course</option>
+                                                    <?php
+                                                    $courses = courses();
+                                                    if (isset($courses) && !empty($courses)) {
+                                                        foreach ($courses as $row) { ?>
+                                                            <option value="<?= $row->id; ?>"><?= $row->title; ?></option>
+                                                    <?php
+                                                        }
+                                                    }
+                                                    ?>
+
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>Time</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">access_time</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <!-- Input field for the time -->
+                                                        <input type="number" name="time" id="edit_time" class="form-control text" required min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <b>Image</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">perm_media</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="file" name="image" id="image"
+                                                            class="form-control text" accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>PDF</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">perm_media</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="file" name="pdf" id="pdf"
+                                                            class="form-control text" accept="application/pdf">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Can Download</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="can_download" id="edit_can_download">
+                                                    <option value="Yes">Yes</option>
+                                                    <option value="No">No</option>
+
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Status</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="status" id="edit_status">
+                                                    <option value="Active">Active</option>
+                                                    <option value="InActive">InActive</option>
+
+                                                </select>
+
+                                            </div>
+                                            <div class="col-md-12">
+                                                <p>
+                                                    <b>Description</b>
+                                                </p>
+                                                <textarea class="form-control text" name="description" id="edit_description" placeholder="Description" rows="5" cols="5"></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- #END# Masked Input -->
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="submit" id="submit" class="btn btn-link waves-effect">SAVE DETAILS
+                    </button>
+                    <button type="button" class="btn btn-link waves-effect"
+                        data-dismiss="modal">CLOSE
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="show" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="defaultModalLabel">View Pdf Document</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Masked Input -->
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="card">
+
+                                <div class="body">
+                                    <div class="demo-masked-input">
+                                        <div class="row clearfix">
+                                            <div class="col-md-4">
+                                                <b>Title</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">person</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="text" name="title" id="s_title"
+                                                            class="form-control text" placeholder="Title" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>Time</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">access_time</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <!-- Input field for the time -->
+                                                        <input type="number" name="time" id="s_time" class="form-control text" required min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Status</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="status" id="s_status">
+                                                    <option value="Active">Active</option>
+                                                    <option value="InActive">InActive</option>
+
+                                                </select>
+
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p>
+                                                    <b>Can Download</b>
+                                                </p>
+                                                <select class="form-control show-tick" name="can_download" id="s_can_download">
+                                                    <option value="Yes">Yes</option>
+                                                    <option value="No">No</option>
+
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <b>Image</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">perm_media</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="file" name="image" id="image"
+                                                            class="form-control text" accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <b>PDF</b>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="material-icons">perm_media</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="file" name="pdf" id="pdf"
+                                                            class="form-control text" accept="application/pdf">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p>
+                                                    <b>Description</b>
+                                                </p>
+                                                <textarea class="form-control text" name="description" id="s_description" placeholder="Description" rows="5" cols="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- #END# Masked Input -->
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-link waves-effect"
+                        data-dismiss="modal">CLOSE
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let type = 'Pdf';
+    let id = 'courses_pdf';
+    let url = "<?php echo base_url() ?>get_courses_details?type=" + type;
+</script>

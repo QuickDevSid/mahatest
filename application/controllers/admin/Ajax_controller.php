@@ -5,6 +5,7 @@ class Ajax_controller extends CI_Controller {
 
    
 	public function get_app_users_ajx(){
+		$this->load->model('Admin_model');
 		$draw = intval($this->input->post("draw"));
 		$start = intval($this->input->post("start"));
 		$length = intval($this->input->post("length"));

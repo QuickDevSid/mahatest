@@ -80,6 +80,7 @@ class Api_model extends CI_Model
             if (!empty($request['mobile_number'])) {
                 $mobile_number = $request['mobile_number'];
                 // $this->db->where('is_deleted', '0');
+                $this->db->where('status', 'Active');
                 $this->db->where('mobile_number', $mobile_number);
                 $exist = $this->db->get('user_login')->num_rows();
 
@@ -142,16 +143,22 @@ class Api_model extends CI_Model
     {
         $request = json_decode(file_get_contents('php://input'), true);
         if ($request) {
-            if (!empty($request['mobile_number'])) {
+            if (!empty($request['mobile_number']) && !empty($request['push_token'])) {
                 $mobile_number = $request['mobile_number'];
-                $push_token = $request['push_token'];
+                $fcm_token = $request['push_token'];
+                $device_id = isset($request['device_id']) ? $request['device_id'] : '';
 
                 $this->db->where('mobile_number', $mobile_number);
+                $this->db->where('status', 'Active');
 
                 $user = $this->db->get('user_login')->row();
                 if (!empty($user)) {
                     $update_data = [
-                        'push_token'    => $user->push_token
+                        'fcm_token'     => $fcm_token,
+                        'push_token'    => $fcm_token,
+                        'device_id'     => $device_id,
+                        'last_logged_in'        => date('Y-m-d H:i:s'),
+                        'is_logged_in'          => '1',
                     ];
                     $this->db->where('login_id', $user->login_id);
                     $this->db->update('user_login', $update_data);
@@ -169,7 +176,12 @@ class Api_model extends CI_Model
                 } else {
                     $data = array(
                         'mobile_number' => $request['mobile_number'],
-                        'push_token' => $request['push_token'],
+                        'fcm_token'     => $fcm_token,
+                        'push_token'    => $fcm_token,
+                        'device_id'     => $device_id,
+                        'last_logged_in'        => date('Y-m-d H:i:s'),
+                        'is_logged_in'          => '1',
+                        'status'          => 'Active',
                         'created_at'    => date('Y-m-d H:i:s')
                     );
                     $this->db->insert('user_login', $data);
@@ -204,7 +216,7 @@ class Api_model extends CI_Model
                 // }
             } else {
                 $json_arr['status'] = 'false';
-                $json_arr['message'] = 'Mobile number  not found. Please try again.';
+                $json_arr['message'] = 'Mobile number, Push Token required. Please try again.';
                 $json_arr['data'] = [];
             }
         } else {
@@ -322,12 +334,12 @@ class Api_model extends CI_Model
                         'last_login_on'     => date('Y-m-d H:i:s'),
                         'device_details'    => $device_details,
                         'permission_details' => $permission_details,
-                        'created_at'        => date('Y-m-d H:i:s')
+                        'created_on'        => date('Y-m-d H:i:s')
                     ));
                     $app_panel_user_id = $exist->id;
                 } else {
                     $this->db->insert('tbl_app_users', array(
-                        'project'               => $project,
+                        'project'               => 'mahatest',
                         'device_id'             => $device_id,
                         'username'              => $username,
                         'password'              => $password,
@@ -365,7 +377,7 @@ class Api_model extends CI_Model
                 $app_panel_user_id = $request['app_panel_user_id'];
 
                 $this->db->where('project_user_table_id', $user_id);
-                $this->db->where('project', $project);
+                $this->db->where('project', 'mahatest');
                 $this->db->where('id', $app_panel_user_id);
                 $this->db->where('device_id', $device_id);
                 $this->db->where('is_deleted', '0');
@@ -1012,14 +1024,14 @@ class Api_model extends CI_Model
         if (!empty($exist)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'Course videos retrieved successfully.';
-            $json_arr['video_path'] = base_url() . 'assets/uploads/courses/videos/';
+            $json_arr['video_path'] = base_url();
             $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
 
             $json_arr['data'] = $exist;
         } else {
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'Course videos not available.';
-            $json_arr['video_path'] = base_url() . 'assets/uploads/courses/videos/';
+            $json_arr['video_path'] = base_url();
             $json_arr['image_path'] = base_url() . 'assets/uploads/courses/images/';
             $json_arr['data'] = [];
         }
@@ -1157,24 +1169,31 @@ class Api_model extends CI_Model
         $request = json_decode(file_get_contents('php://input'), true);
         $offset = isset($request['offset']) ? (int) $request['offset'] : 0;
         $limit = isset($request['limit']) ? (int) $request['limit'] : 10;
-        $type = isset($request['type']) ? $request['type'] : null;
+        $type = isset($request['type']) ? (string)$request['type'] : null;
         $login_id = isset($request['login_id']) ? (int) $request['login_id'] : null;
+        $source_type = isset($request['source_type']) ? (string)$request['source_type'] : null;
+
         $this->db->select('id,type,title, status, video_source, image_url, video_url, description,source_type,can_download,pdf_url,views_count,source_id,num_of_questions,time');
-
-        $this->db->from('docs_videos');
-        if ($type !== null) {
-            $this->db->where('type', $type);
+        if ($type != '') {
+            $this->db->where('type', (string)$type);
         }
-        $this->db->limit($limit, $offset);
-
-        $results = $this->db->get()->result();
-        $is_membership = 0;
-        $this->db->select('id');
-        $this->db->from('tbl_my_membership');
-        $this->db->where('login_id', $login_id);
+        $this->db->where('source_type', 'doc_video');
         $this->db->where('is_deleted', '0');
-        $membership = $this->db->get()->result();
-        if (!empty($membership)) {
+        $this->db->where('status', '1');
+        $this->db->limit($limit, $offset);
+        $results = $this->db->get('docs_videos')->result();
+
+        $is_membership = 0;
+        $this->db->select('tbl_my_membership.id, tbl_my_membership.membership_id, tbl_my_membership.login_id, tbl_my_membership.start_date, tbl_my_membership.end_date, tbl_my_membership.amount, tbl_my_membership.payment_id, tbl_my_membership.status, tbl_my_membership.is_deleted, tbl_my_membership.created_at, tbl_my_membership.updated_at, membership_plans.title as membership_title');
+        $this->db->join('membership_plans', 'membership_plans.id = tbl_my_membership.membership_id');
+        $this->db->join('user_login', 'user_login.login_id = tbl_my_membership.login_id');
+        $this->db->where('tbl_my_membership.is_deleted', '0');
+        $this->db->where('user_login.is_active_membership', '1');
+        $this->db->where('tbl_my_membership.login_id', $login_id);
+        $this->db->order_by('tbl_my_membership.id', 'desc');
+        $this->db->where('CURDATE() BETWEEN tbl_my_membership.start_date AND tbl_my_membership.end_date');
+        $membership_details = $this->db->get('tbl_my_membership')->row();
+        if (!empty($membership_details)) {
             $is_membership = 1;
         }
 
@@ -1219,6 +1238,7 @@ class Api_model extends CI_Model
     {
         $request = json_decode(file_get_contents('php://input'), true);
         $this->db->where('status', 'Active');
+        $this->db->where('id !=', '4');
         $query = $this->db->get('tbl_other_option_category');
         $result = $query->result();
         $json_arr = [
@@ -1236,9 +1256,10 @@ class Api_model extends CI_Model
         $other_option_category_id = $request['other_option_category_id'];
         $offset = $request['offset'];
         $limit = $request['limit'];
-        $this->db->select('id, other_option_category_id, title, short_description, description, image_url, pdf_url, status, created_on, can_download, type');
+        $this->db->select('id, other_option_category_id, title, short_description, description, image_url, pdf_url, status, created_on, can_download, other_option_type as type');
         $this->db->from('tbl_other_option');
         $this->db->where('other_option_category_id', $other_option_category_id);
+        $this->db->where('other_option_category_id !=', '4');
         $this->db->limit($limit, $offset);
 
         $result = $this->db->get()->result();
@@ -1252,6 +1273,34 @@ class Api_model extends CI_Model
         } else {
             $json_arr['status'] = 'false';
             $json_arr['message'] = 'No other options available.';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/other_options/images/';
+            $json_arr['pdf_path'] = base_url() . 'assets/uploads/other_options/pdfs/';
+            $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr);
+    }
+
+    public function get_syllabus_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+        $this->db->select('id, title, short_description, description, image_url, pdf_url, status, created_on, can_download, other_option_type as type');
+        $this->db->from('tbl_other_option');
+        $this->db->where('other_option_category_id', '4');
+        $this->db->limit($limit, $offset);
+
+        $result = $this->db->get()->result();
+        $json_arr = array();
+        if (!empty($result)) {
+            $json_arr['status'] = 'true';
+            $json_arr['message'] = 'Syllabus retrieved successfully.';
+            $json_arr['image_path'] = base_url() . 'assets/uploads/other_options/images/';
+            $json_arr['pdf_path'] = base_url() . 'assets/uploads/other_options/pdfs/';
+            $json_arr['data'] = $result;
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Syllabus not available.';
             $json_arr['image_path'] = base_url() . 'assets/uploads/other_options/images/';
             $json_arr['pdf_path'] = base_url() . 'assets/uploads/other_options/pdfs/';
             $json_arr['data'] = [];
@@ -1327,9 +1376,7 @@ class Api_model extends CI_Model
     public function get_my_membership()
     {
         $request = json_decode(file_get_contents('php://input'), true);
-        // login_id = isset($request['login_id']) ? (int) $request['login_id'] 
         $login_id = $request['login_id'];
-        // $login_id = $this->input->post('login_id');
 
         if (empty($login_id)) {
             $json_arr['status'] = 'false';
@@ -1339,39 +1386,31 @@ class Api_model extends CI_Model
             return;
         }
 
-        $this->db->from('tbl_my_membership');
-        $this->db->where('login_id', $login_id);
-        $this->db->where('is_deleted', '0');
-        $exists = $this->db->count_all_results();
-
         $is_membership = 0;
-        if ($exists > 0) {
-            $this->db->select('id, membership_id, login_id, start_date, end_date, amount, payment_id, status, is_deleted, created_at, updated_at');
-            $this->db->from('tbl_my_membership');
-            $this->db->where('login_id', $login_id);
+        $this->db->select('tbl_my_membership.id, tbl_my_membership.membership_id, tbl_my_membership.login_id, tbl_my_membership.start_date, tbl_my_membership.end_date, tbl_my_membership.amount, tbl_my_membership.payment_id, tbl_my_membership.status, tbl_my_membership.is_deleted, tbl_my_membership.created_at, tbl_my_membership.updated_at, membership_plans.title as membership_title');
+        $this->db->join('membership_plans', 'membership_plans.id = tbl_my_membership.membership_id');
+        $this->db->join('user_login', 'user_login.login_id = tbl_my_membership.login_id');
+        $this->db->where('tbl_my_membership.is_deleted', '0');
+        $this->db->where('tbl_my_membership.login_id', $login_id);
+        $this->db->where('user_login.is_active_membership', '1');
+        $this->db->order_by('tbl_my_membership.id', 'desc');
+        $this->db->where('CURDATE() BETWEEN tbl_my_membership.start_date AND tbl_my_membership.end_date');
+        $membership_details = $this->db->get('tbl_my_membership')->row();
+        if (!empty($membership_details)) {
+            $is_membership = 1;
+        }
 
-            $membership_details = $this->db->get()->result();
-
-            $this->db->select('id');
-            $this->db->from('tbl_my_membership');
-            $this->db->where('login_id', $login_id);
-            $this->db->where('is_deleted', '0');
-            $membership = $this->db->get()->result();
-            if (!empty($membership)) {
-                $is_membership = 1;
-            }
-
+        if (!empty($membership_details)) {
             $json_arr['status'] = 'true';
             $json_arr['message'] = 'Success';
             $json_arr['is_membership'] = $is_membership;
             $json_arr['data'] = $membership_details;
         } else {
             $json_arr['status'] = 'false';
-            $json_arr['message'] = 'No membership details available.';
+            $json_arr['message'] = 'Membership not available';
             $json_arr['is_membership'] = $is_membership;
             $json_arr['data'] = [];
         }
-
         echo json_encode($json_arr);
     }
     ///New work
@@ -1765,7 +1804,7 @@ class Api_model extends CI_Model
                                                 'short_description'     =>  $single_test->short_description,
                                                 'duration'              =>  $single_test->duration,
                                                 'total_questions'       =>  $single_test->total_questions,
-                                                'total_marks'           =>  $single_test->total_marks,                        
+                                                'total_marks'           =>  $single_test->total_marks,
 
                                                 'is_show_correct_ans'  => $show_correct_ans,
                                                 'is_download_test_pdf' => $download_test_pdf,
@@ -2012,12 +2051,12 @@ class Api_model extends CI_Model
                             $data = [];
                             foreach ($tests as $tests_result) {
                                 $test_id = $tests_result->id;
-                                if($tests_result->questions_shuffle == 'Yes'){
+                                if ($tests_result->questions_shuffle == 'Yes') {
                                     $questions_shuffle = '1';
-                                }else{
+                                } else {
                                     $questions_shuffle = '0';
                                 }
-                                
+
                                 $this->db->select('tbl_test_questions.*');
                                 $this->db->from('tbl_test_questions');
                                 $this->db->where('tbl_test_questions.is_deleted', '0');
@@ -2044,15 +2083,15 @@ class Api_model extends CI_Model
                                         'question_type'     =>  $test_questions_result->type,
                                         'group_id'          =>  $test_questions_result->group_id,
                                         'question'          =>  $test_questions_result->question,
-                                        'question_image'    =>  $test_questions_result->question_image != "" ? (base_url() . 'assets/uploads/question_images/' . $test_questions_result->question_image) : '',
+                                        'question_image'    =>  $test_questions_result->question_image != "" ? (base_url() . 'assets/uploads/master_gallary/' . $test_questions_result->question_image) : '',
                                         'option_1'          =>  $test_questions_result->option_1,
-                                        'option_1_image'    =>  $test_questions_result->option_1_image != "" ? (base_url() . 'assets/uploads/question_images/' . $test_questions_result->option_1_image) : '',
+                                        'option_1_image'    =>  $test_questions_result->option_1_image != "" ? (base_url() . 'assets/uploads/master_gallary/' . $test_questions_result->option_1_image) : '',
                                         'option_2'          =>  $test_questions_result->option_2,
-                                        'option_2_image'    =>  $test_questions_result->option_2_image != "" ? (base_url() . 'assets/uploads/question_images/' . $test_questions_result->option_2_image) : '',
+                                        'option_2_image'    =>  $test_questions_result->option_2_image != "" ? (base_url() . 'assets/uploads/master_gallary/' . $test_questions_result->option_2_image) : '',
                                         'option_3'          =>  $test_questions_result->option_3,
-                                        'option_3_image'    =>  $test_questions_result->option_3_image != "" ? (base_url() . 'assets/uploads/question_images/' . $test_questions_result->option_3_image) : '',
+                                        'option_3_image'    =>  $test_questions_result->option_3_image != "" ? (base_url() . 'assets/uploads/master_gallary/' . $test_questions_result->option_3_image) : '',
                                         'option_4'          =>  $test_questions_result->option_4,
-                                        'option_4_image'    =>  $test_questions_result->option_4_image != "" ? (base_url() . 'assets/uploads/question_images/' . $test_questions_result->option_4_image) : '',
+                                        'option_4_image'    =>  $test_questions_result->option_4_image != "" ? (base_url() . 'assets/uploads/master_gallary/' . $test_questions_result->option_4_image) : '',
                                         'answer'            =>  $test_questions_result->answer,
                                         'answer_key'        =>  $test_questions_result->answer_column,
                                         'solution'          =>  $test_questions_result->solution,
@@ -2060,7 +2099,7 @@ class Api_model extends CI_Model
                                         'negative_mark'     =>  $test_questions_result->negative_mark,
                                     );
                                 }
-                                
+
                                 $this->db->select('tbl_test_groups.*');
                                 $this->db->from('tbl_test_groups');
                                 $this->db->where('tbl_test_groups.is_deleted', '0');
@@ -2078,20 +2117,20 @@ class Api_model extends CI_Model
                                         'group_type'        =>  $test_questions_result->group_type,
                                         'group_title'       =>  $test_questions_result->group_title,
                                         'group_description' =>  $test_questions_result->group_description,
-                                        'group_image'       =>  $test_questions_result->group_image != "" ? (base_url() . 'assets/uploads/question_images/' . $test_questions_result->group_image) : '',
+                                        'group_image'       =>  $test_questions_result->group_image != "" ? (base_url() . 'assets/uploads/master_gallary/' . $test_questions_result->group_image) : '',
                                     );
                                 }
 
-                                if($tests_result->show_ans == 'Yes'){
+                                if ($tests_result->show_ans == 'Yes') {
                                     $show_correct_ans = '1';
-                                }else{
+                                } else {
                                     $show_correct_ans = '0';
                                 }
 
-                                if($tests_result->download_test_pdf == 'Yes'){
+                                if ($tests_result->download_test_pdf == 'Yes') {
                                     $download_test_pdf = '1';
                                     $test_pdf_link = $tests_result->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $tests_result->test_pdf) : '';
-                                }else{
+                                } else {
                                     $download_test_pdf = '0';
                                     $test_pdf_link = '';
                                 }
@@ -2226,7 +2265,8 @@ class Api_model extends CI_Model
                                         'payment_on'        => date('Y-m-d H:i:s'),
                                     );
                                     $this->db->insert('tbl_user_contents', $my_buy_data);
-                                    
+                                    $content_id = $this->db->insert_id();
+
                                     $payment_data = array(
                                         'user_id'           => $user_id,
                                         'payment_for'       => '1',
@@ -2235,12 +2275,22 @@ class Api_model extends CI_Model
                                         'payment_status'    => $payment_status,
                                         'payment_amount'    => $payment_amount,
                                         'primary_table_id'  => $insert_id,
-                                        'primary_table_name'=> 'tbl_bought_courses'
+                                        'primary_table_name' => 'tbl_bought_courses'
                                     );
                                     $payment_id = $this->set_user_payment($payment_data);
-                                    
+
                                     $this->db->where('id', $insert_id);
-                                    $this->db->update('tbl_bought_courses',array('payment_table_id'=>$payment_id));
+                                    $this->db->update('tbl_bought_courses', array('payment_table_id' => $payment_id));
+
+                                    $type = '1';
+                                    $app_message = "Hello, " . $single->full_name . "!\n\n🎉 Your course payment successful!";
+                                    $title = 'Course Payment Successfull';
+                                    $notification_data = [
+                                        "landing_page"  => 'my_contents',
+                                        "redirect_id"   => (string)$content_id
+                                    ];
+
+                                    $this->Notification_model->send_notification($app_message, $title, $notification_data, $type, $user_id);
 
                                     $json_arr['status'] = 'true';
                                     $json_arr['message'] = 'Success';
@@ -2503,16 +2553,16 @@ class Api_model extends CI_Model
                                 $attempted_test_id = '';
                             }
 
-                            if($course_result->show_ans == 'Yes'){
+                            if ($course_result->show_ans == 'Yes') {
                                 $show_correct_ans = '1';
-                            }else{
+                            } else {
                                 $show_correct_ans = '0';
                             }
 
-                            if($course_result->download_test_pdf == 'Yes'){
+                            if ($course_result->download_test_pdf == 'Yes') {
                                 $download_test_pdf = '1';
                                 $test_pdf_link = $course_result->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $course_result->test_pdf) : '';
-                            }else{
+                            } else {
                                 $download_test_pdf = '0';
                                 $test_pdf_link = '';
                             }
@@ -2596,23 +2646,23 @@ class Api_model extends CI_Model
                                 $is_test_attempted = '0';
                                 $attempted_test_id = '';
                             }
-                            
-                            if($course_result->show_ans == 'Yes'){
+
+                            if ($course_result->show_ans == 'Yes') {
                                 $show_correct_ans = '1';
-                            }else{
+                            } else {
                                 $show_correct_ans = '0';
                             }
 
-                            if($course_result->questions_shuffle == 'Yes'){
+                            if ($course_result->questions_shuffle == 'Yes') {
                                 $questions_shuffle = '1';
-                            }else{
+                            } else {
                                 $questions_shuffle = '0';
                             }
 
-                            if($course_result->download_test_pdf == 'Yes'){
+                            if ($course_result->download_test_pdf == 'Yes') {
                                 $download_test_pdf = '1';
                                 $test_pdf_link = $course_result->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $course_result->test_pdf) : '';
-                            }else{
+                            } else {
                                 $download_test_pdf = '0';
                                 $test_pdf_link = '';
                             }
@@ -2707,7 +2757,7 @@ class Api_model extends CI_Model
                                         'description'           =>  $single_test->description,
                                         'total_questions'       =>  $single_test->total_questions,
                                         'total_marks'           =>  $single_test->total_marks,
-                                        
+
                                         'questions_shuffle'     =>  $single_test->questions_shuffle,
                                         'show_ans'              =>  $single_test->show_ans,
                                         'test_pdf'              =>  $single_test->test_pdf,
@@ -2724,6 +2774,9 @@ class Api_model extends CI_Model
 
                                         $question_id = $answer['question_id'];
                                         $student_answer = $answer['student_answer'];
+                                        $answer_image = '';
+                                        $correct_answer_image = '';
+                                        $student_answer_text = '';
                                         $this->db->where('id', $question_id);
                                         $this->db->where('is_deleted', '0');
                                         $question_data = $this->db->get('tbl_test_questions')->row();
@@ -2751,24 +2804,47 @@ class Api_model extends CI_Model
                                                         $single_received_positive_marks = 0;
                                                         $single_received_negative_marks = $question_data->negative_mark != "" ? (int)$question_data->negative_mark : 0;
                                                     }
+                                                    if ($student_answer == 'option_1') {
+                                                        $answer_image = $question_data->option_1_image;
+                                                        $student_answer_text = $question_data->option_1;
+                                                    } elseif ($student_answer == 'option_2') {
+                                                        $answer_image = $question_data->option_2_image;
+                                                        $student_answer_text = $question_data->option_2;
+                                                    } elseif ($student_answer == 'option_3') {
+                                                        $answer_image = $question_data->option_3_image;
+                                                        $student_answer_text = $question_data->option_3;
+                                                    } elseif ($student_answer == 'option_4') {
+                                                        $answer_image = $question_data->option_4_image;
+                                                        $student_answer_text = $question_data->option_4;
+                                                    }
+                                                }
+
+                                                if ($question_data->answer_column == 'option_1') {
+                                                    $correct_answer_image = $question_data->option_1_image;
+                                                } elseif ($question_data->answer_column == 'option_2') {
+                                                    $correct_answer_image = $question_data->option_2_image;
+                                                } elseif ($question_data->answer_column == 'option_3') {
+                                                    $correct_answer_image = $question_data->option_3_image;
+                                                } elseif ($question_data->answer_column == 'option_4') {
+                                                    $correct_answer_image = $question_data->option_4_image;
                                                 }
 
                                                 $single_received_marks = $single_received_positive_marks - $single_received_negative_marks;
 
                                                 $attempted_group_id = '';
-                                                if($question_data->type == '2'){
-                                                    $this->db->where('is_deleted','0');
-                                                    $this->db->where('status','1');
-                                                    $this->db->where('id',$question_data->group_id);
+                                                if ($question_data->type == '2') {
+                                                    $this->db->where('is_deleted', '0');
+                                                    $this->db->where('status', '1');
+                                                    $this->db->where('id', $question_data->group_id);
                                                     $single_group = $this->db->get('tbl_test_groups')->row();
-                                                    if(!empty($single_group)){
-                                                        $this->db->where('is_deleted','0');
-                                                        $this->db->where('status','1');
-                                                        $this->db->where('test_id',$test_id);
-                                                        $this->db->where('group_id',$single_group->id);
-                                                        $this->db->where('attempted_test_id',$attempted_id);
+                                                    if (!empty($single_group)) {
+                                                        $this->db->where('is_deleted', '0');
+                                                        $this->db->where('status', '1');
+                                                        $this->db->where('test_id', $test_id);
+                                                        $this->db->where('group_id', $single_group->id);
+                                                        $this->db->where('attempted_test_id', $attempted_id);
                                                         $single_attempted_group = $this->db->get('tbl_attempted_test_groups')->row();
-                                                        if(empty($single_attempted_group)){
+                                                        if (empty($single_attempted_group)) {
                                                             $single_attempted_group_data = array(
                                                                 'group_id'          =>  $single_group->id,
                                                                 'test_id'           =>  $test_id,
@@ -2779,9 +2855,9 @@ class Api_model extends CI_Model
                                                                 'group_image'       =>  $single_group->group_image,
                                                                 'created_on'        =>  date('Y-m-d H:i:s')
                                                             );
-                                                            $this->db->insert('tbl_attempted_test_groups',$single_attempted_group_data);
+                                                            $this->db->insert('tbl_attempted_test_groups', $single_attempted_group_data);
                                                             $attempted_group_id = $this->db->insert_id();
-                                                        }else{
+                                                        } else {
                                                             $attempted_group_id = $single_attempted_group->id;
                                                         }
                                                     }
@@ -2801,17 +2877,19 @@ class Api_model extends CI_Model
                                                     'option_2'         => $question_data->option_2,
                                                     'option_3'         => $question_data->option_3,
                                                     'option_4'         => $question_data->option_4,
-                                                    'answer'           => $student_answer,
+                                                    'correct_answer_image'     => $correct_answer_image,
+                                                    'answer'           => $student_answer_text,
+                                                    'answer_image'     => $answer_image,
                                                     'positive_mark'    => $question_data->positive_mark,
                                                     'negative_mark'    => $question_data->negative_mark,
 
                                                     'received_positive_marks'   =>  $single_received_positive_marks,
                                                     'received_negative_marks'   =>  $single_received_negative_marks,
                                                     'received_marks'            =>  $single_received_marks,
-                                                    
+
                                                     'type'              =>  $question_data->type,
                                                     'group_id'          =>  $question_data->group_id,
-                                                    'attempted_group_id'=>  $attempted_group_id,
+                                                    'attempted_group_id' =>  $attempted_group_id,
                                                     'group_type'        =>  $question_data->group_type,
                                                     'question_image'    =>  $question_data->question_image,
                                                     'option_1_image'    =>  $question_data->option_1_image,
@@ -2843,24 +2921,47 @@ class Api_model extends CI_Model
                                                         $single_received_positive_marks = 0;
                                                         $single_received_negative_marks = $question_data->negative_mark != "" ? (int)$question_data->negative_mark : 0;
                                                     }
+                                                    if ($student_answer == 'option_1') {
+                                                        $answer_image = $question_data->option_1_image;
+                                                        $student_answer_text = $question_data->option_1;
+                                                    } elseif ($student_answer == 'option_2') {
+                                                        $answer_image = $question_data->option_2_image;
+                                                        $student_answer_text = $question_data->option_2;
+                                                    } elseif ($student_answer == 'option_3') {
+                                                        $answer_image = $question_data->option_3_image;
+                                                        $student_answer_text = $question_data->option_3;
+                                                    } elseif ($student_answer == 'option_4') {
+                                                        $answer_image = $question_data->option_4_image;
+                                                        $student_answer_text = $question_data->option_4;
+                                                    }
+                                                }
+
+                                                if ($question_data->answer_column == 'option_1') {
+                                                    $correct_answer_image = $question_data->option_1_image;
+                                                } elseif ($question_data->answer_column == 'option_2') {
+                                                    $correct_answer_image = $question_data->option_2_image;
+                                                } elseif ($question_data->answer_column == 'option_3') {
+                                                    $correct_answer_image = $question_data->option_3_image;
+                                                } elseif ($question_data->answer_column == 'option_4') {
+                                                    $correct_answer_image = $question_data->option_4_image;
                                                 }
 
                                                 $single_received_marks = $single_received_positive_marks - $single_received_negative_marks;
 
                                                 $attempted_group_id = '';
-                                                if($question_data->type == '2'){
-                                                    $this->db->where('is_deleted','0');
-                                                    $this->db->where('status','1');
-                                                    $this->db->where('id',$question_data->group_id);
+                                                if ($question_data->type == '2') {
+                                                    $this->db->where('is_deleted', '0');
+                                                    $this->db->where('status', '1');
+                                                    $this->db->where('id', $question_data->group_id);
                                                     $single_group = $this->db->get('tbl_test_groups')->row();
-                                                    if(!empty($single_group)){
-                                                        $this->db->where('is_deleted','0');
-                                                        $this->db->where('status','1');
-                                                        $this->db->where('test_id',$test_id);
-                                                        $this->db->where('group_id',$single_group->id);
-                                                        $this->db->where('attempted_test_id',$attempted_id);
+                                                    if (!empty($single_group)) {
+                                                        $this->db->where('is_deleted', '0');
+                                                        $this->db->where('status', '1');
+                                                        $this->db->where('test_id', $test_id);
+                                                        $this->db->where('group_id', $single_group->id);
+                                                        $this->db->where('attempted_test_id', $attempted_id);
                                                         $single_attempted_group = $this->db->get('tbl_attempted_test_groups')->row();
-                                                        if(empty($single_attempted_group)){
+                                                        if (empty($single_attempted_group)) {
                                                             $single_attempted_group_data = array(
                                                                 'group_id'          =>  $single_group->id,
                                                                 'test_id'           =>  $test_id,
@@ -2871,9 +2972,9 @@ class Api_model extends CI_Model
                                                                 'group_image'       =>  $single_group->group_image,
                                                                 'created_on'        =>  date('Y-m-d H:i:s')
                                                             );
-                                                            $this->db->insert('tbl_attempted_test_groups',$single_attempted_group_data);
+                                                            $this->db->insert('tbl_attempted_test_groups', $single_attempted_group_data);
                                                             $attempted_group_id = $this->db->insert_id();
-                                                        }else{
+                                                        } else {
                                                             $attempted_group_id = $single_attempted_group->id;
                                                         }
                                                     }
@@ -2893,17 +2994,19 @@ class Api_model extends CI_Model
                                                     'option_2'         => $question_data->option_2,
                                                     'option_3'         => $question_data->option_3,
                                                     'option_4'         => $question_data->option_4,
-                                                    'answer'           => $student_answer,
+                                                    'answer'           => $student_answer_text,
+                                                    'correct_answer_image'     => $correct_answer_image,
+                                                    'answer_image'           => $answer_image,
                                                     'positive_mark'    => $question_data->positive_mark,
                                                     'negative_mark'    => $question_data->negative_mark,
 
                                                     'received_positive_marks'   =>  $single_received_positive_marks,
                                                     'received_negative_marks'   =>  $single_received_negative_marks,
                                                     'received_marks'            =>  $single_received_marks,
-                                                    
+
                                                     'type'              =>  $question_data->type,
                                                     'group_id'          =>  $question_data->group_id,
-                                                    'attempted_group_id'=>  $attempted_group_id,
+                                                    'attempted_group_id' =>  $attempted_group_id,
                                                     'group_type'        =>  $question_data->group_type,
                                                     'question_image'    =>  $question_data->question_image,
                                                     'option_1_image'    =>  $question_data->option_1_image,
@@ -2956,6 +3059,9 @@ class Api_model extends CI_Model
                                         $single_received_marks = 0;
                                         $question_id = $answer['question_id'];
                                         $student_answer = $answer['student_answer'];
+                                        $answer_image = '';
+                                        $correct_answer_image = '';
+                                        $student_answer_text = '';
                                         $this->db->where('id', $question_id);
                                         $this->db->where('is_deleted', '0');
                                         $question_data = $this->db->get('tbl_test_questions')->row();
@@ -2977,24 +3083,47 @@ class Api_model extends CI_Model
                                                     $single_received_positive_marks = 0;
                                                     $single_received_negative_marks = $question_data->negative_mark != "" ? (int)$question_data->negative_mark : 0;
                                                 }
+                                                if ($student_answer == 'option_1') {
+                                                    $answer_image = $question_data->option_1_image;
+                                                    $student_answer_text = $question_data->option_1;
+                                                } elseif ($student_answer == 'option_2') {
+                                                    $answer_image = $question_data->option_2_image;
+                                                    $student_answer_text = $question_data->option_2;
+                                                } elseif ($student_answer == 'option_3') {
+                                                    $answer_image = $question_data->option_3_image;
+                                                    $student_answer_text = $question_data->option_3;
+                                                } elseif ($student_answer == 'option_4') {
+                                                    $answer_image = $question_data->option_4_image;
+                                                    $student_answer_text = $question_data->option_4;
+                                                }
+                                            }
+
+                                            if ($question_data->answer_column == 'option_1') {
+                                                $correct_answer_image = $question_data->option_1_image;
+                                            } elseif ($question_data->answer_column == 'option_2') {
+                                                $correct_answer_image = $question_data->option_2_image;
+                                            } elseif ($question_data->answer_column == 'option_3') {
+                                                $correct_answer_image = $question_data->option_3_image;
+                                            } elseif ($question_data->answer_column == 'option_4') {
+                                                $correct_answer_image = $question_data->option_4_image;
                                             }
 
                                             $single_received_marks = $single_received_positive_marks - $single_received_negative_marks;
 
                                             $attempted_group_id = '';
-                                            if($question_data->type == '2'){
-                                                $this->db->where('is_deleted','0');
-                                                $this->db->where('status','1');
-                                                $this->db->where('id',$question_data->group_id);
+                                            if ($question_data->type == '2') {
+                                                $this->db->where('is_deleted', '0');
+                                                $this->db->where('status', '1');
+                                                $this->db->where('id', $question_data->group_id);
                                                 $single_group = $this->db->get('tbl_test_groups')->row();
-                                                if(!empty($single_group)){
-                                                    $this->db->where('is_deleted','0');
-                                                    $this->db->where('status','1');
-                                                    $this->db->where('test_id',$test_id);
-                                                    $this->db->where('group_id',$single_group->id);
-                                                    $this->db->where('attempted_test_id',$attempted_id);
+                                                if (!empty($single_group)) {
+                                                    $this->db->where('is_deleted', '0');
+                                                    $this->db->where('status', '1');
+                                                    $this->db->where('test_id', $test_id);
+                                                    $this->db->where('group_id', $single_group->id);
+                                                    $this->db->where('attempted_test_id', $attempted_id);
                                                     $single_attempted_group = $this->db->get('tbl_attempted_test_groups')->row();
-                                                    if(empty($single_attempted_group)){
+                                                    if (empty($single_attempted_group)) {
                                                         $single_attempted_group_data = array(
                                                             'group_id'          =>  $single_group->id,
                                                             'test_id'           =>  $test_id,
@@ -3005,14 +3134,14 @@ class Api_model extends CI_Model
                                                             'group_image'       =>  $single_group->group_image,
                                                             'created_on'        =>  date('Y-m-d H:i:s')
                                                         );
-                                                        $this->db->insert('tbl_attempted_test_groups',$single_attempted_group_data);
+                                                        $this->db->insert('tbl_attempted_test_groups', $single_attempted_group_data);
                                                         $attempted_group_id = $this->db->insert_id();
-                                                    }else{
+                                                    } else {
                                                         $attempted_group_id = $single_attempted_group->id;
                                                     }
                                                 }
                                             }
-                                            
+
                                             $attempted_test_questions_data = array(
                                                 'test_id'          => $test_id,
                                                 'attempted_test_id' => $attempted_id,
@@ -3027,17 +3156,19 @@ class Api_model extends CI_Model
                                                 'option_2'         => $question_data->option_2,
                                                 'option_3'         => $question_data->option_3,
                                                 'option_4'         => $question_data->option_4,
-                                                'answer'           => $student_answer,
+                                                'answer'           => $student_answer_text,
+                                                'correct_answer_image'     => $correct_answer_image,
+                                                'answer_image'           => $answer_image,
                                                 'positive_mark'    => $question_data->positive_mark,
                                                 'negative_mark'    => $question_data->negative_mark,
 
                                                 'received_positive_marks'   =>  $single_received_positive_marks,
                                                 'received_negative_marks'   =>  $single_received_negative_marks,
                                                 'received_marks'            =>  $single_received_marks,
-                                                    
+
                                                 'type'              =>  $question_data->type,
                                                 'group_id'          =>  $question_data->group_id,
-                                                'attempted_group_id'=>  $attempted_group_id,
+                                                'attempted_group_id' =>  $attempted_group_id,
                                                 'group_type'        =>  $question_data->group_type,
                                                 'question_image'    =>  $question_data->question_image,
                                                 'option_1_image'    =>  $question_data->option_1_image,
@@ -3097,6 +3228,9 @@ class Api_model extends CI_Model
 
                                         $question_id = $answer['question_id'];
                                         $student_answer = $answer['student_answer'];
+                                        $answer_image = '';
+                                        $correct_answer_image = '';
+                                        $student_answer_text = '';
                                         $this->db->where('id', $question_id);
                                         $this->db->where('is_deleted', '0');
                                         $question_data = $this->db->get('tbl_test_questions')->row();
@@ -3124,24 +3258,47 @@ class Api_model extends CI_Model
                                                         $single_received_positive_marks = 0;
                                                         $single_received_negative_marks = $question_data->negative_mark != "" ? (int)$question_data->negative_mark : 0;
                                                     }
+                                                    if ($student_answer == 'option_1') {
+                                                        $answer_image = $question_data->option_1_image;
+                                                        $student_answer_text = $question_data->option_1;
+                                                    } elseif ($student_answer == 'option_2') {
+                                                        $answer_image = $question_data->option_2_image;
+                                                        $student_answer_text = $question_data->option_2;
+                                                    } elseif ($student_answer == 'option_3') {
+                                                        $answer_image = $question_data->option_3_image;
+                                                        $student_answer_text = $question_data->option_3;
+                                                    } elseif ($student_answer == 'option_4') {
+                                                        $answer_image = $question_data->option_4_image;
+                                                        $student_answer_text = $question_data->option_4;
+                                                    }
+                                                }
+
+                                                if ($question_data->answer_column == 'option_1') {
+                                                    $correct_answer_image = $question_data->option_1_image;
+                                                } elseif ($question_data->answer_column == 'option_2') {
+                                                    $correct_answer_image = $question_data->option_2_image;
+                                                } elseif ($question_data->answer_column == 'option_3') {
+                                                    $correct_answer_image = $question_data->option_3_image;
+                                                } elseif ($question_data->answer_column == 'option_4') {
+                                                    $correct_answer_image = $question_data->option_4_image;
                                                 }
 
                                                 $single_received_marks = $single_received_positive_marks - $single_received_negative_marks;
 
                                                 $attempted_group_id = '';
-                                                if($question_data->type == '2'){
-                                                    $this->db->where('is_deleted','0');
-                                                    $this->db->where('status','1');
-                                                    $this->db->where('id',$question_data->group_id);
+                                                if ($question_data->type == '2') {
+                                                    $this->db->where('is_deleted', '0');
+                                                    $this->db->where('status', '1');
+                                                    $this->db->where('id', $question_data->group_id);
                                                     $single_group = $this->db->get('tbl_test_groups')->row();
-                                                    if(!empty($single_group)){
-                                                        $this->db->where('is_deleted','0');
-                                                        $this->db->where('status','1');
-                                                        $this->db->where('test_id',$test_id);
-                                                        $this->db->where('group_id',$single_group->id);
-                                                        $this->db->where('attempted_test_id',$attempted_id);
+                                                    if (!empty($single_group)) {
+                                                        $this->db->where('is_deleted', '0');
+                                                        $this->db->where('status', '1');
+                                                        $this->db->where('test_id', $test_id);
+                                                        $this->db->where('group_id', $single_group->id);
+                                                        $this->db->where('attempted_test_id', $attempted_id);
                                                         $single_attempted_group = $this->db->get('tbl_attempted_test_groups')->row();
-                                                        if(empty($single_attempted_group)){
+                                                        if (empty($single_attempted_group)) {
                                                             $single_attempted_group_data = array(
                                                                 'group_id'          =>  $single_group->id,
                                                                 'test_id'           =>  $test_id,
@@ -3152,9 +3309,9 @@ class Api_model extends CI_Model
                                                                 'group_image'       =>  $single_group->group_image,
                                                                 'created_on'        =>  date('Y-m-d H:i:s')
                                                             );
-                                                            $this->db->insert('tbl_attempted_test_groups',$single_attempted_group_data);
+                                                            $this->db->insert('tbl_attempted_test_groups', $single_attempted_group_data);
                                                             $attempted_group_id = $this->db->insert_id();
-                                                        }else{
+                                                        } else {
                                                             $attempted_group_id = $single_attempted_group->id;
                                                         }
                                                     }
@@ -3174,17 +3331,19 @@ class Api_model extends CI_Model
                                                     'option_2'         => $question_data->option_2,
                                                     'option_3'         => $question_data->option_3,
                                                     'option_4'         => $question_data->option_4,
-                                                    'answer'           => $student_answer,
+                                                    'answer'           => $student_answer_text,
+                                                    'correct_answer_image'     => $correct_answer_image,
+                                                    'answer_image'           => $answer_image,
                                                     'positive_mark'    => $question_data->positive_mark,
                                                     'negative_mark'    => $question_data->negative_mark,
 
                                                     'received_positive_marks'   =>  $single_received_positive_marks,
                                                     'received_negative_marks'   =>  $single_received_negative_marks,
                                                     'received_marks'            =>  $single_received_marks,
-                                                    
+
                                                     'type'              =>  $question_data->type,
                                                     'group_id'          =>  $question_data->group_id,
-                                                    'attempted_group_id'=>  $attempted_group_id,
+                                                    'attempted_group_id' =>  $attempted_group_id,
                                                     'group_type'        =>  $question_data->group_type,
                                                     'question_image'    =>  $question_data->question_image,
                                                     'option_1_image'    =>  $question_data->option_1_image,
@@ -3217,24 +3376,47 @@ class Api_model extends CI_Model
                                                         $single_received_positive_marks = 0;
                                                         $single_received_negative_marks = $question_data->negative_mark != "" ? (int)$question_data->negative_mark : 0;
                                                     }
+                                                    if ($student_answer == 'option_1') {
+                                                        $answer_image = $question_data->option_1_image;
+                                                        $student_answer_text = $question_data->option_1;
+                                                    } elseif ($student_answer == 'option_2') {
+                                                        $answer_image = $question_data->option_2_image;
+                                                        $student_answer_text = $question_data->option_2;
+                                                    } elseif ($student_answer == 'option_3') {
+                                                        $answer_image = $question_data->option_3_image;
+                                                        $student_answer_text = $question_data->option_3;
+                                                    } elseif ($student_answer == 'option_4') {
+                                                        $answer_image = $question_data->option_4_image;
+                                                        $student_answer_text = $question_data->option_4;
+                                                    }
+                                                }
+
+                                                if ($question_data->answer_column == 'option_1') {
+                                                    $correct_answer_image = $question_data->option_1_image;
+                                                } elseif ($question_data->answer_column == 'option_2') {
+                                                    $correct_answer_image = $question_data->option_2_image;
+                                                } elseif ($question_data->answer_column == 'option_3') {
+                                                    $correct_answer_image = $question_data->option_3_image;
+                                                } elseif ($question_data->answer_column == 'option_4') {
+                                                    $correct_answer_image = $question_data->option_4_image;
                                                 }
 
                                                 $single_received_marks = $single_received_positive_marks - $single_received_negative_marks;
 
                                                 $attempted_group_id = '';
-                                                if($question_data->type == '2'){
-                                                    $this->db->where('is_deleted','0');
-                                                    $this->db->where('status','1');
-                                                    $this->db->where('id',$question_data->group_id);
+                                                if ($question_data->type == '2') {
+                                                    $this->db->where('is_deleted', '0');
+                                                    $this->db->where('status', '1');
+                                                    $this->db->where('id', $question_data->group_id);
                                                     $single_group = $this->db->get('tbl_test_groups')->row();
-                                                    if(!empty($single_group)){
-                                                        $this->db->where('is_deleted','0');
-                                                        $this->db->where('status','1');
-                                                        $this->db->where('test_id',$test_id);
-                                                        $this->db->where('group_id',$single_group->id);
-                                                        $this->db->where('attempted_test_id',$attempted_id);
+                                                    if (!empty($single_group)) {
+                                                        $this->db->where('is_deleted', '0');
+                                                        $this->db->where('status', '1');
+                                                        $this->db->where('test_id', $test_id);
+                                                        $this->db->where('group_id', $single_group->id);
+                                                        $this->db->where('attempted_test_id', $attempted_id);
                                                         $single_attempted_group = $this->db->get('tbl_attempted_test_groups')->row();
-                                                        if(empty($single_attempted_group)){
+                                                        if (empty($single_attempted_group)) {
                                                             $single_attempted_group_data = array(
                                                                 'group_id'          =>  $single_group->id,
                                                                 'test_id'           =>  $test_id,
@@ -3245,9 +3427,9 @@ class Api_model extends CI_Model
                                                                 'group_image'       =>  $single_group->group_image,
                                                                 'created_on'        =>  date('Y-m-d H:i:s')
                                                             );
-                                                            $this->db->insert('tbl_attempted_test_groups',$single_attempted_group_data);
+                                                            $this->db->insert('tbl_attempted_test_groups', $single_attempted_group_data);
                                                             $attempted_group_id = $this->db->insert_id();
-                                                        }else{
+                                                        } else {
                                                             $attempted_group_id = $single_attempted_group->id;
                                                         }
                                                     }
@@ -3267,17 +3449,19 @@ class Api_model extends CI_Model
                                                     'option_2'         => $question_data->option_2,
                                                     'option_3'         => $question_data->option_3,
                                                     'option_4'         => $question_data->option_4,
-                                                    'answer'           => $student_answer,
+                                                    'answer'           => $student_answer_text,
                                                     'positive_mark'    => $question_data->positive_mark,
                                                     'negative_mark'    => $question_data->negative_mark,
 
                                                     'received_positive_marks'   =>  $single_received_positive_marks,
                                                     'received_negative_marks'   =>  $single_received_negative_marks,
                                                     'received_marks'            =>  $single_received_marks,
-                                                    
+
                                                     'type'              =>  $question_data->type,
+                                                    'correct_answer_image'     => $correct_answer_image,
+                                                    'answer_image'           => $answer_image,
                                                     'group_id'          =>  $question_data->group_id,
-                                                    'attempted_group_id'=>  $attempted_group_id,
+                                                    'attempted_group_id' =>  $attempted_group_id,
                                                     'group_type'        =>  $question_data->group_type,
                                                     'question_image'    =>  $question_data->question_image,
                                                     'option_1_image'    =>  $question_data->option_1_image,
@@ -3330,6 +3514,9 @@ class Api_model extends CI_Model
                                         $single_received_marks = 0;
                                         $question_id = $answer['question_id'];
                                         $student_answer = $answer['student_answer'];
+                                        $answer_image = '';
+                                        $student_answer_text = '';
+                                        $correct_answer_image = '';
                                         $this->db->where('id', $question_id);
                                         $this->db->where('is_deleted', '0');
                                         $question_data = $this->db->get('tbl_test_questions')->row();
@@ -3351,24 +3538,47 @@ class Api_model extends CI_Model
                                                     $single_received_positive_marks = 0;
                                                     $single_received_negative_marks = $question_data->negative_mark != "" ? (int)$question_data->negative_mark : 0;
                                                 }
+                                                if ($student_answer == 'option_1') {
+                                                    $answer_image = $question_data->option_1_image;
+                                                    $student_answer_text = $question_data->option_1;
+                                                } elseif ($student_answer == 'option_2') {
+                                                    $answer_image = $question_data->option_2_image;
+                                                    $student_answer_text = $question_data->option_2;
+                                                } elseif ($student_answer == 'option_3') {
+                                                    $answer_image = $question_data->option_3_image;
+                                                    $student_answer_text = $question_data->option_3;
+                                                } elseif ($student_answer == 'option_4') {
+                                                    $answer_image = $question_data->option_4_image;
+                                                    $student_answer_text = $question_data->option_4;
+                                                }
+                                            }
+
+                                            if ($question_data->answer_column == 'option_1') {
+                                                $correct_answer_image = $question_data->option_1_image;
+                                            } elseif ($question_data->answer_column == 'option_2') {
+                                                $correct_answer_image = $question_data->option_2_image;
+                                            } elseif ($question_data->answer_column == 'option_3') {
+                                                $correct_answer_image = $question_data->option_3_image;
+                                            } elseif ($question_data->answer_column == 'option_4') {
+                                                $correct_answer_image = $question_data->option_4_image;
                                             }
 
                                             $single_received_marks = $single_received_positive_marks - $single_received_negative_marks;
 
                                             $attempted_group_id = '';
-                                            if($question_data->type == '2'){
-                                                $this->db->where('is_deleted','0');
-                                                $this->db->where('status','1');
-                                                $this->db->where('id',$question_data->group_id);
+                                            if ($question_data->type == '2') {
+                                                $this->db->where('is_deleted', '0');
+                                                $this->db->where('status', '1');
+                                                $this->db->where('id', $question_data->group_id);
                                                 $single_group = $this->db->get('tbl_test_groups')->row();
-                                                if(!empty($single_group)){
-                                                    $this->db->where('is_deleted','0');
-                                                    $this->db->where('status','1');
-                                                    $this->db->where('test_id',$test_id);
-                                                    $this->db->where('group_id',$single_group->id);
-                                                    $this->db->where('attempted_test_id',$attempted_id);
+                                                if (!empty($single_group)) {
+                                                    $this->db->where('is_deleted', '0');
+                                                    $this->db->where('status', '1');
+                                                    $this->db->where('test_id', $test_id);
+                                                    $this->db->where('group_id', $single_group->id);
+                                                    $this->db->where('attempted_test_id', $attempted_id);
                                                     $single_attempted_group = $this->db->get('tbl_attempted_test_groups')->row();
-                                                    if(empty($single_attempted_group)){
+                                                    if (empty($single_attempted_group)) {
                                                         $single_attempted_group_data = array(
                                                             'group_id'          =>  $single_group->id,
                                                             'test_id'           =>  $test_id,
@@ -3379,14 +3589,14 @@ class Api_model extends CI_Model
                                                             'group_image'       =>  $single_group->group_image,
                                                             'created_on'        =>  date('Y-m-d H:i:s')
                                                         );
-                                                        $this->db->insert('tbl_attempted_test_groups',$single_attempted_group_data);
+                                                        $this->db->insert('tbl_attempted_test_groups', $single_attempted_group_data);
                                                         $attempted_group_id = $this->db->insert_id();
-                                                    }else{
+                                                    } else {
                                                         $attempted_group_id = $single_attempted_group->id;
                                                     }
                                                 }
                                             }
-                                            
+
                                             $attempted_test_questions_data = array(
                                                 'test_id'          => $test_id,
                                                 'attempted_test_id' => $attempted_id,
@@ -3401,17 +3611,19 @@ class Api_model extends CI_Model
                                                 'option_2'         => $question_data->option_2,
                                                 'option_3'         => $question_data->option_3,
                                                 'option_4'         => $question_data->option_4,
-                                                'answer'           => $student_answer,
+                                                'answer'           => $student_answer_text,
+                                                'correct_answer_image'     => $correct_answer_image,
+                                                'answer_image'           => $answer_image,
                                                 'positive_mark'    => $question_data->positive_mark,
                                                 'negative_mark'    => $question_data->negative_mark,
 
                                                 'received_positive_marks'   =>  $single_received_positive_marks,
                                                 'received_negative_marks'   =>  $single_received_negative_marks,
                                                 'received_marks'            =>  $single_received_marks,
-                                                    
+
                                                 'type'              =>  $question_data->type,
                                                 'group_id'          =>  $question_data->group_id,
-                                                'attempted_group_id'=>  $attempted_group_id,
+                                                'attempted_group_id' =>  $attempted_group_id,
                                                 'group_type'        =>  $question_data->group_type,
                                                 'question_image'    =>  $question_data->question_image,
                                                 'option_1_image'    =>  $question_data->option_1_image,
@@ -3440,6 +3652,16 @@ class Api_model extends CI_Model
                                     $this->db->update('tbl_attempted_test', $marks_array);
                                 }
                             }
+
+                            $type = '3';
+                            $app_message = "Hello, " . $single->full_name . "!\n\n🎉 Your test submitted successfully!";
+                            $title = 'Test Submit Successfull';
+                            $notification_data = [
+                                "landing_page"  => 'test_result_page',
+                                "redirect_id"   => (string)$attempted_id
+                            ];
+
+                            $this->Notification_model->send_notification($app_message, $title, $notification_data, $type, $user_id);
 
                             $json_arr['status'] = 'true';
                             $json_arr['message'] = 'Success';
@@ -3604,8 +3826,8 @@ class Api_model extends CI_Model
                     return;
                 }
 
-                $this->db->select('tbl_attempted_test_questions.question,tbl_attempted_test_questions.correct_answer,tbl_attempted_test_questions.solution,tbl_attempted_test_questions.type as question_type,tbl_attempted_test_questions.attempted_group_id as group_id,tbl_attempted_test_groups.group_type,tbl_attempted_test_groups.group_title,tbl_attempted_test_groups.group_description,tbl_attempted_test_groups.group_image');
-                $this->db->join('tbl_attempted_test_groups','tbl_attempted_test_groups.id = tbl_attempted_test_questions.attempted_group_id','left');
+                $this->db->select('tbl_attempted_test_questions.question,tbl_attempted_test_questions.question_image,tbl_attempted_test_questions.answer,tbl_attempted_test_questions.answer_image,tbl_attempted_test_questions.correct_answer_image,tbl_attempted_test_questions.correct_answer,tbl_attempted_test_questions.solution,tbl_attempted_test_questions.type as question_type,tbl_attempted_test_questions.attempted_group_id as group_id,tbl_attempted_test_groups.group_type,tbl_attempted_test_groups.group_title,tbl_attempted_test_groups.group_description,tbl_attempted_test_groups.group_image');
+                $this->db->join('tbl_attempted_test_groups', 'tbl_attempted_test_groups.id = tbl_attempted_test_questions.attempted_group_id', 'left');
                 $this->db->where('tbl_attempted_test_questions.attempted_test_id', $attempted_test_id);
                 $this->db->where('tbl_attempted_test_questions.test_id', $test_id);
                 $this->db->where('tbl_attempted_test_questions.is_deleted', '0');
@@ -3614,7 +3836,7 @@ class Api_model extends CI_Model
                 $json_arr['status'] = 'true';
                 $json_arr['message'] = 'Success';
                 $json_arr['data'] = $all_questions;
-                $json_arr['group_image_base'] = base_url() . 'assets/uploads/question_images/';
+                $json_arr['group_image_base'] = base_url() . 'assets/uploads/master_gallary/';
             } else {
                 $json_arr['status'] = 'false';
                 $json_arr['message'] = 'Login ID or Attempted Test ID not provided';
@@ -3641,9 +3863,9 @@ class Api_model extends CI_Model
                 $group_id = isset($request['group_id']) ? $request['group_id'] : '';
                 $attempted_group_id = isset($request['attempted_group_id']) ? $request['attempted_group_id'] : '';
 
-                if($attempted_test_id != ""){
+                if ($attempted_test_id != "") {
                     $this->db->where('id', $attempted_test_id);
-                    if($parent_module != ""){
+                    if ($parent_module != "") {
                         $this->db->where('parent_module', $parent_module);
                     }
                     $this->db->where('user_id', $user_id);
@@ -3662,18 +3884,18 @@ class Api_model extends CI_Model
                     $this->db->select('tbl_attempted_test_groups.group_type,tbl_attempted_test_groups.group_title,tbl_attempted_test_groups.group_description,tbl_attempted_test_groups.group_image');
                     $this->db->where('tbl_attempted_test_groups.attempted_test_id', $attempted_test_id);
                     $this->db->where('tbl_attempted_test_groups.test_id', $test_id);
-                    if($group_id != ""){
+                    if ($group_id != "") {
                         $this->db->where('tbl_attempted_test_groups.group_id', $group_id);
                     }
-                    if($attempted_group_id != ""){
+                    if ($attempted_group_id != "") {
                         $this->db->where('tbl_attempted_test_groups.id', $attempted_group_id);
                     }
                     $this->db->where('tbl_attempted_test_groups.is_deleted', '0');
                     $all_questions = $this->db->get('tbl_attempted_test_groups')->result();
-                }else{
+                } else {
                     $this->db->select('tbl_test_groups.group_type,tbl_test_groups.group_title,tbl_test_groups.group_description,tbl_test_groups.group_image');
                     $this->db->where('tbl_test_groups.test_id', $test_id);
-                    if($group_id != ""){
+                    if ($group_id != "") {
                         $this->db->where('tbl_test_groups.id', $group_id);
                     }
                     $this->db->where('tbl_test_groups.is_deleted', '0');
@@ -3683,7 +3905,7 @@ class Api_model extends CI_Model
                 $json_arr['status'] = 'true';
                 $json_arr['message'] = 'Success';
                 $json_arr['data'] = $all_questions;
-                $json_arr['group_image_base'] = base_url() . 'assets/uploads/question_images/';
+                $json_arr['group_image_base'] = base_url() . 'assets/uploads/master_gallary/';
             } else {
                 $json_arr['status'] = 'false';
                 $json_arr['message'] = 'Login ID and Test ID required';
@@ -3739,6 +3961,14 @@ class Api_model extends CI_Model
                 $this->db->where('is_deleted', '0');
                 $this->db->where('question_status', $question_status);
                 $all_questions = $this->db->get('tbl_attempted_test_questions')->result();
+
+                if (empty($all_questions)) {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'Questions not found';
+                    $json_arr['data'] = [];
+                    echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+                    return;
+                }
 
                 $json_arr['status'] = 'true';
                 $json_arr['message'] = 'Success';
@@ -3993,7 +4223,8 @@ class Api_model extends CI_Model
                                         'payment_on'        => date('Y-m-d H:i:s'),
                                     );
                                     $this->db->insert('tbl_user_contents', $my_buy_data);
-                                    
+                                    $content_id = $this->db->insert_id();
+
                                     $payment_data = array(
                                         'user_id'           => $user_id,
                                         'payment_for'       => '2',
@@ -4002,12 +4233,22 @@ class Api_model extends CI_Model
                                         'payment_status'    => $payment_status,
                                         'payment_amount'    => $payment_amount,
                                         'primary_table_id'  => $insert_id,
-                                        'primary_table_name'=> 'tbl_bought_test_series'
+                                        'primary_table_name' => 'tbl_bought_test_series'
                                     );
                                     $payment_id = $this->set_user_payment($payment_data);
-                                    
+
                                     $this->db->where('id', $insert_id);
-                                    $this->db->update('tbl_bought_test_series',array('payment_table_id'=>$payment_id));
+                                    $this->db->update('tbl_bought_test_series', array('payment_table_id' => $payment_id));
+
+                                    $type = '2';
+                                    $app_message = "Hello, " . $single->full_name . "!\n\n🎉 Your test series payment successful!";
+                                    $title = 'Test Series payment Successfull';
+                                    $notification_data = [
+                                        "landing_page"  => 'my_contents',
+                                        "redirect_id"   => (string)$content_id
+                                    ];
+
+                                    $this->Notification_model->send_notification($app_message, $title, $notification_data, $type, $user_id);
 
                                     $json_arr['status'] = 'true';
                                     $json_arr['message'] = 'Success';
@@ -4049,7 +4290,7 @@ class Api_model extends CI_Model
         }
         echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
     }
-    
+
     public function buy_membership()
     {
         $request = json_decode(file_get_contents('php://input'), true);
@@ -4075,10 +4316,10 @@ class Api_model extends CI_Model
                             $applied_coupon_id = $request['applied_coupon_id'];
                             $payment_amount = $request['payment_amount'];
                             if ($payment_status == '1') {
-                                $mrp = $test_series_data->price != "" ? (float)$test_series_data->price : 0;
+                                $mrp = $test_series_data->actual_price != "" ? (float)$test_series_data->actual_price : 0;
                                 $test_series_course_discount_rate = $test_series_data->discount_per != "" ? (float)$test_series_data->discount_per : 0;
                                 $test_series_course_discount = ($test_series_course_discount_rate * $mrp / 100);
-                                $sale_price = $test_series_data->actual_price != "" ? (float)$test_series_data->actual_price : 0;
+                                $sale_price = $test_series_data->price != "" ? (float)$test_series_data->price : 0;
                                 $coupon_discount_amount = 0;
                                 $coupons_discount_type = null;
                                 $discount = 0;
@@ -4100,9 +4341,9 @@ class Api_model extends CI_Model
                                 $original_sale_pice = $sale_price - $coupon_discount_amount;
                                 $total_discount_amount = $coupon_discount_amount + $test_series_course_discount;
                                 if ($payment_amount == $original_sale_pice) {
-                                    $start_date = (new DateTime())->format('Y-m-d');                                    
+                                    $start_date = (new DateTime())->format('Y-m-d');
                                     $end_date = (new DateTime())->add(new DateInterval('P' . $test_series_data->no_of_months . 'M'))->format('Y-m-d');
-                                    
+
                                     $buy_data = array(
                                         'login_id'              => $user_id,
                                         'membership_id'         => $memership_id,
@@ -4131,7 +4372,7 @@ class Api_model extends CI_Model
                                     );
                                     $this->db->insert('tbl_my_membership', $buy_data);
                                     $insert_id = $this->db->insert_id();
-                                    
+
                                     $payment_data = array(
                                         'user_id'           => $user_id,
                                         'payment_for'       => '0',
@@ -4140,12 +4381,25 @@ class Api_model extends CI_Model
                                         'payment_status'    => $payment_status,
                                         'payment_amount'    => $payment_amount,
                                         'primary_table_id'  => $insert_id,
-                                        'primary_table_name'=> 'tbl_my_membership'
+                                        'primary_table_name' => 'tbl_my_membership'
                                     );
                                     $payment_id = $this->set_user_payment($payment_data);
-                                    
+
                                     $this->db->where('id', $insert_id);
-                                    $this->db->update('tbl_my_membership',array('payment_table_id'=>$payment_id));
+                                    $this->db->update('tbl_my_membership', array('payment_table_id' => $payment_id));
+
+                                    $this->db->where('login_id', $user_id);
+                                    $this->db->update('user_login', array('my_membership_id' => $insert_id, 'start_date' => $start_date, 'end_date' => $end_date, 'membership_id' => $memership_id, 'is_active_membership' => '1'));
+
+                                    $type = '0';
+                                    $app_message = "Hello, " . $single->full_name . "!\n\n🎉 Your membership has been successfully activated!";
+                                    $title = 'Membership Payment Successfull';
+                                    $notification_data = [
+                                        "landing_page"  => 'my_payments',
+                                        "redirect_id"   => (string)$payment_id
+                                    ];
+
+                                    $this->Notification_model->send_notification($app_message, $title, $notification_data, $type, $user_id);
 
                                     $json_arr['status'] = 'true';
                                     $json_arr['message'] = 'Success';
@@ -4187,7 +4441,7 @@ class Api_model extends CI_Model
         }
         echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
     }
-    
+
     public function user_payments()
     {
         $request = json_decode(file_get_contents('php://input'), true);
@@ -4196,13 +4450,18 @@ class Api_model extends CI_Model
             if (!empty($request['login_id'])) {
                 $user_id = $request['login_id'];
                 $type = isset($request['type']) ? $request['type'] : '';
+                $offset = isset($request['offset']) ? $request['offset'] : '';
+                $limit = isset($request['limit']) ? $request['limit'] : '';
                 $this->db->where('login_id', $user_id);
                 $single = $this->db->get('user_login')->row();
                 if (!empty($single)) {
                     $this->db->select('id,payment_for,payment_on,transaction_id,payment_status,payment_amount');
                     $this->db->where('user_id', $user_id);
-                    if($type != ""){
+                    if ($type != "") {
                         $this->db->where('payment_for', $type);
+                    }
+                    if ($limit != "" && $offset != "") {
+                        $this->db->limit($limit, $offset);
                     }
                     $this->db->where('is_deleted', '0');
                     $this->db->order_by('payment_on', 'desc');
@@ -4235,7 +4494,60 @@ class Api_model extends CI_Model
         }
         echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
     }
-    
+
+    public function user_notifications()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+
+        if ($request) {
+            if (!empty($request['login_id'])) {
+                $user_id = $request['login_id'];
+                $type = isset($request['type']) ? $request['type'] : '';
+                $offset = isset($request['offset']) ? $request['offset'] : '';
+                $limit = isset($request['limit']) ? $request['limit'] : '';
+                $this->db->where('login_id', $user_id);
+                $single = $this->db->get('user_login')->row();
+                if (!empty($single)) {
+                    $this->db->select('id,type,content,title,created_on');
+                    $this->db->where('send_customer', $user_id);
+                    if ($type != "") {
+                        $this->db->where('type', $type);
+                    }
+                    if ($limit != "" && $offset != "") {
+                        $this->db->limit($limit, $offset);
+                    }
+                    $this->db->where('is_deleted', '0');
+                    $this->db->order_by('created_on', 'desc');
+                    $result = $this->db->get('tbl_customer_notifications');
+                    $test_series_data = $result->result();
+
+                    if (!empty($test_series_data)) {
+                        $json_arr['status'] = 'true';
+                        $json_arr['message'] = 'Success';
+                        $json_arr['data'] = $test_series_data;
+                    } else {
+                        $json_arr['status'] = 'false';
+                        $json_arr['message'] = 'Notifications not available';
+                        $json_arr['data'] = [];
+                    }
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'User not found';
+                    $json_arr['data'] = [];
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Login not available.';
+                $json_arr['data'] = [];
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Request not found.';
+            $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    }
+
     public function user_payment_details()
     {
         $request = json_decode(file_get_contents('php://input'), true);
@@ -4287,11 +4599,12 @@ class Api_model extends CI_Model
         }
         echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
     }
-    public function set_user_payment($array){
+    public function set_user_payment($array)
+    {
         $date = array(
             'created_on'        => date('Y-m-d H:i:s')
         );
-        $data = array_merge($array,$date);
+        $data = array_merge($array, $date);
         $this->db->insert('tbl_user_payments', $data);
         $insert_id = $this->db->insert_id();
         return $insert_id;
@@ -4360,17 +4673,17 @@ class Api_model extends CI_Model
                                 $is_test_attempted = '0';
                                 $attempted_test_id = '';
                             }
-                            
-                            if($single_test->show_ans == 'Yes'){
+
+                            if ($single_test->show_ans == 'Yes') {
                                 $show_correct_ans = '1';
-                            }else{
+                            } else {
                                 $show_correct_ans = '0';
                             }
 
-                            if($single_test->download_test_pdf == 'Yes'){
+                            if ($single_test->download_test_pdf == 'Yes') {
                                 $download_test_pdf = '1';
                                 $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                            }else{
+                            } else {
                                 $download_test_pdf = '0';
                                 $test_pdf_link = '';
                             }
@@ -4385,7 +4698,7 @@ class Api_model extends CI_Model
                                 'short_description'     =>  $single_test->short_description,
                                 'duration'              =>  $single_test->duration,
                                 'total_questions'       =>  $single_test->total_questions,
-                                'total_marks'           =>  $single_test->total_marks,                                
+                                'total_marks'           =>  $single_test->total_marks,
 
                                 'is_show_correct_ans'  => $show_correct_ans,
                                 'is_download_test_pdf' => $download_test_pdf,
@@ -4480,17 +4793,17 @@ class Api_model extends CI_Model
                                 $is_test_attempted = '0';
                                 $attempted_test_id = '';
                             }
-                            
-                            if($single_test->show_ans == 'Yes'){
+
+                            if ($single_test->show_ans == 'Yes') {
                                 $show_correct_ans = '1';
-                            }else{
+                            } else {
                                 $show_correct_ans = '0';
                             }
 
-                            if($single_test->download_test_pdf == 'Yes'){
+                            if ($single_test->download_test_pdf == 'Yes') {
                                 $download_test_pdf = '1';
                                 $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                            }else{
+                            } else {
                                 $download_test_pdf = '0';
                                 $test_pdf_link = '';
                             }
@@ -4506,7 +4819,7 @@ class Api_model extends CI_Model
                                 'short_description'     =>  $single_test->short_description,
                                 'duration'              =>  $single_test->duration,
                                 'total_questions'       =>  $single_test->total_questions,
-                                'total_marks'           =>  $single_test->total_marks,                             
+                                'total_marks'           =>  $single_test->total_marks,
 
                                 'is_show_correct_ans'  => $show_correct_ans,
                                 'is_download_test_pdf' => $download_test_pdf,
@@ -4558,23 +4871,23 @@ class Api_model extends CI_Model
                                     $is_test_attempted = '0';
                                     $attempted_test_id = '';
                                 }
-                            
-                                if($single_test->show_ans == 'Yes'){
+
+                                if ($single_test->show_ans == 'Yes') {
                                     $show_correct_ans = '1';
-                                }else{
+                                } else {
                                     $show_correct_ans = '0';
                                 }
 
-                                if($single_test->questions_shuffle == 'Yes'){
+                                if ($single_test->questions_shuffle == 'Yes') {
                                     $questions_shuffle = '1';
-                                }else{
+                                } else {
                                     $questions_shuffle = '0';
                                 }
 
-                                if($single_test->download_test_pdf == 'Yes'){
+                                if ($single_test->download_test_pdf == 'Yes') {
                                     $download_test_pdf = '1';
                                     $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                                }else{
+                                } else {
                                     $download_test_pdf = '0';
                                     $test_pdf_link = '';
                                 }
@@ -4590,7 +4903,7 @@ class Api_model extends CI_Model
                                     'short_description'     =>  $single_test->short_description,
                                     'duration'              =>  $single_test->duration,
                                     'total_questions'       =>  $single_test->total_questions,
-                                    'total_marks'           =>  $single_test->total_marks,                        
+                                    'total_marks'           =>  $single_test->total_marks,
 
                                     'is_show_correct_ans'  => $show_correct_ans,
                                     'is_download_test_pdf' => $download_test_pdf,
@@ -4645,7 +4958,6 @@ class Api_model extends CI_Model
             $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
             // $json_arr['image_path'] = base_url();
         }
-
         echo json_encode($json_arr);
     }
 
@@ -4773,18 +5085,18 @@ class Api_model extends CI_Model
                             } else {
                                 $is_test_attempted = '0';
                                 $attempted_test_id = '';
-                            }                  
+                            }
 
-                            if($single_test->show_ans == 'Yes'){
+                            if ($single_test->show_ans == 'Yes') {
                                 $show_correct_ans = '1';
-                            }else{
+                            } else {
                                 $show_correct_ans = '0';
                             }
 
-                            if($single_test->download_test_pdf == 'Yes'){
+                            if ($single_test->download_test_pdf == 'Yes') {
                                 $download_test_pdf = '1';
                                 $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                            }else{
+                            } else {
                                 $download_test_pdf = '0';
                                 $test_pdf_link = '';
                             }
@@ -4801,7 +5113,7 @@ class Api_model extends CI_Model
                                 'short_description'     =>  $single_test->short_description,
                                 'duration'              =>  $single_test->duration,
                                 'total_questions'       =>  $single_test->total_questions,
-                                'total_marks'           =>  $single_test->total_marks,                       
+                                'total_marks'           =>  $single_test->total_marks,
 
                                 'is_show_correct_ans'  => $show_correct_ans,
                                 'is_download_test_pdf' => $download_test_pdf,
@@ -4901,22 +5213,22 @@ class Api_model extends CI_Model
                                 } else {
                                     $is_test_attempted = '0';
                                     $attempted_test_id = '';
-                                }               
+                                }
 
-                                if($single_test->show_ans == 'Yes'){
+                                if ($single_test->show_ans == 'Yes') {
                                     $show_correct_ans = '1';
-                                }else{
+                                } else {
                                     $show_correct_ans = '0';
                                 }
-    
-                                if($single_test->download_test_pdf == 'Yes'){
+
+                                if ($single_test->download_test_pdf == 'Yes') {
                                     $download_test_pdf = '1';
                                     $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                                }else{
+                                } else {
                                     $download_test_pdf = '0';
                                     $test_pdf_link = '';
                                 }
-                                
+
                                 $all_tests[] = array(
                                     'examwise_material_id'  =>  $exist->id,
                                     'exam_material_id'      =>  $exist->exam_material_id,
@@ -4931,7 +5243,7 @@ class Api_model extends CI_Model
                                     'short_description'     =>  $single_test->short_description,
                                     'duration'              =>  $single_test->duration,
                                     'total_questions'       =>  $single_test->total_questions,
-                                    'total_marks'           =>  $single_test->total_marks,                     
+                                    'total_marks'           =>  $single_test->total_marks,
 
                                     'is_show_correct_ans'  => $show_correct_ans,
                                     'is_download_test_pdf' => $download_test_pdf,
@@ -5100,22 +5412,22 @@ class Api_model extends CI_Model
                                     $attempted_test_id = '';
                                 }
 
-                                if($single_test->show_ans == 'Yes'){
+                                if ($single_test->show_ans == 'Yes') {
                                     $show_correct_ans = '1';
-                                }else{
+                                } else {
                                     $show_correct_ans = '0';
                                 }
-    
-                                if($single_test->questions_shuffle == 'Yes'){
+
+                                if ($single_test->questions_shuffle == 'Yes') {
                                     $questions_shuffle = '1';
-                                }else{
+                                } else {
                                     $questions_shuffle = '0';
                                 }
-    
-                                if($single_test->download_test_pdf == 'Yes'){
+
+                                if ($single_test->download_test_pdf == 'Yes') {
                                     $download_test_pdf = '1';
                                     $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                                }else{
+                                } else {
                                     $download_test_pdf = '0';
                                     $test_pdf_link = '';
                                 }
@@ -5130,7 +5442,7 @@ class Api_model extends CI_Model
                                     'short_description'     =>  $single_test->short_description,
                                     'duration'              =>  $single_test->duration,
                                     'total_questions'       =>  $single_test->total_questions,
-                                    'total_marks'           =>  $single_test->total_marks,                    
+                                    'total_marks'           =>  $single_test->total_marks,
 
                                     'is_show_correct_ans'  => $show_correct_ans,
                                     'is_download_test_pdf' => $download_test_pdf,
@@ -5224,22 +5536,22 @@ class Api_model extends CI_Model
                                     $attempted_test_id = '';
                                 }
 
-                                if($single_test->show_ans == 'Yes'){
+                                if ($single_test->show_ans == 'Yes') {
                                     $show_correct_ans = '1';
-                                }else{
+                                } else {
                                     $show_correct_ans = '0';
                                 }
-    
-                                if($single_test->questions_shuffle == 'Yes'){
+
+                                if ($single_test->questions_shuffle == 'Yes') {
                                     $questions_shuffle = '1';
-                                }else{
+                                } else {
                                     $questions_shuffle = '0';
                                 }
-    
-                                if($single_test->download_test_pdf == 'Yes'){
+
+                                if ($single_test->download_test_pdf == 'Yes') {
                                     $download_test_pdf = '1';
                                     $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
-                                }else{
+                                } else {
                                     $download_test_pdf = '0';
                                     $test_pdf_link = '';
                                 }
@@ -5254,7 +5566,7 @@ class Api_model extends CI_Model
                                     'short_description'     =>  $single_test->short_description,
                                     'duration'              =>  $single_test->duration,
                                     'total_questions'       =>  $single_test->total_questions,
-                                    'total_marks'           =>  $single_test->total_marks,                 
+                                    'total_marks'           =>  $single_test->total_marks,
 
                                     'is_show_correct_ans'  => $show_correct_ans,
                                     'is_download_test_pdf' => $download_test_pdf,
@@ -5957,5 +6269,563 @@ class Api_model extends CI_Model
             $json_arr['message'] = 'Invalid request.';
         }
         echo json_encode($json_arr);
+    }
+
+    public function delete_active_user()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+
+        if ($request) {
+            if (!empty($request['login_id'])) {
+                $login_id = $request['login_id'];
+                $this->db->where('login_id', $login_id);
+                $query = $this->db->get('user_login');
+                // print_r($query);
+                // exit;
+                if ($query->num_rows() > 0) {
+                    $result = $query->row();
+                    $this->db->where('login_id', $login_id);
+                    $this->db->update('user_login', ['status' => 'Inactive']);
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'Success.';
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'Invalid request.';
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'User ID is required.';
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Invalid request.';
+        }
+        echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function get_mpsc_all_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        if ($request) {
+            if (!empty($request['login_id'])) {
+                $user_id = $request['login_id'];
+                $category_id = $request['category_id'];
+                $sub_category_id = $request['sub_category_id'];
+                $this->db->where('login_id', $user_id);
+                $single = $this->db->get('user_login')->row();
+                if (!empty($single)) {
+
+                    if (!empty($category_id) && !empty($sub_category_id)) {
+
+                        $this->db->select('tbl_ebooks.id AS ebook_id, tbl_ebooks.title, tbl_ebooks.image, tbl_ebook_category.id AS category_id, tbl_ebook_sub_category.id AS sub_category_id');
+                        $this->db->from('tbl_ebooks');
+                        $this->db->join('tbl_ebook_category', 'tbl_ebook_category.id = tbl_ebooks.category_id', 'left');
+                        $this->db->join('tbl_ebook_sub_category', 'tbl_ebook_sub_category.id = tbl_ebooks.sub_category_id', 'left');
+                        $this->db->where('tbl_ebooks.is_deleted', '0');
+                        $this->db->where('tbl_ebooks.status', '1');
+                        if (isset($category_id)) {
+                            $this->db->where('tbl_ebooks.category_id', $category_id);
+                        }
+                        if (isset($sub_category_id)) {
+                            $this->db->where('tbl_ebooks.sub_category_id', $sub_category_id);
+                        }
+                        $this->db->order_by('tbl_ebooks.id', 'DESC');
+                        $result = $this->db->get();
+                        $ebook_list = $result->result();
+
+                        if (!empty($ebook_list)) {
+                            $data = [];
+                            foreach ($ebook_list as $ebook_list_result) {
+                                $data[] = array(
+                                    'id'         =>  $ebook_list_result->ebook_id,
+                                    'category_id'         =>  $ebook_list_result->category_id,
+                                    'sub_category_id'         =>  $ebook_list_result->sub_category_id,
+                                    'title'      =>  $ebook_list_result->title,
+                                    'image'       =>  $ebook_list_result->image != "" ? base_url('/assets/ebook_images/' . $ebook_list_result->image) : '',
+                                );
+                            }
+                            $json_arr['status'] = 'true';
+                            $json_arr['message'] = 'Success';
+                            $json_arr['data'] = $data;
+                        } else {
+                            $json_arr['status'] = 'false';
+                            $json_arr['message'] = 'Ebook not found';
+                            $json_arr['data'] = [];
+                        }
+                    } else {
+                        $json_arr['status'] = 'false';
+                        $json_arr['message'] = 'Category and Sub-Category not found';
+                        $json_arr['data'] = [];
+                    }
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'User not found';
+                    $json_arr['data'] = [];
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Login not available.';
+                $json_arr['data'] = [];
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Request not found.';
+            $json_arr['data'] = [];
+        }
+        echo json_encode($json_arr, JSON_UNESCAPED_UNICODE);
+    }
+
+
+
+
+    public function mpsc_all_subjectwise_external_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        $user_id = $request['login_id'];
+        $exam_material_id = $request['exam_material_id'];
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+
+        $this->db->select('tbl_exam_material_subjectwise_test.*,tbl_exam_material_subjects.id,tbl_exam_material_subjects.title,tbl_exam_material_subjects.icon');
+
+        $this->db->join('tbl_exam_material_subjects', 'tbl_exam_material_subjects.id = tbl_exam_material_subjectwise_test.subject_id');
+
+        $this->db->from('tbl_exam_material_subjectwise_test');
+        $this->db->where('tbl_exam_material_subjectwise_test.exam_material_id', $exam_material_id);
+        $this->db->where('tbl_exam_material_subjectwise_test.is_deleted', '0');
+        $this->db->where('tbl_exam_material_subjectwise_test.status', '1');
+        $this->db->limit($limit, $offset);
+        $this->db->group_by('tbl_exam_material_subjectwise_test.subject_id');
+        $exist = $this->db->get()->result();
+        // print_r($exist);
+        // exit;
+        if (!empty($exist)) {
+            $json_arr['status'] = 'true';
+            $json_arr['message'] = 'MPSC Subjects retrieved successfully.';
+            $json_arr['data'] = $exist;
+            $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+            // $json_arr['image_path'] = base_url();
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'MPSC Subjects not available.';
+            $json_arr['data'] = [];
+            $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+            // $json_arr['image_path'] = base_url();
+        }
+        echo json_encode($json_arr);
+    }
+
+    public function exam_material_subjectwise_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        $user_id = $request['login_id'];
+        $exam_material_id = $request['exam_material_id'];
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+        $this->db->select('tbl_exam_material_subjectwise_test.*,tbl_exam_material_subjects.id,tbl_exam_material_subjects.title,tbl_exam_material_subjects.icon');
+        $this->db->join('tbl_exam_material_subjects', 'tbl_exam_material_subjects.id = tbl_exam_material_subjectwise_test.subject_id');
+        $this->db->from('tbl_exam_material_subjectwise_test');
+        if ($exam_material_id != '') {
+            $this->db->where('tbl_exam_material_subjectwise_test.exam_material_id', $exam_material_id);
+        }
+        $this->db->where('tbl_exam_material_subjectwise_test.is_deleted', '0');
+        $this->db->where('tbl_exam_material_subjectwise_test.status', '1');
+        $this->db->limit($limit, $offset);
+        $this->db->group_by('tbl_exam_material_subjectwise_test.subject_id');
+        $exist = $this->db->get()->result();
+        // print_r($exist);
+        // exit;
+        if (!empty($exist)) {
+            $json_arr['status'] = 'true';
+            $json_arr['message'] = 'MPSC Subjects retrieved successfully.';
+            $json_arr['data'] = $exist;
+            $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+            // $json_arr['image_path'] = base_url();
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'MPSC Subjects not available.';
+            $json_arr['data'] = [];
+            $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+            // $json_arr['image_path'] = base_url();
+        }
+        echo json_encode($json_arr);
+    }
+
+    public function exam_material_examwise_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        $user_id = $request['login_id'];
+        $exam_material_id = $request['exam_material_id'];
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+        $this->db->select('tbl_exam_material_examwise_test.*,tbl_exam_material_exams.id,tbl_exam_material_exams.title,tbl_exam_material_exams.icon');
+        $this->db->join('tbl_exam_material_exams', 'tbl_exam_material_exams.id = tbl_exam_material_examwise_test.exam_id');
+        $this->db->from('tbl_exam_material_examwise_test');
+        if ($exam_material_id != '') {
+            $this->db->where('tbl_exam_material_examwise_test.exam_material_id', $exam_material_id);
+            // $this->db->where('type', (string)$type);
+        }
+        $this->db->where('tbl_exam_material_examwise_test.is_deleted', '0');
+        $this->db->where('tbl_exam_material_examwise_test.status', '1');
+        $this->db->limit($limit, $offset);
+        $this->db->group_by('tbl_exam_material_examwise_test.exam_id');
+        $exist = $this->db->get()->result();
+        // print_r($exist);
+        // exit;
+        if (!empty($exist)) {
+            $json_arr['status'] = 'true';
+            $json_arr['message'] = 'MPSC Exams retrieved successfully.';
+            $json_arr['data'] = $exist;
+            $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+            // $json_arr['image_path'] = base_url();
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'MPSC Exams not available.';
+            $json_arr['data'] = [];
+            $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+            // $json_arr['image_path'] = base_url();
+        }
+        echo json_encode($json_arr);
+    }
+
+    public function exam_material_subjectwise_tests_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        $user_id = $request['login_id'];
+        $exam_material_id = $request['exam_material_id'];
+        $subject_id = $request['subject_id'];
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+        $this->db->select('tbl_subjectwise_tests.*,tbl_exam_material_subjects.id,tbl_exam_material_subjects.title,tbl_exam_material_subjects.icon');
+        $this->db->join('tbl_exam_material_subjects', 'tbl_exam_material_subjects.id = tbl_subjectwise_tests.subject_id');
+        $this->db->from('tbl_subjectwise_tests');
+        if ($exam_material_id != '') {
+            $this->db->where('tbl_subjectwise_tests.exam_material_id', $exam_material_id);
+        }
+        if ($subject_id != '') {
+            $this->db->where('tbl_subjectwise_tests.subject_id', $subject_id);
+        }
+        $this->db->where('tbl_subjectwise_tests.is_deleted', '0');
+        $this->db->where('tbl_subjectwise_tests.status', '1');
+        $this->db->limit($limit, $offset);
+        // $this->db->group_by('tbl_exam_material_subjectwise_test.subject_id');
+        // $exist = $this->db->get()->result();
+        // print_r($exist);
+        // exit;
+        $exist = $this->db->get()->row();
+        if (!empty($exist)) {
+            if ($exist->tests != "") {
+                $test = explode(',', $exist->tests);
+                $tests = array();
+                if (!empty($test)) {
+                    for ($i = 0; $i < count($test); $i++) {
+                        $this->db->where('id', $test[$i]);
+                        $this->db->where('is_deleted', '0');
+                        $single_test = $this->db->get('tbl_test_setups')->row();
+                        if (!empty($single_test)) {
+                            $this->db->where('test_id', $single_test->id);
+                            $this->db->where('user_id', $user_id);
+                            $this->db->where('is_deleted', '0');
+                            $this->db->where('parent_module', 'exam_material');
+                            $attempted_test = $this->db->get('tbl_attempted_test')->row();
+                            if (!empty($attempted_test)) {
+                                $is_test_attempted = '1';
+                                $attempted_test_id = $attempted_test->id;
+                            } else {
+                                $is_test_attempted = '0';
+                                $attempted_test_id = '';
+                            }
+                            if ($single_test->show_ans == 'Yes') {
+                                $show_correct_ans = '1';
+                            } else {
+                                $show_correct_ans = '0';
+                            }
+
+                            if ($single_test->download_test_pdf == 'Yes') {
+                                $download_test_pdf = '1';
+                                $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
+                            } else {
+                                $download_test_pdf = '0';
+                                $test_pdf_link = '';
+                            }
+
+                            $tests[] = array(
+                                'exam_id'             =>  $exist->exam_material_id,
+                                'is_test_attempted'     =>  $is_test_attempted,
+                                'attempted_test_id'     =>  $attempted_test_id,
+                                'test_id'               =>  $single_test->id,
+                                'topic'                 =>  $single_test->topic,
+                                'short_note'            =>  $single_test->short_note,
+                                'short_description'     =>  $single_test->short_description,
+                                'duration'              =>  $single_test->duration,
+                                'total_questions'       =>  $single_test->total_questions,
+                                'total_marks'           =>  $single_test->total_marks,
+                                'image'                 =>  $single_test->image,
+
+                                'is_show_correct_ans'  => $show_correct_ans,
+                                'is_download_test_pdf' => $download_test_pdf,
+                                'test_pdf_link'        => $test_pdf_link,
+                            );
+                        }
+                    }
+                }
+
+                if (!empty($tests)) {
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'MPSC Subjects Test retrieved successfully.';
+                    $json_arr['data'] = $tests;
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'MPSC Subjects Test not retrieved successfully.';
+                    $json_arr['data'] = [];
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Subject tests not available.';
+                $json_arr['data'] = [];
+                $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Subject not available.';
+            $json_arr['data'] = [];
+            $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+        }
+
+        // if (!empty($exist)) {
+        //     $json_arr['status'] = 'true';
+        //     $json_arr['message'] = 'MPSC Subjects retrieved successfully.';
+        //     $json_arr['data'] = $exist;
+        //     $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+        //     // $json_arr['image_path'] = base_url();
+        // } else {
+        //     $json_arr['status'] = 'false';
+        //     $json_arr['message'] = 'MPSC Subjects not available.';
+        //     $json_arr['data'] = [];
+        //     $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+        //     // $json_arr['image_path'] = base_url();
+        // }
+        echo json_encode($json_arr);
+    }
+
+    public function exam_material_examwise_tests_api()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+        $user_id = $request['login_id'];
+        $exam_material_id = $request['exam_material_id'];
+        $exam_id = $request['exam_id'];
+        $offset = $request['offset'];
+        $limit = $request['limit'];
+        $exam_year_id = $request['exam_year_id'];
+        $exam_type_id = $request['exam_type_id'];
+        $this->db->select('tbl_examwise_tests.*,tbl_exam_material_exams.id,tbl_exam_material_exams.title,tbl_exam_material_exams.icon');
+        $this->db->join('tbl_exam_material_exams', 'tbl_exam_material_exams.id = tbl_examwise_tests.exam_name');
+        $this->db->from('tbl_examwise_tests');
+        $this->db->where('tbl_examwise_tests.exam_type', $exam_type_id);
+        $this->db->where('tbl_examwise_tests.exam_year', $exam_year_id);
+        $this->db->where('tbl_examwise_tests.exam_material_id', $exam_material_id);
+        $this->db->where('tbl_examwise_tests.exam_name', $exam_id);
+        $this->db->where('tbl_examwise_tests.is_deleted', '0');
+        $this->db->where('tbl_examwise_tests.status', '1');
+        $this->db->limit($limit, $offset);
+        $exist = $this->db->get()->row();
+        // print_r($exist);
+        // exit;
+        if (!empty($exist)) {
+            if ($exist->tests != "") {
+                $test = explode(',', $exist->tests);
+                $tests = array();
+                if (!empty($test)) {
+                    for ($i = 0; $i < count($test); $i++) {
+                        $this->db->where('id', $test[$i]);
+                        $this->db->where('is_deleted', '0');
+                        $single_test = $this->db->get('tbl_test_setups')->row();
+                        if (!empty($single_test)) {
+                            $this->db->where('test_id', $single_test->id);
+                            $this->db->where('user_id', $user_id);
+                            $this->db->where('is_deleted', '0');
+                            $this->db->where('parent_module', 'exam_material');
+                            $attempted_test = $this->db->get('tbl_attempted_test')->row();
+                            if (!empty($attempted_test)) {
+                                $is_test_attempted = '1';
+                                $attempted_test_id = $attempted_test->id;
+                            } else {
+                                $is_test_attempted = '0';
+                                $attempted_test_id = '';
+                            }
+                            if ($single_test->show_ans == 'Yes') {
+                                $show_correct_ans = '1';
+                            } else {
+                                $show_correct_ans = '0';
+                            }
+
+                            if ($single_test->download_test_pdf == 'Yes') {
+                                $download_test_pdf = '1';
+                                $test_pdf_link = $single_test->test_pdf != '' ? (base_url() . 'assets/uploads/test_pdfs/' . $single_test->test_pdf) : '';
+                            } else {
+                                $download_test_pdf = '0';
+                                $test_pdf_link = '';
+                            }
+
+                            $tests[] = array(
+                                'exam_id'             =>  $exist->exam_material_id,
+                                'is_test_attempted'     =>  $is_test_attempted,
+                                'attempted_test_id'     =>  $attempted_test_id,
+                                'test_id'               =>  $single_test->id,
+                                'topic'                 =>  $single_test->topic,
+                                'short_note'            =>  $single_test->short_note,
+                                'short_description'     =>  $single_test->short_description,
+                                'duration'              =>  $single_test->duration,
+                                'total_questions'       =>  $single_test->total_questions,
+                                'total_marks'           =>  $single_test->total_marks,
+                                'image'                 =>  $single_test->image,
+
+                                'is_show_correct_ans'  => $show_correct_ans,
+                                'is_download_test_pdf' => $download_test_pdf,
+                                'test_pdf_link'        => $test_pdf_link,
+                            );
+                        }
+                    }
+                }
+
+                if (!empty($tests)) {
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'Exam tests retrieved successfully.';
+                    $json_arr['data'] = $tests;
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'Exam tests not available.';
+                    $json_arr['data'] = [];
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+                }
+            } else {
+                $json_arr['status'] = 'false';
+                $json_arr['message'] = 'Exam tests not available.';
+                $json_arr['data'] = [];
+                $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+            }
+        } else {
+            $json_arr['status'] = 'false';
+            $json_arr['message'] = 'Exam not available.';
+            $json_arr['data'] = [];
+            $json_arr['image_path'] = base_url() . 'assets/uploads/test_setup/images/';
+        }
+        echo json_encode($json_arr);
+    }
+    public function get_recent_post_api_exam_material()
+    {
+        $request = json_decode(file_get_contents('php://input'), true);
+
+        if ($request) {
+            if (isset($request['login_id'])) {
+                $user_id = $request['login_id'];
+                $exam_material_id = $request['exam_material_id'];
+                $offset = $request['offset'];
+                $limit = $request['limit'];
+
+                $this->db->select('
+                    tbl_examwise_pdf.id AS examwise_id,
+                    tbl_examwise_pdf.exam_material_id,
+                    tbl_examwise_pdf.title AS exam_title,
+                    tbl_examwise_pdf.short_description AS exam_short_description,
+                    tbl_examwise_pdf.pdf AS exam_pdf,
+                    tbl_examwise_pdf.image AS exam_image,
+                    tbl_examwise_pdf.status AS exam_status,
+                    tbl_examwise_pdf.is_deleted AS exam_deleted,
+                    tbl_examwise_pdf.created_on AS created_on
+                ');
+                $this->db->where('tbl_examwise_pdf.exam_material_id', $exam_material_id);
+                $this->db->where('tbl_examwise_pdf.status', '1');
+                $this->db->where('tbl_examwise_pdf.is_deleted', '0');
+                // $this->db->limit($limit, $offset);
+                $examwise_result = $this->db->get('tbl_examwise_pdf')->result_array();
+
+                $this->db->select('
+                    tbl_subjectwise_pdf.id AS subjectwise_id,
+                    tbl_subjectwise_pdf.exam_material_id AS exam_material_id,
+                    tbl_subjectwise_pdf.title AS exam_title,
+                    tbl_subjectwise_pdf.short_description AS exam_short_description,
+                    tbl_subjectwise_pdf.pdf AS exam_pdf,
+                    tbl_subjectwise_pdf.image AS exam_image,
+                    tbl_subjectwise_pdf.status AS exam_status,
+                    tbl_subjectwise_pdf.is_deleted AS exam_deleted,
+                    tbl_subjectwise_pdf.created_on AS created_on
+                ');
+                $this->db->where('tbl_subjectwise_pdf.exam_material_id', $exam_material_id);
+                $this->db->where('tbl_subjectwise_pdf.status', '1');
+                $this->db->where('tbl_subjectwise_pdf.is_deleted', '0');
+                // $this->db->limit($limit, $offset);
+                $subjectwise_result = $this->db->get('tbl_subjectwise_pdf')->result_array();
+
+                $merged_results = array_merge($examwise_result, $subjectwise_result);
+                usort($merged_results, function ($a, $b) {
+                    return strtotime($b['created_on']) - strtotime($a['created_on']); // Newest first
+                });
+
+                $paginated_results = array_slice($merged_results, $offset, $limit);
+
+                if (!empty($paginated_results)) {
+                    $json_arr['status'] = 'true';
+                    $json_arr['message'] = 'Success';
+                    $json_arr['data'] = $paginated_results;
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+                    $json_arr['pdf_path'] = base_url() . 'assets/uploads/exam_material/pdf/';
+                } else {
+                    $json_arr['status'] = 'false';
+                    $json_arr['message'] = 'No post found.';
+                    $json_arr['data'] = [];
+                    $json_arr['image_path'] = base_url() . 'assets/uploads/exam_material/images/';
+                    $json_arr['pdf_path'] = base_url() . 'assets/uploads/exam_material/pdf/';
+                }
+
+                echo json_encode($json_arr);
+            } else {
+                echo json_encode(['status' => 'false', 'message' => 'User ID is required.']);
+            }
+        } else {
+            echo json_encode(['status' => 'false', 'message' => 'Invalid request.']);
+        }
+    }
+
+    public function update_memberships(){
+        $this->db->where("is_active_membership",'1');
+        $result = $this->db->get("user_login")->result();
+        if(!empty($result)){
+            $flag = '0';
+            foreach($result as $data){   
+                $this->db->select('tbl_my_membership.id, tbl_my_membership.membership_id, tbl_my_membership.login_id, tbl_my_membership.start_date, tbl_my_membership.end_date, tbl_my_membership.amount, tbl_my_membership.payment_id, tbl_my_membership.status, tbl_my_membership.is_deleted, tbl_my_membership.created_at, tbl_my_membership.updated_at, membership_plans.title as membership_title');
+                $this->db->join('membership_plans', 'membership_plans.id = tbl_my_membership.membership_id');
+                $this->db->join('user_login', 'user_login.login_id = tbl_my_membership.login_id');
+                $this->db->where('CURDATE() BETWEEN tbl_my_membership.start_date AND tbl_my_membership.end_date');
+                $this->db->where('tbl_my_membership.is_deleted', '0');
+                $this->db->where('tbl_my_membership.login_id', $data->login_id);
+                $this->db->where('tbl_my_membership.id', $data->my_membership_id);
+                $this->db->order_by('tbl_my_membership.id', 'desc');
+                $membership_details = $this->db->get('tbl_my_membership')->row();
+                if(empty($membership_details)){
+                    $flag = '1';
+                    $update_data = array(
+                        'is_active_membership'  =>  '0',
+                        'membership_id'         =>  null,
+                        'end_date'              =>  null,
+                        'start_date'            =>  null,
+                        'my_membership_id'      =>  null
+                    );
+                    $this->db->where("login_id",$data->login_id);
+                    $this->db->update("user_login",$update_data);
+                }
+            }
+
+            if($flag == '1'){
+                echo json_encode(['status' => 'true', 'message' => 'Memberships updated successfully']);
+            }else{
+                echo json_encode(['status' => 'false', 'message' => 'Expired memberships not available']);
+            }
+        }else{
+            echo json_encode(['status' => 'false', 'message' => 'Active memberships not available']);
+        }
     }
 }

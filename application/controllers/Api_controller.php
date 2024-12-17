@@ -35,6 +35,10 @@ class Api_controller extends CI_Controller
 	{
 		$this->Api_model->set_user_logout();
 	}
+	public function user_notifications()
+	{
+		$this->Api_model->user_notifications();
+	}
 	public function get_banner_image_api()
 	{
 		$this->Api_model->get_banner_image_api();
@@ -139,6 +143,10 @@ class Api_controller extends CI_Controller
 	{
 		$this->Api_model->get_other_options_api();
 	}
+	public function get_syllabus_api()
+	{
+		$this->Api_model->get_syllabus_api();
+	}
 	public function get_membership_plans_api()
 	{
 		$this->Api_model->get_membership_plans_api();
@@ -176,7 +184,6 @@ class Api_controller extends CI_Controller
 	{
 		$this->Api_model->get_ebooks_solution_api();
 	}
-
 	public function get_ebooks_tests_api()
 	{
 		$this->Api_model->get_ebooks_tests_api();
@@ -351,6 +358,11 @@ class Api_controller extends CI_Controller
 		$this->Api_model->exam_material_examwise_pdf();
 	}
 
+	public function get_recent_post_api_exam_material()
+	{
+		$this->Api_model->get_recent_post_api_exam_material();
+	}
+
 	public function exam_material_syllabus_examwise_content()
 	{
 		$this->Api_model->exam_material_syllabus_examwise_content();
@@ -390,6 +402,17 @@ class Api_controller extends CI_Controller
 	{
 		$this->Api_model->get_whatsapp_number_api();
 	}
+
+	public function get_mpsc_all_api()
+	{
+		$this->Api_model->get_mpsc_all_api();
+	}
+
+	public function delete_active_user()
+	{
+		$this->Api_model->delete_active_user();
+	}
+
 	public function set_user_english_vocabulary_bookmark_api()
 	{
 		$this->Api_model->set_user_english_vocabulary_bookmark_api();
@@ -397,5 +420,31 @@ class Api_controller extends CI_Controller
 	public function set_user_marathi_sabd_sangrah_bookmark_api()
 	{
 		$this->Api_model->set_user_marathi_sabd_sangrah_bookmark_api();
+	}
+	public function exam_material_subjectwise_tests_api()
+	{
+		$this->Api_model->exam_material_subjectwise_tests_api();
+	}
+
+	public function exam_material_examwise_tests_api()
+	{
+		$this->Api_model->exam_material_examwise_tests_api();
+	}
+	public function exam_material_examwise_api()
+	{
+		$this->Api_model->exam_material_examwise_api();
+	}
+
+	public function exam_material_subjectwise_api()
+	{
+		$this->Api_model->exam_material_subjectwise_api();
+	}
+	public function mpsc_all_subjectwise_external_api()
+	{
+		$this->Api_model->mpsc_all_subjectwise_external_api();
+	}
+	public function update_memberships()
+	{
+		$this->Api_model->update_memberships();
 	}
 }

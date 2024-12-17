@@ -18,6 +18,7 @@ class News extends CI_Controller
     {
         parent::__construct();
         $this->load->model("DocsVideos_model");
+        $this->load->model("Exam_Material_model");
         $this->load->model("Courses_model");
         $this->load->model("News_model");
     }
@@ -41,6 +42,19 @@ class News extends CI_Controller
         $this->load->view('news/jscript.php', $data);
     }
 
+    public function exam_material_list_new()
+    {
+        $data['category'] = $this->Exam_Material_model->get_exam_material_list();
+        // echo '<pre>';
+        // print_r($data['category']);
+        // exit();
+        $this->load->view('exam_material/exam_material_list', $data);
+        $this->load->view('templates/header1', $data);
+        $this->load->view('templates/menu', $data);
+        $this->load->view('templates/footer1', $data);
+        $this->load->view('exam_material/exam_list_script.php', $data);
+        // $this->load->view('courses/newjscript.php', $data);
+    }
     function fetch_user()
     {
         $this->load->model("news_model");
@@ -583,7 +597,7 @@ class News extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('news/newscript.php', $data);
+        $this->load->view('news/news_list_script.php', $data);
         // $this->load->view('courses/newjscript.php', $data);
     }
 
@@ -663,7 +677,7 @@ class News extends CI_Controller
         $this->load->view('templates/header1', $data);
         $this->load->view('templates/menu', $data);
         $this->load->view('templates/footer1', $data);
-        $this->load->view('news/newscatscript.php', $data);
+        $this->load->view('news/news_category_list_script.php', $data);
         // $this->load->view('courses/newjscript.php', $data);
     }
 

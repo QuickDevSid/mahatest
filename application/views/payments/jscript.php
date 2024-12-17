@@ -1,5 +1,14 @@
 <script>
-    $(document).ready(function() { 
+    $(document).ready(function() {
+        $(function() {
+            $('#app_user_management').addClass('active');
+            $('#app_user_management .menu-toggle').addClass('toggled');
+            $('#app_user_management .ml-menu').css('display', 'block');
+
+            $('#all_payments').addClass('active');
+            getData();
+        });
+
         var oldExportAction = function(self, e, dt, button, config) {
             if (button[0].className.indexOf('buttons-excel') >= 0) {
                 if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {

@@ -1,0 +1,71 @@
+<?php
+/**
+ * Web Based Software Activation System
+ * Developed By
+ * Sagar Maher
+ * Coding Visions Infotech Pvt. Ltd.
+ * http://codingvisions.com/
+ * 31/01/2019
+ */
+?>
+<!-- Modal Dialogs ====================================================================================================================== -->
+<!-- Default Size -->
+<div class="modal fade" id="PostDetailModel" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="defaultModalLabel">Job Alert Details</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Masked Input -->
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card">
+                            <div class="body">
+                                <div class="row">
+                                    <!-- Post Content Column -->
+                                    <div class="col-lg-12">
+                                        <!-- Title -->
+                                        <h1 class="mt-4" id="d_post_title">Post Title</h1>
+                                        <!-- Author -->
+                                        <p class="lead">
+                                            for <a href="#" id="d_exam_group">Exam Group</a>
+
+                                            <a href="#" id="d_apply_link"><button type="button" class="btn bg-teal waves-effect pull-right">
+                                                    <i class="material-icons">person_add</i>
+                                                    <span>Apply Link</span>
+                                                </button></a>
+                                        </p>
+                                       
+                                        <hr>
+                                        <!-- Date/Time -->
+                                        <p id="d_created_at">Posted on January 1, 2019 at 12:00 PM</p>
+                                        <hr>
+                                        <!-- Preview Image -->
+                                        <div id="d_post_image">
+                                            <img class="img-fluid rounded" style="width: 100%;" src="http://placehold.it/900x300" alt="" >
+                                        </div>
+
+                                        <hr>
+                                        <!-- Post Content -->
+                                        <p id="d_post_description">Description</p>
+                                        <hr>
+                                        
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Masked Input -->
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div></div>
