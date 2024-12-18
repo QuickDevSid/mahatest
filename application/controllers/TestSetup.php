@@ -680,28 +680,46 @@ class TestSetup extends CI_Controller
         if ($this->form_validation->run() === FALSE) {
             $upload_image = $this->input->post('current_group_image');
             if (isset($_FILES['zipfile']) && $_FILES['zipfile']['name'] != "") {
-                $gst_config = array(
-                    'upload_path'   => "assets/uploads/master_gallary_files",
-                    'allowed_types' => "*",
-                    'encrypt_name'  => true,
-                );
+                $file_type = strtolower(pathinfo($_FILES['zipfile']['name'], PATHINFO_EXTENSION));
+                if ($file_type == 'zip') {
+                    $gst_config = array(
+                        'upload_path'   => "assets/uploads/master_gallary_files",
+                        'allowed_types' => "zip",
+                        'encrypt_name'  => true,
+                    );
+                } else if (in_array($file_type, ['jpg', 'jpeg', 'png', 'gif'])) {
+                    // echo '<pre>'; print_r($file_type);
+                    $gst_config = array(
+                        'upload_path'   => "assets/uploads/master_gallary",
+                        'allowed_types' => "jpg|jpeg|png|gif",
+                        'encrypt_name'  => true,
+                    );
+                } else {
+                    $error = array('error' => 'Unsupported file type. Please upload a ZIP or an image file.');
+                    $this->session->set_flashdata("error", $error['error']);
+                    // echo '<pre>'; print_r($error);
+                    // exit;
+                    return;
+                }
                 $this->upload->initialize($gst_config);
                 if ($this->upload->do_upload('zipfile')) {
                     $data = $this->upload->data();
                     $upload_image = $data['file_name'];
-                    $zip_file_path = $data['full_path']; 
-                    $zip = new ZipArchive;
-                    if ($zip->open($zip_file_path) === TRUE) {
-                        $extracted_folder = 'assets/uploads/master_gallary/';
+                    if ($file_type == 'zip') {
+	                    $zip_file_path = $data['full_path']; 
+	                    $zip = new ZipArchive;
+	                    if ($zip->open($zip_file_path) === TRUE) {
+	                        $extracted_folder = 'assets/uploads/master_gallary/';
     
-                        $zip->extractTo($extracted_folder);
-                        $zip->close();
-                    } else {    
-                        $error = array('error' => 'Failed to extract the ZIP file');
-                        $this->session->set_flashdata("error", $error['error']);
-                        exit;
-                        return;
-                    }
+	                        $zip->extractTo($extracted_folder);
+	                        $zip->close();
+	                    } else {    
+	                        $error = array('error' => 'Failed to extract the ZIP file');
+	                        $this->session->set_flashdata("error", $error['error']);
+	                        exit;
+	                        return;
+	                    }
+			}
                 } else {
                     $error = array('error' => $this->upload->display_errors());
                     $this->session->set_flashdata("error", $error['error']);

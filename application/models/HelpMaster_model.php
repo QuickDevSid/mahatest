@@ -24,6 +24,7 @@ class HelpMaster_model extends CI_Model
     function make_datatables()
     {
         $this->make_query();
+        $this->db->where('is_deleted','0');
         $query = $this->db->get();
         return $query->result();
     }

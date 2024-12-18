@@ -206,8 +206,8 @@ class Ajax_controller extends CI_Controller {
       <button type="button" name="Edit" onclick="get_help_master_Edit(this.id,\'edit\')" id="edit_' . $row->id . '"  class="btn bg-purple waves-effect btn-xs" data-toggle="modal" data-target="#add_help_entry" >
       <i class="material-icons">mode_edit</i></button>
 
-      <button type="button" name="Delete" onclick="deleteExamSectionDetails(this.id)" id="delete_' . $row->id . '" data-type="confirm" class="btn bg-red waves-effect btn-xs">
-      <i class="material-icons">delete</i></button>
+      <a title="Delete" href="'.base_url().'delete/'.$row->id.'/tbl_help_master" id="delete_' . $row->id . '" cass="btn bg-red waves-effect btn-xs">
+      <i class="material-icons">delete</i></a>
       ';
 
         if($row->type == '1') {
@@ -219,7 +219,7 @@ class Ajax_controller extends CI_Controller {
 		}
        
         $sub_array[] = $row->title;
-        $sub_array[] = $row->status;
+        $sub_array[] = $row->status == '1' ? 'Active' : 'Inactive';
         $sub_array[] = date("d-m-Y H:i:s",strtotime($row->created_on));
 
 

@@ -19,13 +19,13 @@
                                         <div class="demo-masked-input">
                                             <div class="row clearfix">
                                                 <div class="col-md-4">
-                                                    <b>Images File* <small>(.zip allowed)</small></b>
+                                                    <b>Images File* <small>(.zip, .jpg, .jpeg, .png allowed)</small></b>
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
                                                             <i class="material-icons">note</i>
                                                         </span>
                                                         <div class="form-line">
-                                                            <input type="file" accept=".zip" name="zipfile" id="zipfile" class="form-control file">
+                                                            <input type="file" accept=".zip, .jpg, .jpeg, .png" name="zipfile" id="zipfile" class="form-control file">
                                                         </div>
                                                     </div>
                                                 </div>

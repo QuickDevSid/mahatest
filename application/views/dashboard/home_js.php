@@ -31,14 +31,19 @@
             scrollX: true,
             scrollY: true,
             pageLength : 11,
-            order: [[ 3, "desc" ]],
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
             "ajax": {
                 url: ur,
                 type: "POST"
-            }
+            },
+            columnDefs: [
+                {
+                    targets: '_all', // Disable sorting for all columns
+                    orderable: false
+                }
+            ]
         });
     }
 

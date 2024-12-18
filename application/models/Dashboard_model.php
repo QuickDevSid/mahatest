@@ -18,7 +18,7 @@ class Dashboard_model extends CI_Model
     }
     
     var $table = "user_login";
-    var $select_column = array("login_id as id", "full_name as Name", "email as EmailID", "gender as Gender", "profile_image as Profile_Image", "selected_exams as Selected_Exams", "login_type as Login_Type", "status as Status", "created_at as Added_On");
+    var $select_column = array("login_id as id", "full_name as Name", "email as EmailID", "gender as Gender", "profile_image as Profile_Image", "selected_exams as Selected_Exams", "login_type as Login_Type", "status as user_Status", "created_at as Added_On");
     
     function make_query()
     {
@@ -51,6 +51,7 @@ class Dashboard_model extends CI_Model
     function make_datatables()
     {
         $this->make_query();
+        $this->db->order_by('created_at','desc');
         $query = $this->db->get();
        // echo $this->db->last_query();exit;
         return $query->result();

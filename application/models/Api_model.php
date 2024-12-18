@@ -746,6 +746,7 @@ class Api_model extends CI_Model
                     'district_id'   => $request['district_id'],
                     'state_id'   => $request['state_id'],
                     'Address'   => $request['Address'],
+                    'status'   => 'Active',
                 );
                 $this->db->insert('user_login', $data);
                 $login_id = $this->db->insert_id();

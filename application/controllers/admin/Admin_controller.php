@@ -48,7 +48,6 @@ public function add_data()
             
             $insert = $this->HelpMaster_model->save($data);
             if ($insert == 'Inserted') {
-                echo "inserted";
                 $art_msg['msg'] = 'New Plan Added.';
                 $art_msg['type'] = 'success';
             } else {
@@ -92,7 +91,7 @@ public function update_data()
             $insert=$this->HelpMaster_model->update($id,$data);
             if($insert=='Updated')
             {
-                echo "Updated";
+                // echo "Updated";
                 $art_msg['msg'] = 'data updated.';
                 $art_msg['type'] = 'success';
             }

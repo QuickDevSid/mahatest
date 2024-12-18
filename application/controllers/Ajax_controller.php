@@ -270,6 +270,13 @@ class Ajax_controller extends CI_Controller
         echo json_encode($output);
         exit();
     }
+    public function delete(){        
+        $result = $this->Admin_model->delete();
+        $art_msg['msg'] = 'Record deleted successfully.';
+        $art_msg['type'] = 'success';
+        $this->session->set_userdata('alert_msg', $art_msg);
+        redirect(base_url() . 'add_help_master');
+    }
     public function get_test_setup_ajx()
     {
         $draw = intval($this->input->post("draw"));

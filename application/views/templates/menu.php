@@ -314,14 +314,14 @@ if (!$this->session->userdata('logged_in')) {
                     <a href="javascript:void(0);" class="menu-toggle"> <i class="material-icons">perm_media</i>
                         <span>Docs and Videos</span> </a>
                     <ul class="ml-menu">
-                        <li id="add_document">
+                        <!-- <li id="add_document">
                             <a href="<?php echo base_url() . "doc_videos/add_document"; ?>">
                                 <i class="material-icons">description</i> <span>Docs</span> </a>
                         </li>
                         <li id="document_list">
                             <a href="<?php echo base_url() . "doc_videos/document_list"; ?>">
                                 <i class="material-icons">description</i> <span>Docs List</span> </a>
-                        </li>
+                        </li> -->
                         <li id="add_text">
                             <a href="<?php echo base_url() . "doc_videos/add_text"; ?>">
                                 <i class="material-icons">inventory</i> <span>Texts</span> </a>

@@ -38,14 +38,16 @@ class Dashboard extends CI_Controller
         $this->load->model("Dashboard_model");
         $fetch_data = $this->Dashboard_model->make_datatables();
         $data = array();
+        $serial_number = 1;
         foreach ($fetch_data as $row) {
             $sub_array = array();
+            $sub_array[] = $serial_number++;
             $sub_array[] = $row->Name;
             $sub_array[] = $row->EmailID;
             $sub_array[] = $row->Gender;
-            $sub_array[] = $row->Status;
-            $sub_array[] = $row->Added_On;
-            $sub_array[] = $row->Selected_Exams;
+            $sub_array[] = $row->user_Status;
+            $sub_array[] = date('d-m-Y h:i A',strtotime($row->Added_On));
+            // $sub_array[] = $row->Selected_Exams;
             $data[] = $sub_array;
         }
         $output = array(

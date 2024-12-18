@@ -433,6 +433,7 @@ $route['add_other_option_category'] = "admin/Admin_controller/add_other_option_c
 /*27-02-2024*/
 $route['courses/add_course_data'] = 'Courses/add_course_data';
 $route['courses/courses_list'] = 'Courses/courses_list';
+$route['delete/(:any)/(:any)'] = 'Ajax_controller/delete/$1';
 $route['courses/delete_courses_list/(:any)'] = 'Courses/delete_courses_list/$1';
 $route['courses/status_courses_list_active/(:any)'] = 'Courses/status_courses_list_active/$1';
 $route['courses/status_courses_list_in_active/(:any)'] = 'Courses/status_courses_list_in_active/$1';

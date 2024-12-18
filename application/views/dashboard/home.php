@@ -95,22 +95,24 @@
                                    width="100%">
                                 <thead>
                                 <tr>
+                                    <th>Sr. No.</th>
                                     <th>Name</th>
                                     <th>Email Id</th>
                                     <th>Gender</th>
                                     <th>Status</th>
                                     <th>Added On</th>
-                                    <th>Selected Exams</th>
+                                    <!-- <th>Selected Exams</th> -->
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
+                                    <th>Sr. No.</th>
                                     <th>Name</th>
                                     <th>Email Id</th>
                                     <th>Gender</th>
                                     <th>Status</th>
                                     <th>Added On</th>
-                                    <th>Selected Exams</th>
+                                    <!-- <th>Selected Exams</th> -->
                                 </tr>
                                 </tfoot>
                                 <tbody>
