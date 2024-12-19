@@ -631,10 +631,10 @@ if (!$this->session->userdata('logged_in')) {
         <!-- Footer -->
         <div class="legal">
             <div class="copyright">
-                &copy; <?= date('Y'); ?> <a href="http://codingvisions.com/">Coding Visions Infotetch Pvt. Ltd.</a>.
+                &copy; <?= date('Y'); ?> <a href="https://quickensol.com/">Quickensol IT Solutions</a>
             </div>
             <div class="version">
-                <b>Version: </b> 1.0.6
+                <b>Version: </b> 1.1.0
             </div>
         </div>
         <!-- #Footer -->

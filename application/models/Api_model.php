@@ -164,56 +164,20 @@ class Api_model extends CI_Model
                     $this->db->update('user_login', $update_data);
 
                     $data = [
-                        'login_id'       => $user->login_id,
-                        'full_name'     => $user->full_name,
-                        'mobile_number' => $user->mobile_number,
-                        'email'         => $user->email,
-                        'gender'        => $user->gender
+                        'login_id'       => $user->login_id != "" && $user->login_id != null ? $user->login_id : '',
+                        'full_name'     => $user->full_name != "" && $user->full_name != null ? $user->full_name : '',
+                        'mobile_number' => $user->mobile_number != "" && $user->mobile_number != null ? $user->mobile_number : '',
+                        'email'         => $user->email != "" && $user->email != null ? $user->email : '',
+                        'gender'        => $user->gender != "" && $user->gender != null ? $user->gender : ''
                     ];
                     $json_arr['status'] = 'true';
                     $json_arr['message'] = 'Login successful.';
                     $json_arr['data'] = [$data];
                 } else {
-                    $data = array(
-                        'mobile_number' => $request['mobile_number'],
-                        'fcm_token'     => $fcm_token,
-                        'push_token'    => $fcm_token,
-                        'device_id'     => $device_id,
-                        'last_logged_in'        => date('Y-m-d H:i:s'),
-                        'is_logged_in'          => '1',
-                        'status'          => 'Active',
-                        'created_at'    => date('Y-m-d H:i:s')
-                    );
-                    $this->db->insert('user_login', $data);
-                    $login_id = $this->db->insert_id();
-
-                    $this->db->where('login_id', $login_id);
-                    $users = $this->db->get('user_login')->row();
-                    if (!empty($users)) {
-                        $data = [
-                            'login_id'       => $users->login_id,
-                            'full_name'     => $users->full_name,
-                            'mobile_number' => $users->mobile_number,
-                            'email'         => $users->email,
-                            'gender'        => $users->gender
-                        ];
-                    }
-
                     $json_arr['status'] = 'false';
-                    $json_arr['message'] = 'User not found. Please register first.';
-                    $json_arr['data'] = [
-                        'login_id'       => '',
-                        'full_name'     => '',
-                        'mobile_number' => '',
-                        'email'         => '',
-                        'gender'        => ''
-                    ];
+                    $json_arr['message'] = 'Mobile number not registered with us.';
+                    $json_arr['data'] = [];
                 }
-                //  } else {
-                //     $json_arr['status'] = 'false';
-                //     $json_arr['message'] = 'Invalid OTP. Please try again.';
-                //     $json_arr['data'] = [];
-                // }
             } else {
                 $json_arr['status'] = 'false';
                 $json_arr['message'] = 'Mobile number, Push Token required. Please try again.';
@@ -739,13 +703,13 @@ class Api_model extends CI_Model
             $exist = $this->db->get('user_login')->result();
             if (empty($exist)) {
                 $data = array(
-                    'full_name'     => $request['full_name'],
-                    'gender'     => $request['gender'],
-                    'mobile_number' => $request['mobile_number'],
-                    'email'         => $request['email'],
-                    'district_id'   => $request['district_id'],
-                    'state_id'   => $request['state_id'],
-                    'Address'   => $request['Address'],
+                    'full_name'     => $request['full_name'] != "" && $request['full_name'] != null ? $request['full_name'] : '',
+                    'gender'     => $request['gender'] != "" && $request['gender'] != null ? $request['gender'] : '',
+                    'mobile_number' => $request['mobile_number'] != "" && $request['mobile_number'] != null ? $request['mobile_number'] : '',
+                    'email'         => $request['email'] != "" && $request['email'] != null ? $request['email'] : '',
+                    'district_id'   => $request['district_id'] != "" && $request['district_id'] != null ? $request['district_id'] : '',
+                    'state_id'   => $request['state_id'] != "" && $request['state_id'] != null ? $request['state_id'] : '',
+                    'Address'   => $request['Address'] != "" && $request['Address'] != null ? $request['Address'] : '',
                     'status'   => 'Active',
                 );
                 $this->db->insert('user_login', $data);
